@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {HttpServiceService} from './services/http-service.service';
+import firebase from 'firebase';
 
 @Component({
   selector: 'app-root',
@@ -9,17 +9,15 @@ import {HttpServiceService} from './services/http-service.service';
 export class AppComponent {
   title = 'Tour of Heroes';
 
+  // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
+  firebaseConfig = {
+  };
+  firebaseDb: firebase.database.Database;
+
   data: any;
 
-  constructor(private httpService: HttpServiceService) {
-    this.get();
+  constructor() {
+    firebase.initializeApp(this.firebaseConfig);
+    this.firebaseDb = firebase.database();
   }
-
-  get() {
-    this.httpService.get('categories').subscribe(data => {
-      this.data = data;
-      console.log(this.data);
-    });
-  }
-
 }
