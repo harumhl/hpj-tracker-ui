@@ -5,6 +5,7 @@ import {DbService} from './db.service';
 import {GoalModel} from './models/goal.model';
 import {DatePipe} from '@angular/common';
 import {environment} from '../environments/environment';
+import { version } from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import {environment} from '../environments/environment';
 })
 export class AppComponent {
   title = 'HPJ Tracker';
+  version = 'v' + version;
 
   email = 'haru.mhl@gmail.com';
 
