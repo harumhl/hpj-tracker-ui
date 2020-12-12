@@ -5,9 +5,9 @@ TODO: Give a short introduction of your project. Let this section explain the ob
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
 
 1.  My initial setup process
-Creating repos: go to dev.azure.com, create project, and create repos
+I followed Firebase's documentation to set up Realtime Database and to deploy to their Hosting server. In the future, 
+all I need is 'npm run-script build' and 'amplify deploy'.
 
-Initial deployment & Pipeline: I followed this link https://towardsdatascience.com/how-to-deploy-web-apps-with-azure-52ca340b41b9
 2.  Installation process
 3.	Software dependencies
 4.	Latest releases
