@@ -1,1 +1,22 @@
 <h1>{{title}}</h1>
+
+<!-- Log in to see data -->
+<label id="emailLabel" for="emailInput"> email: </label>
+<input id="emailInput" value={{this.email}}>
+<label id="passwordLabel" for="passwordInput"> password: </label>
+<input id="passwordInput" type="password">
+<button id="login" (click)="login()">login</button>
+
+<!-- Displaying data -->
+<table>
+  <tr>
+    <th id="header" *ngFor="let column of this.headers">
+      {{column}}
+    </th>
+  </tr>
+  <tr id="content-row" *ngFor="let row of this.data">
+    <td id=content-column* *ngFor="let column of this.headers">
+      {{row[column]}}
+    </td>
+  </tr>
+</table>

@@ -12,7 +12,9 @@ import {environment} from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Tour of Heroes';
+  title = 'HPJ Tracker';
+
+  email = 'haru.mhl@gmail.com';
 
   // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
   firebaseConfig = {
@@ -27,20 +29,57 @@ export class AppComponent {
   };
   firebaseDb: firebase.database.Database = null;
 
-  data: object;
+  headers: string[];
+  data: object[];
 
   constructor(private dbService: DbService,
               private datePipe: DatePipe) {
+    // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.firebaseDb = firebase.database();
-
     this.dbService.firebaseDb = this.firebaseDb;
-
-    // this.initAddToDb();
-    this.newEntry('Basic', 'Wake up at 6am', 1);
   }
 
-  initAddToDb() {
+  _getDateKey(date?) {
+    if (date === null || date === undefined) {
+      date = Date();
+    }
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
+
+  _objectToIterable(obj: object) {
+    const iterable = [];
+    Object.keys(obj).forEach((key) => iterable.push(obj[key]));
+    return iterable;
+  }
+
+  login() { // Login, hide login HTML components, read data
+    this.email = (document.getElementById('emailInput') as HTMLInputElement).value;
+    const password = (document.getElementById('passwordInput') as HTMLInputElement).value;
+    firebase.auth().signInWithEmailAndPassword(this.email, password)
+      .then((user) => {
+        console.log(`Successfully logged in as ${this.email}`);
+
+        // Hide login-related HTML components
+        document.getElementById('emailLabel').hidden = true;
+        document.getElementById('emailInput').hidden = true;
+        document.getElementById('passwordLabel').hidden = true;
+        document.getElementById('passwordInput').hidden = true;
+        document.getElementById('login').hidden = true;
+
+        // Get data upon successful login
+        this.headers = ['name', 'count', 'goalCount'];
+        this.dbService.readSubscribe('/goals').on('value', (snap) => {
+          const data = snap.val();
+          this.data = this._objectToIterable(data);
+        });
+      })
+      .catch((error) => {
+        console.log(`Failed to login: ${error.code} - ${error.message}`);
+      });
+  }
+
+  initAddToDb() { // Only to be run after clearing/refreshing the database
     this.dbService.writeNew('/categories', {category: 'Basic'} as CategoryModel);
     this.dbService.writeNew('/categories', {category: 'Workout'} as CategoryModel);
     this.dbService.writeNew('/categories', {category: 'Hazel'} as CategoryModel);
@@ -54,16 +93,29 @@ export class AppComponent {
     this.dbService.update('/entries', '_2020-12-11_Eatfruits', {count: 2});
   }
 
-  newEntry(category: string, name: string, count: number, doneDate?: string) {
+  newEntry(category: string, name: string, count: number, doneDate?: string, goalCount?: number) { // Entering what I did
     const key = DbService.keysToKey('/goals', {category, name});
     if (doneDate === null || doneDate === undefined) {
-      doneDate = this.datePipe.transform(Date(), 'yyyy-MM-dd');
+      doneDate = this._getDateKey();
     }
 
-    this.dbService.readAll('/goals/' + key).then((snapshot) => {
-      const value = snapshot.val();
-      const goalCount = value.goalCount;
+    if (goalCount) {
       this.dbService.writeNew('/entries', {doneDate, category, name, count, goalCount, updatedTs: Date()});
+    } else {
+      this.dbService.readAllOnce('/goals/' + key).then((snapshot) => {
+        const value = snapshot.val();
+        goalCount = value.goalCount;
+        this.dbService.writeNew('/entries', {doneDate, category, name, count, goalCount, updatedTs: Date()});
+      });
+    }
+  }
+
+  newEntriesOfTheDay() { // Creating an empty list of entries for the day
+    this.dbService.readAllOnce('/goals').then((snapshot) => {
+      const value = snapshot.val();
+      for (const goal of this._objectToIterable(value)) {
+        this.newEntry(goal.category, goal.name, 0, null, goal.goalCount);
+      }
     });
   }
 }

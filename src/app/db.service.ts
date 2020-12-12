@@ -49,8 +49,12 @@ export class DbService {
       });
   }
 
-  readAll(path?: string) { // if no path is given, then literally everything is read.
+  readAllOnce(path?: string) { // if no path is given, then literally everything is read.
     return this.firebaseDb.ref(path).once('value');
+  }
+
+  readSubscribe(path?: string) { // if no path is given, then literally everything is read.
+    return this.firebaseDb.ref(path);
   }
 
   update(path: string, key: string, data: object) {

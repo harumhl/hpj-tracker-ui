@@ -6,7 +6,7 @@ TODO: Guide users through getting your code up and running on their own system. 
 
 1.  My initial setup process
 I followed Firebase's documentation to set up Realtime Database and to deploy to their Hosting server. In the future, 
-all I need is 'npm run-script build' and 'amplify deploy'.
+all I need is 'npm run-script build' and 'firebase deploy'.
 
 2.  Installation process
 3.	Software dependencies
