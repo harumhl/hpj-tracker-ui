@@ -4,7 +4,14 @@
 
 export const environment = {
   production: false,
-  backend: 'http://localhost:8080/'
+  firebaseApiKey: '',
+  firebaseAuthDomain: '',
+  firebaseDatabaseURL: '',
+  firebaseProjectId: '',
+  firebaseStorageBucket: '',
+  firebaseMessagingSenderId: '',
+  firebaseAppId: '',
+  firebaseMeasurementId: ''
 };
 
 /*

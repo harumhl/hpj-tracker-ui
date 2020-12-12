@@ -4,6 +4,7 @@ import {CategoryModel} from './models/category.model';
 import {DbService} from './db.service';
 import {GoalModel} from './models/goal.model';
 import {DatePipe} from '@angular/common';
+import {environment} from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,14 @@ export class AppComponent {
 
   // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
   firebaseConfig = {
+    apiKey: environment.firebaseApiKey,
+    authDomain: environment.firebaseAuthDomain,
+    databaseURL: environment.firebaseDatabaseURL,
+    projectId: environment.firebaseProjectId,
+    storageBucket: environment.firebaseStorageBucket,
+    messagingSenderId: environment.firebaseMessagingSenderId,
+    appId: environment.firebaseAppId,
+    measurementId: environment.firebaseMeasurementId
   };
   firebaseDb: firebase.database.Database = null;
 

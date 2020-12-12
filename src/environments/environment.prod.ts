@@ -1,4 +1,11 @@
 export const environment = {
   production: true,
-  backend: 'http://hpj-tracker-api.azurewebsites.net/'
+  firebaseApiKey: '',
+  firebaseAuthDomain: '',
+  firebaseDatabaseURL: '',
+  firebaseProjectId: '',
+  firebaseStorageBucket: '',
+  firebaseMessagingSenderId: '',
+  firebaseAppId: '',
+  firebaseMeasurementId: ''
 };
