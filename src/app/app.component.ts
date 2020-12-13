@@ -30,8 +30,8 @@ export class AppComponent {
   firebaseDb: firebase.database.Database = null;
 
   headers: string[] = ['name', 'count', 'goalCount'];
-  data: object[];
-  overallCompletionRate: string; // todo
+  data: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
+  overallCompletionRate = '0%'; // todo
 
   constructor(private dbService: DbService) {
     // Setting up Firebase
@@ -42,8 +42,15 @@ export class AppComponent {
     // Read in the data
     this.dbService.readEntriesToday(true, (snapshot) => { // have to have the underscore before date
       const data = snapshot.val() || {}; // in case there is no entry
-      this.data = UtilService.objectToIterable(data);
-      this.overallCompletionRate = '';  // todo
+      this.data = UtilService.objectToIterable(data); // todo order by category first then by custom
+
+      let overallCompletionRate = 0;
+      for (const entry of this.data) { // todo do only un-archived ones
+        overallCompletionRate += entry.count / entry.goalCount;
+      }
+      overallCompletionRate /= this.data.length ;
+      overallCompletionRate *= 100;
+      this.overallCompletionRate = overallCompletionRate.toFixed(2) + '%';  // todo
     });
   }
 
