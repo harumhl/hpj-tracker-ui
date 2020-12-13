@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.1.0",
-  "description": "Login + Display data in table",
+  "version": "0.2.0",
+  "description": "Overall % + new empty entry of the day + display data by default + fn to enter new category/goal/entry",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
