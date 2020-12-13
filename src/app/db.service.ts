@@ -38,11 +38,7 @@ export class DbService {
     // Concatenate values of 'primary key'
     let key = '';
     for (const k of keys) {
-      if (key === '') { // no starting underscore
-        key = this._removeAllSpaces(data[k]);
-      } else {
-        key += '_' + this._removeAllSpaces(data[k]);
-      }
+      key = this._removeAllSpaces(data[k]);
     }
     return key;
   }
@@ -90,7 +86,7 @@ export class DbService {
   }
 
   readEntriesToday(subscribe: boolean, callback) {
-    this._read(subscribe, '/entries/_' + this.today, callback);
+    this._read(subscribe, '/entries/' + this.today, callback);
   }
 
   newCategory(category: string) {
@@ -129,13 +125,13 @@ export class DbService {
         if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name)) {
           // If goalCount is not given, then get it from the goal in /goals before making the entry
           if (goalCount) {
-            this._writeNew(DbService.paths.entries + '_' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
+            this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
           } else {
             const key = DbService._keysToKey('/goals', {category, name});
             this._read(false, '/goals/' + key, (snapshot2) => {
               const value = snapshot2.val();
               goalCount = value.goalCount;
-              this._writeNew(DbService.paths.entries + '/_' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
+              this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
             });
 
           }
