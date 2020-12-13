@@ -1,5 +1,6 @@
-<h1>{{title}}</h1>
+<h2>{{title}}</h2>
 {{overallCompletionRate}}
+<br>
 
 <!-- Log in to see data -->
 <label id="emailLabel" for="emailInput"> email: </label>
@@ -21,9 +22,10 @@
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
       'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
       'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
-      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}
-    ">
-      {{row[column]}}
+      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}">
+      <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
+      <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
+             (focusout)="updateEntryCount(row, $event)">
     </td>
   </tr>
 </table>

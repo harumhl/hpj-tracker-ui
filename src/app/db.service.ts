@@ -140,7 +140,12 @@ export class DbService {
     }
   }
 
-  updateEntry() {
+  updateEntryCount(category: string, name: string, count: number, doneDate?: string) {
+    if (doneDate === null || doneDate === undefined) {
+      doneDate = this._getDateKey();
+    }
 
+    const path = DbService.paths.entries + '/' + doneDate;
+    this._update(path, DbService._keysToKey(path, {category, name}), {count});
   }
 }

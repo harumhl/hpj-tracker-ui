@@ -15,6 +15,7 @@ export class AppComponent {
   version = 'v' + version;
 
   email = 'haru.mhl@gmail.com';
+  loggedIn = false;
 
   // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
   firebaseConfig = {
@@ -62,6 +63,7 @@ export class AppComponent {
     firebase.auth().signInWithEmailAndPassword(this.email, password)
       .then((user) => {
         console.log(`Successfully logged in as ${this.email}`);
+        this.loggedIn = true;
 
         // Hide login-related HTML components
         document.getElementById('emailLabel').hidden = true;
@@ -140,5 +142,12 @@ export class AppComponent {
         }
       });
     });
+  }
+
+  updateEntryCount(row, event) {
+    const newCount = parseInt(event.target.value, 10);
+    if (row.count !== newCount) {
+      this.dbService.updateEntryCount(row.category, row.name, newCount);
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.2.0",
-  "description": "Overall % + new empty entry of the day + display data by default + fn to enter new category/goal/entry",
+  "version": "0.3.0",
+  "description": "Modify entry once logged in",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
