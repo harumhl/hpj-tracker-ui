@@ -1,11 +1,18 @@
+/* Adjusting height based on window/screen height */
+table {height: 100%;}
+@media screen and (min-height: 200px) {
+  table {font-size: 10px; padding: 0 5px;}
+  table tr td input {width: 50px; height: 8px;}
+}
+@media screen and (min-height: 900px) {
+  table {font-size: 15px;}
+}
+
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
   text-align: left;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding: 3px 5px;
 }
 
 .twenty-percent-done {

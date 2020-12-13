@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.3.1",
-  "description": "Complete and incomplete tasks align / login button not hidden if login failed",
+  "version": "0.3.2",
+  "description": "Display categories & temporary solution to display most of daily entries on the phone without requiring much scroll",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

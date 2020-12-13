@@ -30,7 +30,7 @@ export class AppComponent {
   };
   firebaseDb: firebase.database.Database = null;
 
-  headers: string[] = ['name', 'count', 'goalCount'];
+  headers: string[] = ['category', 'name', 'count', 'goalCount'];
   data: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
   overallCompletionRate = '0%'; // todo
 
@@ -44,6 +44,7 @@ export class AppComponent {
     this.dbService.readEntriesToday(true, (snapshot) => { // have to have the underscore before date
       const data = snapshot.val() || {}; // in case there is no entry
       this.data = UtilService.objectToIterable(data); // todo order by category first then by custom
+      this.data.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
       let overallCompletionRate = 0;
       for (const entry of this.data) { // todo do only un-archived ones
