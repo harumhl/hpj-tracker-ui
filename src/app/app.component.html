@@ -16,7 +16,13 @@
     </th>
   </tr>
   <tr id="content-row" *ngFor="let row of this.data">
-    <td id=content-column* *ngFor="let column of this.headers">
+    <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
+      'hundred-percent-done': row['count'] >= row['goalCount'],
+      'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
+      'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
+      'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
+      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}
+    ">
       {{row[column]}}
     </td>
   </tr>

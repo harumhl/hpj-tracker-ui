@@ -4,3 +4,19 @@ table, th, td {
   text-align: left;
   padding: 5px;
 }
+
+.twenty-percent-done {
+  background: #fdfbf3;
+}
+.forty-percent-done {
+  background: #fbf6e7;
+}
+.sixty-percent-done {
+  background: #fae3e0;
+}
+.eighty-percent-done {
+  background: #fdc1dd;
+}
+.hundred-percent-done {
+  background: #ff9fda;
+}

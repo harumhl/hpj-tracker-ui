@@ -31,6 +31,7 @@ export class AppComponent {
   };
   firebaseDb: firebase.database.Database = null;
 
+  today: string;
   headers: string[];
   data: object[];
 
@@ -40,11 +41,13 @@ export class AppComponent {
     firebase.initializeApp(this.firebaseConfig);
     this.firebaseDb = firebase.database();
     this.dbService.firebaseDb = this.firebaseDb;
+
+    this.today = Date();
   }
 
   _getDateKey(date?) {
     if (date === null || date === undefined) {
-      date = Date();
+      date = this.today;
     }
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
@@ -56,6 +59,8 @@ export class AppComponent {
   }
 
   login() { // Login, hide login HTML components, read data
+    document.getElementById('login').hidden = true;
+
     this.email = (document.getElementById('emailInput') as HTMLInputElement).value;
     const password = (document.getElementById('passwordInput') as HTMLInputElement).value;
     firebase.auth().signInWithEmailAndPassword(this.email, password)
@@ -67,17 +72,25 @@ export class AppComponent {
         document.getElementById('emailInput').hidden = true;
         document.getElementById('passwordLabel').hidden = true;
         document.getElementById('passwordInput').hidden = true;
-        document.getElementById('login').hidden = true;
 
         // Get data upon successful login
+        this.newEntriesOfTheDay();
         this.headers = ['name', 'count', 'goalCount'];
-        this.dbService.readSubscribe('/goals').on('value', (snap) => {
+        this.dbService.readSubscribe('/entries').on('value', (snap) => {
           const data = snap.val();
-          this.data = this._objectToIterable(data);
+          const newData = [];
+          const today = this._getDateKey();
+          Object.keys(data).filter(key => {
+            if (key.includes(today)) {
+              newData.push(data[key]);
+            }
+          });
+
+          this.data = newData;
         });
       })
       .catch((error) => {
-        console.log(`Failed to login: ${error.code} - ${error.message}`);
+        console.error(`Failed to login: ${error.code} - ${error.message}`);
       });
   }
 
@@ -96,7 +109,7 @@ export class AppComponent {
   }
 
   newEntry(category: string, name: string, count: number, doneDate?: string, goalCount?: number) { // Entering what I did
-    const key = DbService.keysToKey('/goals', {category, name});
+    const key = DbService._keysToKey('/goals', {category, name});
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }
@@ -113,10 +126,15 @@ export class AppComponent {
   }
 
   newEntriesOfTheDay() { // Creating an empty list of entries for the day
-    this.dbService.readAllOnce('/goals').then((snapshot) => {
+    this.dbService.readAllOnce().then((snapshot) => {
       const value = snapshot.val();
-      for (const goal of this._objectToIterable(value)) {
-        this.newEntry(goal.category, goal.name, 0, null, goal.goalCount);
+      const today = this._getDateKey();
+
+      for (const goal of this._objectToIterable(value.goals)) {
+        // Looking for an entry which includes today's date and the iterating goal -> if not found, then make an empty entry
+        if (Object.keys(value.entries).some(key => key.includes(today) && key.includes(DbService._removeAllSpaces(goal.name))) === false) {
+          this.newEntry(goal.category, goal.name, 0, null, goal.goalCount);
+        }
       }
     });
   }

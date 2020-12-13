@@ -11,7 +11,11 @@ export class DbService {
 
   constructor() { }
 
-  static keysToKey(path: string, data: object) {
+  static _removeAllSpaces(str: string) {
+    return str.replace(/ /g,'');
+  }
+
+  static _keysToKey(path: string, data: object) {
     // Determine which keys in 'data' dict we will consider as the 'primary key'
     let keys = [];
     if (path === '/categories') {
@@ -25,21 +29,21 @@ export class DbService {
     // Concatenate values of 'primary key'
     let key = '';
     for (const k of keys) {
-      key += '_' + data[k].replace(/ /g,''); // removing all spaces
+      key += '_' + this._removeAllSpaces(data[k]);
     }
     return key;
   }
 
   private static handleError(functioinName: string, parameters: object, error: object, otherInfo?: object) {
     if (otherInfo) {
-      console.log(`Function '${functioinName}' failed with parameters, error and info`, parameters, error, otherInfo);
+      console.error(`Function '${functioinName}' failed with parameters, error and info`, parameters, error, otherInfo);
     } else {
-      console.log(`Function '${functioinName}' failed with parameters and error`, parameters, error);
+      console.error(`Function '${functioinName}' failed with parameters and error`, parameters, error);
     }
   }
 
   writeNew(path: string, data: object) {
-    const key = DbService.keysToKey(path, data);
+    const key = DbService._keysToKey(path, data);
     this.firebaseDb.ref(path + '/' + key).set(data)
       .then(() => {
         ;
