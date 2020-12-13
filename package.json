@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.3.0",
-  "description": "Modify entry once logged in",
+  "version": "0.3.1",
+  "description": "Complete and incomplete tasks align / login button not hidden if login failed",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

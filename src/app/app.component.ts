@@ -56,7 +56,7 @@ export class AppComponent {
   }
 
   login() { // Login, hide login HTML components, read data
-    document.getElementById('login').hidden = true;
+    (document.getElementById('login') as HTMLInputElement).disabled = true;
 
     this.email = (document.getElementById('emailInput') as HTMLInputElement).value;
     const password = (document.getElementById('passwordInput') as HTMLInputElement).value;
@@ -70,6 +70,7 @@ export class AppComponent {
         document.getElementById('emailInput').hidden = true;
         document.getElementById('passwordLabel').hidden = true;
         document.getElementById('passwordInput').hidden = true;
+        document.getElementById('login').hidden = true;
 
         // this.initializeDatabase();
 
@@ -77,6 +78,7 @@ export class AppComponent {
         this.newEntriesOfTheDay();
       })
       .catch((error) => {
+        (document.getElementById('login') as HTMLInputElement).disabled = false;
         console.error(`Failed to login: ${error.code} - ${error.message}`);
       });
   }
