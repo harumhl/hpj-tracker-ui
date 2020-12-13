@@ -19,4 +19,5 @@ table, th, td {
 }
 .hundred-percent-done {
   background: #ff9fda;
+  padding: 0;
 }
