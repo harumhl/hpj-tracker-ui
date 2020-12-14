@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.3.3",
-  "description": "Toggle to display incomplete tasks only + background color on overall % + overall % logic fix + empty input means 0",
+  "version": "0.4.0",
+  "description": "Enter new goal or update existing goal via UI + README has version history + db .validate rules are intact + goals accept 'details' + category gets colors + model is back + display categories and goals for testing",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

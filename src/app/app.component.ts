@@ -4,6 +4,9 @@ import {DbService} from './db.service';
 import {environment} from '../environments/environment';
 import {version} from '../../package.json';
 import {UtilService} from './util.service';
+import {Category} from './model/category.model';
+import {Entry} from './model/entry.model';
+import {Goal} from './model/goal.model';
 
 @Component({
   selector: 'app-root',
@@ -31,10 +34,25 @@ export class AppComponent {
   firebaseDb: firebase.database.Database = null;
 
   headers: string[] = ['category', 'name', 'count', 'goalCount']; // todo display 'unit'
-  dataQueried: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
-  dataToDisplay: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
+  categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored.
+    Hazel: '#e6efff',
+    Workout: '#e6fbff',
+    Mind: '#fff7e1',
+    ProgrammingAI: '#f3f3f3',
+    Basic: '#FFFFFF',
+    Interpersonal: '#f5f0ff',
+    Hobby: '#f5f0ff'
+  };
+  categoryList: string[];
+  goalList: string[];
+  dataQueried: Entry[];
+  dataToDisplay: Entry[];
   overallCompletionRate = 0;
   displayIncompleteOnly = true;
+
+  testing = false;
+  categories: Category[];
+  goals: Goal[];
 
   constructor(private dbService: DbService) {
     // Setting up Firebase
@@ -58,6 +76,14 @@ export class AppComponent {
       }
       this.overallCompletionRate /= this.dataQueried.length ;
       this.overallCompletionRate *= 100;
+    });
+    this.dbService._read(true, DbService.paths.categories, (snapshot) => {
+      this.categories = UtilService.objectToIterable(snapshot.val());
+      this.categoryList = this.categories.map(category => category.category);
+    });
+    this.dbService._read(true, DbService.paths.goals, (snapshot) => {
+      this.goals = UtilService.objectToIterable(snapshot.val());
+      this.goalList = this.goals.map(goal => goal.name);
     });
   }
 
@@ -99,42 +125,45 @@ export class AppComponent {
     this.dbService.newCategory('Hobby');
 
     // todo - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), details/descriptions, priorities
-    const minutes = 'minutes';
+    const mins = 'mins';
     const count = 'count';
-    this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, minutes);
-    this.dbService.newGoal('Hazel', 'Stretching', false, 10, minutes);
-    this.dbService.newGoal('Hazel', 'Skincare', false, 2, 'twice a day');
-    this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day');
-    this.dbService.newGoal('Hazel', 'Smile', false, 5, minutes);
-    this.dbService.newGoal('Hazel', 'Learn more', false, 10, minutes);
-    this.dbService.newGoal('Hazel', 'Posture', false, 3, minutes);
-    this.dbService.newGoal('Hazel', 'Dress up', true, 10, minutes);
-    this.dbService.newGoal('Hazel', 'Voice practice', false, 3, minutes);
-    this.dbService.newGoal('Hazel', 'Anal', true, 1, minutes);
-    this.dbService.newGoal('Workout', 'Push-ups', false, 50, count);
-    this.dbService.newGoal('Workout', 'Ab workout', false, 50, count);
-    this.dbService.newGoal('Workout', 'Leg workout', false, 50, count);
-    this.dbService.newGoal('Workout', 'Running', false, 1.0, 'miles');
-    this.dbService.newGoal('Workout', 'Walking', false, 20, minutes);
-    this.dbService.newGoal('Mind', 'Mind', false, 5, minutes);
-    this.dbService.newGoal('Mind', 'Mirror', false, 3, minutes);
-    this.dbService.newGoal('Mind', 'Read', false, 5, minutes);
-    this.dbService.newGoal('Mind', 'Meditate Hypnosis', false, 5, minutes);
-    this.dbService.newGoal('ProgrammingAI', 'Programming', false, 10, minutes);
-    this.dbService.newGoal('ProgrammingAI', 'AI', false, 10, minutes);
-    this.dbService.newGoal('Basic', 'Sleep 7 hours', false, 1, count);
-    this.dbService.newGoal('Basic', 'Wake up at 6am', false, 1, count);
-    this.dbService.newGoal('Basic', 'Eat fruits', false, 2, 'fruits');
-    this.dbService.newGoal('Basic', 'Eat healthy', false, 2, 'meals');
-    this.dbService.newGoal('Basic', 'Drink water', false, 6, 'cups');
-    this.dbService.newGoal('Basic', 'Shave', false, 1, count);
-    this.dbService.newGoal('Basic', 'Brush teeth', false, 2, count);
-    this.dbService.newGoal('Basic', 'Poop', false, 1, count);
-    this.dbService.newGoal('Basic', 'Shower', false, 2, count);
-    this.dbService.newGoal('Basic', 'Chores', false, 5, minutes);
-    this.dbService.newGoal('Basic', 'Write diary', false, 1, count);
-    this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count);
-    this.dbService.newGoal('Hobby', 'hobby', false, 5, minutes);
+    this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, '');
+    this.dbService.newGoal('Hazel', 'Stretching', false, 10, mins, '');
+    this.dbService.newGoal('Hazel', 'Skincare', false, 2, 'twice a day', '');
+    this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day', '');
+    this.dbService.newGoal('Hazel', 'Smile', false, 5, mins, '');
+    this.dbService.newGoal('Hazel', 'Learn more', false, 10, mins, '');
+    this.dbService.newGoal('Hazel', 'Posture', false, 3, mins, '');
+    this.dbService.newGoal('Hazel', 'Dress up', true, 10, mins, '');
+    this.dbService.newGoal('Hazel', 'Voice practice', false, 3, mins, '');
+    this.dbService.newGoal('Hazel', 'Anal', true, 1, mins, '');
+    this.dbService.newGoal('Workout', 'Push-ups', false, 50, count, '');
+    this.dbService.newGoal('Workout', 'Ab workout', false, 50, count, '');
+    this.dbService.newGoal('Workout', 'Leg workout', false, 50, count, '');
+    this.dbService.newGoal('Workout', 'Running', false, 1.0, 'miles', '');
+    this.dbService.newGoal('Workout', 'Walking', false, 20, mins, '');
+    this.dbService.newGoal('Mind', 'Mindful', false, 5, mins, '');
+    this.dbService.newGoal('Mind', 'Mirror', false, 3, mins, '');
+    this.dbService.newGoal('Mind', 'Read', false, 5, mins, '');
+    this.dbService.newGoal('Mind', 'Meditate Hypnosis', false, 5, mins, '');
+    this.dbService.newGoal('ProgrammingAI', 'Programming', false, 10, mins, '');
+    this.dbService.newGoal('ProgrammingAI', 'AI', false, 10, mins, '');
+    this.dbService.newGoal('Basic', 'Sleep 7 hours', false, 1, count, '');
+    this.dbService.newGoal('Basic', 'Wake up at 6am', false, 1, count, '');
+    this.dbService.newGoal('Basic', 'Eat fruits', false, 2, 'fruits', '');
+    this.dbService.newGoal('Basic', 'Eat healthy', false, 2, 'meals', '');
+    // this.dbService.newGoal('Basic', 'Red meat limit', false, 3, 'meals per week', '');
+    this.dbService.newGoal('Basic', 'Drink water', false, 6, 'cups', '');
+    this.dbService.newGoal('Basic', 'Shave', false, 1, count, '');
+    this.dbService.newGoal('Basic', 'Brush teeth', false, 2, count, '');
+    // this.dbService.newGoal('Basic', 'Floss', false, 1, count, 'weekly');
+    this.dbService.newGoal('Basic', 'Poop', false, 1, count, '');
+    this.dbService.newGoal('Basic', 'Shower', false, 2, count, '');
+    this.dbService.newGoal('Basic', 'Remove body hair', false, 30, 'hair', '');
+    this.dbService.newGoal('Basic', 'Chores', false, 5, mins, '');
+    this.dbService.newGoal('Basic', 'Write diary', false, 1, count, '');
+    this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, '');
+    this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, '');
   }
 
   newEntriesOfTheDay() { // Creating an empty list of entries for the day - if such entry doesn't exist
@@ -167,6 +196,36 @@ export class AppComponent {
       } else {
         this.dataToDisplay = this.dataQueried;
       }
+    }
+  }
+
+  save(type: string) {
+    if (type === 'New Goal') {
+      const category = (document.getElementById('newGoalCategory') as HTMLInputElement).value;
+      const name = (document.getElementById('newGoalName') as HTMLInputElement).value;
+      const goalCount = (document.getElementById('newGoalGoalCount') as HTMLInputElement).value;
+      const unit = (document.getElementById('newGoalUnit') as HTMLInputElement).value;
+      const details = (document.getElementById('newGoalDetails') as HTMLInputElement).value;
+
+      (document.getElementById('newGoalName') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalGoalCount') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalUnit') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalDetails') as HTMLInputElement).value = '';
+
+      this.dbService.newGoal(category, name, false, Number(goalCount), unit, details);
+      this.dbService.newEntry(category, name, 0);
+    } else if (type === 'Modify Goal') {
+      const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+      const goalCount = (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value;
+      const unit = (document.getElementById('modifyGoalUnit') as HTMLInputElement).value;
+      const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
+
+      (document.getElementById('modifyGoalName') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = '';
+
+      this.dbService.updateGoal(name, Number(goalCount), unit, details);
     }
   }
 }

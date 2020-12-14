@@ -1,7 +1,37 @@
 {
-  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+  "COMMENT": "Visit https://firebase.google.com/docs/database/security to learn more about security rules.",
   "rules": {
-    ".read": false,
-    ".write": false
+    ".read": "true",
+    ".write": "auth.uid === 'REPLACEME'",
+    "categories": {
+      "$categoryId": {
+        "category": {".validate": "newData.isString()"},
+        "$other":   {".validate": false}
+      }
+    },
+    "goals": {
+      "$goalId": {
+        "archived":  {".validate": "newData.isBoolean()"},
+        "category":  {".validate": "newData.isString()"},
+        "goalCount": {".validate": "newData.isNumber()"},
+        "name":      {".validate": "newData.isString()"},
+        "unit":      {".validate": "newData.isString()"},
+        "details":   {".validate": "newData.isString()"},
+        "$other":    {".validate": false}
+      },
+    },
+    "entries": {
+      "$entryDate": {
+        "$entryGoal": {
+          "category":  {".validate": "newData.isString()"},
+          "count":     {".validate": "newData.isNumber()"},
+          "doneDate":  {".validate": "newData.isString()"},
+          "goalCount": {".validate": "newData.isNumber()"},
+          "name":      {".validate": "newData.isString()"},
+          "updatedTs": {".validate": "newData.isString()"},
+          "$other":    {".validate": false}
+        }
+      }
+    }
   }
 }

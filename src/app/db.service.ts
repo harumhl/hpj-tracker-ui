@@ -95,23 +95,38 @@ export class DbService {
     }
   }
 
-  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string) {
+  // todo goal occurrence (e.g. daily/weekly/MWF)
+  // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
+  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, details: string) {
     if (category !== '' && name !== '' && goalCount > 0 && unit !== '') { // input validation
       // Foreign key constraint - check whether the category already exists in /categories
       this._read(false, DbService.paths.categories, (snapshot) => {
         const categories = snapshot.val();
         // If the category exists, then write the new goal
         if (UtilService.objectToIterable(categories).some(c => c.category === category)) {
-          this._writeNew(DbService.paths.goals, {category, name, archived, goalCount, unit});
+          this._writeNew(DbService.paths.goals, {category, name, archived, goalCount, unit, details});
         }
       });
     }
   }
 
-  updateGoal() { // todo changing archived & goalCount & unit should be easy <-> name should be done "recursively"
-
+  updateGoal(name: string, goalCount?: number, unit?: string, details?: string) {
+    let dataToModify = {};
+    if (goalCount) {
+      dataToModify = Object.assign(dataToModify, {goalCount});
+    }
+    if (unit) {
+      dataToModify = Object.assign(dataToModify, {unit});
+    }
+    if (details) {
+      dataToModify = Object.assign(dataToModify, {details});
+    }
+    const path = DbService.paths.goals;
+    this._update(path, DbService._keysToKey(path, {name}), dataToModify);
   }
 
+  // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)
+  // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)
   newEntry(category: string, name: string, count: number, doneDate?: string, goalCount?: number) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
@@ -125,13 +140,13 @@ export class DbService {
         if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name)) {
           // If goalCount is not given, then get it from the goal in /goals before making the entry
           if (goalCount) {
-            this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
+            this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: this._getDateKey(Date())});
           } else {
             const key = DbService._keysToKey('/goals', {category, name});
             this._read(false, '/goals/' + key, (snapshot2) => {
               const value = snapshot2.val();
               goalCount = value.goalCount;
-              this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: Date()});
+              this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: this._getDateKey(Date())});
             });
 
           }

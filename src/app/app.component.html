@@ -16,6 +16,8 @@
 <input id="passwordInput" type="password">
 <button id="login" (click)="login()">login</button>
 
+<!-- todo display notes on top (yearly goal, monthly goal, quotes) -->
+
 <!-- Displaying data -->
 <table>
   <tr>
@@ -29,12 +31,67 @@
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
       'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
       'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
-      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}">
+      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}"
+      style="background-color:{{categoryColors[row[column]]}}">
       <!-- todo merge category column over multiple rows -->
+      <!-- todo display descriptions -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
              (focusout)="updateEntryCount(row, $event)">
     </td>
   </tr>
 </table>
+
+<!-- Enter a new goal -->
+<label>New goal: </label>
+<select id="newGoalCategory" [disabled]="loggedIn === false">
+  <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
+</select>
+<input id="newGoalName" placeholder="*name" style="width: 100px" [disabled]="loggedIn === false">
+<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" [disabled]="loggedIn === false">
+<input id="newGoalUnit" placeholder="*unit" style="width: 50px" [disabled]="loggedIn === false">
+<input id="newGoalDetails" placeholder="*details" style="width: 100px" [disabled]="loggedIn === false">
+<button (click)="save('New Goal')" [disabled]="loggedIn === false">save</button>
+<br>
+
+<!-- Update an existing goal -->
+<label>Modify goal: </label>
+<select id="modifyGoalName" [disabled]="loggedIn === false">
+  <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
+</select>
+<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
+<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
+<input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
+<button (click)="save('Modify Goal')" [disabled]="loggedIn === false">save</button>
+<br>
+
 {{version}}
+
+<!-- (Testing) display all categories and goals -->
+<label for="testing">testing</label>
+<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing">
+<table *ngIf="testing">
+  <tr *ngFor="let row of this.categories">
+    <td *ngFor="let column of ['category']" >
+      <label>{{row[column]}}</label>
+    </td>
+  </tr>
+</table>
+<br>
+<table *ngIf="testing">
+  <tr *ngFor="let row of this.goals">
+    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'details']" >
+      <label>{{row[column]}}</label>
+    </td>
+  </tr>
+</table>
+
+
+
+<!-- TODO: schedule - display goals and daily entry based on time (not by category) -->
+<!-- todo: charts
+  - display completion rates over days for multiple goals (with selection options)
+  - allow changing the timeline
+-->
+<!-- todo: notifications -->
+<!-- todo: handling money - based on the daily progress, move money from 'maybe' account to 'donate' and 'free to use' accounts -->
