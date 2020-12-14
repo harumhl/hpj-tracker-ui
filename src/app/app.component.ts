@@ -31,8 +31,10 @@ export class AppComponent {
   firebaseDb: firebase.database.Database = null;
 
   headers: string[] = ['category', 'name', 'count', 'goalCount'];
-  data: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
-  overallCompletionRate = '0%'; // todo
+  dataQueried: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
+  dataToDisplay: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
+  overallCompletionRate = '0%';
+  displayIncompleteOnly = true;
 
   constructor(private dbService: DbService) {
     // Setting up Firebase
@@ -43,14 +45,16 @@ export class AppComponent {
     // Read in the data
     this.dbService.readEntriesToday(true, (snapshot) => { // have to have the underscore before date
       const data = snapshot.val() || {}; // in case there is no entry
-      this.data = UtilService.objectToIterable(data); // todo order by category first then by custom
-      this.data.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
+      this.dataQueried = UtilService.objectToIterable(data); // todo order by category first then by custom
+      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
+
+      this.toggle('incomplete', true);
 
       let overallCompletionRate = 0;
-      for (const entry of this.data) { // todo do only un-archived ones
+      for (const entry of this.dataQueried) { // todo do only un-archived ones
         overallCompletionRate += entry.count / entry.goalCount;
       }
-      overallCompletionRate /= this.data.length ;
+      overallCompletionRate /= this.dataQueried.length ;
       overallCompletionRate *= 100;
       this.overallCompletionRate = overallCompletionRate.toFixed(2) + '%';  // todo
     });
@@ -151,6 +155,17 @@ export class AppComponent {
     const newCount = parseInt(event.target.value, 10);
     if (row.count !== newCount) {
       this.dbService.updateEntryCount(row.category, row.name, newCount);
+    }
+  }
+
+  toggle(id: string, value?: any) {
+    if (id === 'incomplete') {
+      this.displayIncompleteOnly = value; // actually toggling on/off
+      if (this.displayIncompleteOnly) {
+        this.dataToDisplay = UtilService.deepCopyArray(this.dataQueried).filter(entry => entry.count < entry.goalCount);
+      } else {
+        this.dataToDisplay = this.dataQueried;
+      }
     }
   }
 }

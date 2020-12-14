@@ -22,4 +22,7 @@ export class UtilService {
     }
   }
 
+  static deepCopyArray(array: any[]) {
+    return JSON.parse(JSON.stringify(array));
+  }
 }

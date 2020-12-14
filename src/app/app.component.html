@@ -1,4 +1,6 @@
 {{overallCompletionRate}}
+<input id="incomplete" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('incomplete', !displayIncompleteOnly)">
+<label for="incomplete">incomplete</label>
 <br>
 
 <!-- Log in to see data -->
@@ -15,7 +17,7 @@
       {{column}}
     </th>
   </tr>
-  <tr id="content-row" *ngFor="let row of this.data">
+  <tr id="content-row" *ngFor="let row of this.dataToDisplay">
     <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
       'hundred-percent-done': row['count'] >= row['goalCount'],
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
