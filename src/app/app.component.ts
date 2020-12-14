@@ -30,10 +30,10 @@ export class AppComponent {
   };
   firebaseDb: firebase.database.Database = null;
 
-  headers: string[] = ['category', 'name', 'count', 'goalCount'];
+  headers: string[] = ['category', 'name', 'count', 'goalCount']; // todo display 'unit'
   dataQueried: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
   dataToDisplay: {'category', 'name', 'count', 'doneDate', 'goalCount'}[];
-  overallCompletionRate = '0%';
+  overallCompletionRate = 0;
   displayIncompleteOnly = true;
 
   constructor(private dbService: DbService) {
@@ -48,15 +48,16 @@ export class AppComponent {
       this.dataQueried = UtilService.objectToIterable(data); // todo order by category first then by custom
       this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
-      this.toggle('incomplete', true);
+      this.toggle('incomplete', this.displayIncompleteOnly);
 
-      let overallCompletionRate = 0;
+      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
+      this.overallCompletionRate = 0;
       for (const entry of this.dataQueried) { // todo do only un-archived ones
-        overallCompletionRate += entry.count / entry.goalCount;
+        const ratio = entry.count / entry.goalCount;
+        this.overallCompletionRate += ratio > 1 ? 1 : ratio;
       }
-      overallCompletionRate /= this.dataQueried.length ;
-      overallCompletionRate *= 100;
-      this.overallCompletionRate = overallCompletionRate.toFixed(2) + '%';  // todo
+      this.overallCompletionRate /= this.dataQueried.length ;
+      this.overallCompletionRate *= 100;
     });
   }
 
@@ -152,7 +153,7 @@ export class AppComponent {
   }
 
   updateEntryCount(row, event) {
-    const newCount = parseInt(event.target.value, 10);
+    const newCount = parseInt(event.target.value || 0, 10);
     if (row.count !== newCount) {
       this.dbService.updateEntryCount(row.category, row.name, newCount);
     }

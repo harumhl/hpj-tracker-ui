@@ -1,4 +1,10 @@
-{{overallCompletionRate}}
+<label [ngClass]="{
+      'hundred-percent-done': overallCompletionRate >= 100,
+      'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
+      'sixty-percent-done': 60 <= overallCompletionRate && overallCompletionRate < 80,
+      'forty-percent-done': 40 <= overallCompletionRate && overallCompletionRate < 60,
+      'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}">
+  {{overallCompletionRate | number : '0.2-2'}}%</label>
 <input id="incomplete" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('incomplete', !displayIncompleteOnly)">
 <label for="incomplete">incomplete</label>
 <br>
@@ -24,6 +30,7 @@
       'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
       'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
       'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}">
+      <!-- todo merge category column over multiple rows -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
              (focusout)="updateEntryCount(row, $event)">

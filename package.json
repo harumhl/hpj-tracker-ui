@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.3.2",
-  "description": "Display categories & temporary solution to display most of daily entries on the phone without requiring much scroll",
+  "version": "0.3.3",
+  "description": "Toggle to display incomplete tasks only + background color on overall % + overall % logic fix + empty input means 0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
