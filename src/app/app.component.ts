@@ -55,7 +55,7 @@ export class AppComponent {
   categories: Category[];
   goals: Goal[];
 
-  constructor(private dbService: DbService) {
+  constructor(public dbService: DbService) {
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.firebaseDb = firebase.database();
