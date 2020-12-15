@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.4.0",
-  "description": "Enter new goal or update existing goal via UI + README has version history + db .validate rules are intact + goals accept 'details' + category gets colors + model is back + display categories and goals for testing",
+  "version": "0.5.0",
+  "description": "Display today's date and day + full display to show details + daily entries only from unarchived goals",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -33,7 +33,7 @@ export class AppComponent {
   };
   firebaseDb: firebase.database.Database = null;
 
-  headers: string[] = ['category', 'name', 'count', 'goalCount']; // todo display 'unit'
+  headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored.
     Hazel: '#e6efff',
     Workout: '#e6fbff',
@@ -49,6 +49,7 @@ export class AppComponent {
   dataToDisplay: Entry[];
   overallCompletionRate = 0;
   displayIncompleteOnly = true;
+  displayFullInfo = true;
 
   testing = false;
   categories: Category[];
@@ -60,23 +61,7 @@ export class AppComponent {
     this.firebaseDb = firebase.database();
     this.dbService.firebaseDb = this.firebaseDb;
 
-    // Read in the data
-    this.dbService.readEntriesToday(true, (snapshot) => { // have to have the underscore before date
-      const data = snapshot.val() || {}; // in case there is no entry
-      this.dataQueried = UtilService.objectToIterable(data); // todo order by category first then by custom
-      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
-
-      this.toggle('incomplete', this.displayIncompleteOnly);
-
-      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
-      this.overallCompletionRate = 0;
-      for (const entry of this.dataQueried) { // todo do only un-archived ones
-        const ratio = entry.count / entry.goalCount;
-        this.overallCompletionRate += ratio > 1 ? 1 : ratio;
-      }
-      this.overallCompletionRate /= this.dataQueried.length ;
-      this.overallCompletionRate *= 100;
-    });
+    // TODO optimize accessing database (frequency-wise)
     this.dbService._read(true, DbService.paths.categories, (snapshot) => {
       this.categories = UtilService.objectToIterable(snapshot.val());
       this.categoryList = this.categories.map(category => category.category);
@@ -84,6 +69,29 @@ export class AppComponent {
     this.dbService._read(true, DbService.paths.goals, (snapshot) => {
       this.goals = UtilService.objectToIterable(snapshot.val());
       this.goalList = this.goals.map(goal => goal.name);
+    });
+    // Read in the data
+    this.dbService.readEntriesOfADay(true, 'today', (snapshot) => { // have to have the underscore before date
+      const data = snapshot.val() || {}; // in case there is no entry
+      this.dataQueried = UtilService.objectToIterable(data); // TODO order by category first then by custom
+      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
+
+      for (const queriedEntry of this.dataQueried) {
+        const goal = this.goals.filter(g => g.category === queriedEntry.category && g.name === queriedEntry.name)[0];
+        queriedEntry.unit = goal.unit;
+        queriedEntry.details = goal.details;
+      }
+
+      this.toggle('incomplete', this.displayIncompleteOnly);
+
+      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
+      this.overallCompletionRate = 0;
+      for (const entry of this.dataQueried) {
+        const ratio = entry.count / entry.goalCount;
+        this.overallCompletionRate += ratio > 1 ? 1 : ratio;
+      }
+      this.overallCompletionRate /= this.dataQueried.length ;
+      this.overallCompletionRate *= 100;
     });
   }
 
@@ -124,27 +132,37 @@ export class AppComponent {
     this.dbService.newCategory('Interpersonal');
     this.dbService.newCategory('Hobby');
 
-    // todo - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), details/descriptions, priorities
+    // TODO - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), details/descriptions, priorities
+    // TODO copy details from 2020 HPJ tracker spreadsheet
     const mins = 'mins';
     const count = 'count';
     this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, '');
     this.dbService.newGoal('Hazel', 'Stretching', false, 10, mins, '');
     this.dbService.newGoal('Hazel', 'Skincare', false, 2, 'twice a day', '');
     this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day', '');
+    this.dbService.newGoal('Hazel', 'Brush hair', false, 200, 'strokes', '');
+    this.dbService.newGoal('Hazel', 'Cold blow dry hair', false, 5, mins, '');
     this.dbService.newGoal('Hazel', 'Smile', false, 5, mins, '');
+    this.dbService.newGoal('Hazel', 'Face muscle stretch', false, 5, mins, '');
+    this.dbService.newGoal('Hazel', 'Mewing', false, 5, mins, '');
     this.dbService.newGoal('Hazel', 'Learn more', false, 10, mins, '');
     this.dbService.newGoal('Hazel', 'Posture', false, 3, mins, '');
+    this.dbService.newGoal('Hazel', 'Posture correction stretch', false, 3, mins, '');
     this.dbService.newGoal('Hazel', 'Dress up', true, 10, mins, '');
     this.dbService.newGoal('Hazel', 'Voice practice', false, 3, mins, '');
     this.dbService.newGoal('Hazel', 'Anal', true, 1, mins, '');
     this.dbService.newGoal('Workout', 'Push-ups', false, 50, count, '');
     this.dbService.newGoal('Workout', 'Ab workout', false, 50, count, '');
-    this.dbService.newGoal('Workout', 'Leg workout', false, 50, count, '');
+    this.dbService.newGoal('Workout', 'Squats & Lunges', false, 50, count, '');
+    this.dbService.newGoal('Workout', 'Donkey kicks & Fire hydrants', false, 50, count, 'with a band');
+    this.dbService.newGoal('Workout', 'Glute bridge', false, 30, count, '');
     this.dbService.newGoal('Workout', 'Running', false, 1.0, 'miles', '');
     this.dbService.newGoal('Workout', 'Walking', false, 20, mins, '');
+    this.dbService.newGoal('Workout', 'No red-meat dish', false, 1, count, '');
     this.dbService.newGoal('Mind', 'Mindful', false, 5, mins, '');
     this.dbService.newGoal('Mind', 'Mirror', false, 3, mins, '');
     this.dbService.newGoal('Mind', 'Read', false, 5, mins, '');
+    this.dbService.newGoal('Mind', 'Talk with Rhami', false, 5, mins, '');
     this.dbService.newGoal('Mind', 'Meditate Hypnosis', false, 5, mins, '');
     this.dbService.newGoal('ProgrammingAI', 'Programming', false, 10, mins, '');
     this.dbService.newGoal('ProgrammingAI', 'AI', false, 10, mins, '');
@@ -156,21 +174,26 @@ export class AppComponent {
     this.dbService.newGoal('Basic', 'Drink water', false, 6, 'cups', '');
     this.dbService.newGoal('Basic', 'Shave', false, 1, count, '');
     this.dbService.newGoal('Basic', 'Brush teeth', false, 2, count, '');
+    this.dbService.newGoal('Basic', 'Retainer', false, 2, count, '');
     // this.dbService.newGoal('Basic', 'Floss', false, 1, count, 'weekly');
     this.dbService.newGoal('Basic', 'Poop', false, 1, count, '');
     this.dbService.newGoal('Basic', 'Shower', false, 2, count, '');
+    this.dbService.newGoal('Basic', 'Condition hair', false, 2, count, 'conditioner & leave-in conditioner daily');
+    // this.dbService.newGoal('Basic', 'Hair pack', false, 2, count, '');
     this.dbService.newGoal('Basic', 'Remove body hair', false, 30, 'hair', '');
     this.dbService.newGoal('Basic', 'Chores', false, 5, mins, '');
+    this.dbService.newGoal('Basic', 'Nap', false, 5, mins, '');
     this.dbService.newGoal('Basic', 'Write diary', false, 1, count, '');
     this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, '');
     this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, '');
+    this.dbService.newGoal('Hobby', 'enjoy/study constellations', false, 5, mins, '');
   }
 
   newEntriesOfTheDay() { // Creating an empty list of entries for the day - if such entry doesn't exist
     this.dbService._read(false, DbService.paths.goals, (snapshot) => {
       const goals = snapshot.val();
 
-      this.dbService.readEntriesToday(false, (snapshot2) => {
+      this.dbService.readEntriesOfADay(false, 'today', (snapshot2) => {
         const entriesToday = snapshot2.val() || []; // in case there is no entry
         for (const goal of UtilService.objectToIterable(goals)) {
           if (UtilService.objectToIterable(entriesToday).some(entry => entry.name === goal.name) === false) {
@@ -195,6 +218,13 @@ export class AppComponent {
         this.dataToDisplay = UtilService.deepCopyArray(this.dataQueried).filter(entry => entry.count < entry.goalCount);
       } else {
         this.dataToDisplay = this.dataQueried;
+      }
+    } else if (id === 'fullDisplay') {
+      this.displayFullInfo = value;
+      if (this.displayFullInfo) {
+        this.headers = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
+      } else {
+        this.headers = ['name', 'count', 'goalCount'];
       }
     }
   }

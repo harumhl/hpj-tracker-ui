@@ -9,9 +9,13 @@ export class UtilService {
 
   // Firebase returns a json, but sometimes a list is needed to process further
   static objectToIterable(obj: object) {
-    const iterable = [];
-    Object.keys(obj).forEach((key) => iterable.push(obj[key]));
-    return iterable;
+    if (obj) {
+      const iterable = [];
+      Object.keys(obj).forEach((key) => iterable.push(obj[key]));
+      return iterable;
+    } else {
+      return [];
+    }
   }
 
   static handleError(functioinName: string, parameters: object, error: object, otherInfo?: object) {

@@ -30,7 +30,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 10,
         "name" : "AI",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Abworkout" : {
         "category" : "Workout",
@@ -38,7 +38,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 50,
         "name" : "Ab workout",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Anal" : {
         "category" : "Hazel",
@@ -46,15 +46,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Anal",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Brushteeth" : {
         "category" : "Basic",
-        "count" : 1,
+        "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Brush teeth",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Chores" : {
         "category" : "Basic",
@@ -62,7 +62,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
         "name" : "Chores",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Dressup" : {
         "category" : "Hazel",
@@ -70,15 +70,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 10,
         "name" : "Dress up",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Drinkwater" : {
         "category" : "Basic",
-        "count" : 1,
+        "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 6,
         "name" : "Drink water",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Eatfruits" : {
         "category" : "Basic",
@@ -86,7 +86,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Eat fruits",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Eathealthy" : {
         "category" : "Basic",
@@ -94,7 +94,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Eat healthy",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Haircare" : {
         "category" : "Hazel",
@@ -102,7 +102,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Haircare",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Learnmore" : {
         "category" : "Hazel",
@@ -110,7 +110,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 10,
         "name" : "Learn more",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Legworkout" : {
         "category" : "Workout",
@@ -118,7 +118,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 50,
         "name" : "Leg workout",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Makeuppractice" : {
         "category" : "Hazel",
@@ -126,7 +126,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 3,
         "name" : "Makeup practice",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "MeditateHypnosis" : {
         "category" : "Mind",
@@ -134,15 +134,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
         "name" : "Meditate Hypnosis",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
-      "Mind" : {
+      "Mindful" : {
         "category" : "Mind",
         "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
-        "name" : "Mind",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "name" : "Mindful",
+        "updatedTs" : "2020-12-13"
       },
       "Mirror" : {
         "category" : "Mind",
@@ -150,7 +150,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 3,
         "name" : "Mirror",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Poop" : {
         "category" : "Basic",
@@ -158,7 +158,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Poop",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Posture" : {
         "category" : "Hazel",
@@ -166,15 +166,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 3,
         "name" : "Posture",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Programming" : {
         "category" : "ProgrammingAI",
-        "count" : 10,
+        "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 10,
         "name" : "Programming",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Push-ups" : {
         "category" : "Workout",
@@ -182,7 +182,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 50,
         "name" : "Push-ups",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Read" : {
         "category" : "Mind",
@@ -190,7 +190,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
         "name" : "Read",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
+      },
+      "Removebodyhair" : {
+        "category" : "Basic",
+        "count" : 0,
+        "doneDate" : "2020-12-13",
+        "goalCount" : 30,
+        "name" : "Remove body hair",
+        "updatedTs" : "2020-12-13"
       },
       "Running" : {
         "category" : "Workout",
@@ -198,15 +206,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Running",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Shave" : {
         "category" : "Basic",
-        "count" : 1,
+        "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Shave",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Shower" : {
         "category" : "Basic",
@@ -214,7 +222,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Shower",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Skincare" : {
         "category" : "Hazel",
@@ -222,15 +230,15 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 2,
         "name" : "Skincare",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Sleep7hours" : {
         "category" : "Basic",
-        "count" : 1,
+        "count" : 0,
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Sleep 7 hours",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Smile" : {
         "category" : "Hazel",
@@ -238,7 +246,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
         "name" : "Smile",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Stretching" : {
         "category" : "Hazel",
@@ -246,7 +254,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 10,
         "name" : "Stretching",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Textorcall" : {
         "category" : "Interpersonal",
@@ -254,7 +262,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Text or call",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Voicepractice" : {
         "category" : "Hazel",
@@ -262,7 +270,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 3,
         "name" : "Voice practice",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Wakeupat6am" : {
         "category" : "Basic",
@@ -270,7 +278,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Wake up at 6am",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Walking" : {
         "category" : "Workout",
@@ -278,7 +286,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 20,
         "name" : "Walking",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "Writediary" : {
         "category" : "Basic",
@@ -286,7 +294,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 1,
         "name" : "Write diary",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       },
       "hobby" : {
         "category" : "Hobby",
@@ -294,7 +302,7 @@
         "doneDate" : "2020-12-13",
         "goalCount" : 5,
         "name" : "hobby",
-        "updatedTs" : "Sun Dec 13 2020 14:50:57 GMT-0600 (Central Standard Time)"
+        "updatedTs" : "2020-12-13"
       }
     }
   },
@@ -302,13 +310,15 @@
     "AI" : {
       "archived" : false,
       "category" : "ProgrammingAI",
+      "details" : "",
       "goalCount" : 10,
       "name" : "AI",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Abworkout" : {
       "archived" : false,
       "category" : "Workout",
+      "details" : "",
       "goalCount" : 50,
       "name" : "Ab workout",
       "unit" : "count"
@@ -316,13 +326,15 @@
     "Anal" : {
       "archived" : true,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Anal",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Brushteeth" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Brush teeth",
       "unit" : "count"
@@ -330,20 +342,23 @@
     "Chores" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 5,
       "name" : "Chores",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Dressup" : {
       "archived" : true,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 10,
       "name" : "Dress up",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Drinkwater" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 6,
       "name" : "Drink water",
       "unit" : "cups"
@@ -351,6 +366,7 @@
     "Eatfruits" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Eat fruits",
       "unit" : "fruits"
@@ -358,6 +374,7 @@
     "Eathealthy" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Eat healthy",
       "unit" : "meals"
@@ -365,6 +382,7 @@
     "Haircare" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Haircare",
       "unit" : "twice a day"
@@ -372,13 +390,15 @@
     "Learnmore" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 10,
       "name" : "Learn more",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Legworkout" : {
       "archived" : false,
       "category" : "Workout",
+      "details" : "",
       "goalCount" : 50,
       "name" : "Leg workout",
       "unit" : "count"
@@ -386,34 +406,39 @@
     "Makeuppractice" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 3,
       "name" : "Makeup practice",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "MeditateHypnosis" : {
       "archived" : false,
       "category" : "Mind",
+      "details" : "",
       "goalCount" : 5,
       "name" : "Meditate Hypnosis",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
-    "Mind" : {
+    "Mindful" : {
       "archived" : false,
       "category" : "Mind",
+      "details" : "",
       "goalCount" : 5,
-      "name" : "Mind",
-      "unit" : "minutes"
+      "name" : "Mindful",
+      "unit" : "mins"
     },
     "Mirror" : {
       "archived" : false,
       "category" : "Mind",
+      "details" : "",
       "goalCount" : 3,
       "name" : "Mirror",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Poop" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Poop",
       "unit" : "count"
@@ -421,20 +446,23 @@
     "Posture" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 3,
       "name" : "Posture",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Programming" : {
       "archived" : false,
       "category" : "ProgrammingAI",
+      "details" : "",
       "goalCount" : 10,
       "name" : "Programming",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Push-ups" : {
       "archived" : false,
       "category" : "Workout",
+      "details" : "",
       "goalCount" : 50,
       "name" : "Push-ups",
       "unit" : "count"
@@ -442,13 +470,23 @@
     "Read" : {
       "archived" : false,
       "category" : "Mind",
+      "details" : "",
       "goalCount" : 5,
       "name" : "Read",
-      "unit" : "minutes"
+      "unit" : "mins"
+    },
+    "Removebodyhair" : {
+      "archived" : false,
+      "category" : "Basic",
+      "details" : "",
+      "goalCount" : 30,
+      "name" : "Remove body hair",
+      "unit" : "hair"
     },
     "Running" : {
       "archived" : false,
       "category" : "Workout",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Running",
       "unit" : "miles"
@@ -456,6 +494,7 @@
     "Shave" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Shave",
       "unit" : "count"
@@ -463,6 +502,7 @@
     "Shower" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Shower",
       "unit" : "count"
@@ -470,6 +510,7 @@
     "Skincare" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 2,
       "name" : "Skincare",
       "unit" : "twice a day"
@@ -477,6 +518,7 @@
     "Sleep7hours" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Sleep 7 hours",
       "unit" : "count"
@@ -484,20 +526,23 @@
     "Smile" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 5,
       "name" : "Smile",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Stretching" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 10,
       "name" : "Stretching",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Textorcall" : {
       "archived" : false,
       "category" : "Interpersonal",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Text or call",
       "unit" : "count"
@@ -505,13 +550,15 @@
     "Voicepractice" : {
       "archived" : false,
       "category" : "Hazel",
+      "details" : "",
       "goalCount" : 3,
       "name" : "Voice practice",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Wakeupat6am" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Wake up at 6am",
       "unit" : "count"
@@ -519,13 +566,15 @@
     "Walking" : {
       "archived" : false,
       "category" : "Workout",
+      "details" : "",
       "goalCount" : 20,
       "name" : "Walking",
-      "unit" : "minutes"
+      "unit" : "mins"
     },
     "Writediary" : {
       "archived" : false,
       "category" : "Basic",
+      "details" : "",
       "goalCount" : 1,
       "name" : "Write diary",
       "unit" : "count"
@@ -533,9 +582,10 @@
     "hobby" : {
       "archived" : false,
       "category" : "Hobby",
+      "details" : "",
       "goalCount" : 5,
       "name" : "hobby",
-      "unit" : "minutes"
+      "unit" : "mins"
     }
   }
 }

@@ -5,4 +5,8 @@ export class Entry {
   count: number;
   goalCount: number;
   updatedTs: string;
+
+  // For display
+  unit?: string;
+  details?: string;
 }

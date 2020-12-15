@@ -1,3 +1,5 @@
+<!-- todo refresh button to refresh today's entry -->
+<!-- TODO chart and note on top - with checkbox to hide em -->
 <label [ngClass]="{
       'hundred-percent-done': overallCompletionRate >= 100,
       'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
@@ -5,8 +7,11 @@
       'forty-percent-done': 40 <= overallCompletionRate && overallCompletionRate < 60,
       'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
+({{dbService.today}} {{dbService.dayOfToday}})
 <input id="incomplete" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('incomplete', !displayIncompleteOnly)">
 <label for="incomplete">incomplete</label>
+<input id="fullDisplay" type="checkbox" [checked]="displayFullInfo" (change)="toggle('fullDisplay', !displayFullInfo)">
+<label for="fullDisplay">full display</label>
 <br>
 
 <!-- Log in to see data -->
@@ -21,7 +26,7 @@
 <!-- Displaying data -->
 <table>
   <tr>
-    <th id="header" *ngFor="let column of this.headers">
+    <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">
       {{column}}
     </th>
   </tr>
@@ -33,8 +38,9 @@
       'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
       'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}"
       style="background-color:{{categoryColors[row[column]]}}">
+      <!-- todo display data for the past 7 days OR the current week -->
       <!-- todo merge category column over multiple rows -->
-      <!-- todo display descriptions -->
+      <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
              (focusout)="updateEntryCount(row, $event)">
@@ -43,31 +49,32 @@
 </table>
 
 <!-- Enter a new goal -->
-<label>New goal: </label>
-<select id="newGoalCategory" [disabled]="loggedIn === false">
+<label *ngIf="loggedIn">New goal: </label>
+<select id="newGoalCategory" *ngIf="loggedIn">
   <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
 </select>
-<input id="newGoalName" placeholder="*name" style="width: 100px" [disabled]="loggedIn === false">
-<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" [disabled]="loggedIn === false">
-<input id="newGoalUnit" placeholder="*unit" style="width: 50px" [disabled]="loggedIn === false">
-<input id="newGoalDetails" placeholder="*details" style="width: 100px" [disabled]="loggedIn === false">
-<button (click)="save('New Goal')" [disabled]="loggedIn === false">save</button>
+<input id="newGoalName" placeholder="*name" style="width: 100px" *ngIf="loggedIn">
+<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" *ngIf="loggedIn">
+<input id="newGoalUnit" placeholder="*unit" style="width: 50px" *ngIf="loggedIn">
+<input id="newGoalDetails" placeholder="*details" style="width: 100px" *ngIf="loggedIn">
+<button (click)="save('New Goal')" *ngIf="loggedIn">save</button>
 <br>
 
 <!-- Update an existing goal -->
-<label>Modify goal: </label>
-<select id="modifyGoalName" [disabled]="loggedIn === false">
+<label *ngIf="loggedIn">Modify goal: </label>
+<select id="modifyGoalName" *ngIf="loggedIn">
   <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
 </select>
-<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
-<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
-<input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-<button (click)="save('Modify Goal')" [disabled]="loggedIn === false">save</button>
+<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" *ngIf="loggedIn">
+<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" *ngIf="loggedIn">
+<input id="modifyGoalDetails" placeholder="details" style="width: 100px" *ngIf="loggedIn">
+<button (click)="save('Modify Goal')" *ngIf="loggedIn">save</button>
 <br>
 
 {{version}}
 
 <!-- (Testing) display all categories and goals -->
+<!-- todo display entries of past dates -->
 <label for="testing">testing</label>
 <input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing">
 <table *ngIf="testing">

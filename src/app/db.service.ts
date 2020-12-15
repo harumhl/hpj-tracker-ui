@@ -11,10 +11,21 @@ export class DbService {
   static paths = {categories: '/categories', goals: '/goals', entries: '/entries'};
 
   firebaseDb: firebase.database.Database = null;
-  today;
+  today: string;
+  dayOfToday: string;
 
   constructor(private datePipe: DatePipe) {
+    // Set today's date and day
     this.today = this._getDateKey();
+    switch (new Date().getDay()) {
+      case 0: this.dayOfToday = 'Sun'; break;
+      case 1: this.dayOfToday = 'Mon'; break;
+      case 2: this.dayOfToday = 'Tue'; break;
+      case 3: this.dayOfToday = 'Wed'; break;
+      case 4: this.dayOfToday = 'Thu'; break;
+      case 5: this.dayOfToday = 'Fri'; break;
+      case 6: this.dayOfToday = 'Sat'; break;
+    }
   }
 
   // To make a goal name into a database key
@@ -85,8 +96,11 @@ export class DbService {
       });
   }
 
-  readEntriesToday(subscribe: boolean, callback) {
-    this._read(subscribe, '/entries/' + this.today, callback);
+  readEntriesOfADay(subscribe: boolean, date: string, callback) {
+    if (date === null || date === undefined || date === '' || date === 'today') {
+      date = this.today;
+    }
+    this._read(subscribe, '/entries/' + date, callback);
   }
 
   newCategory(category: string) {
@@ -95,6 +109,7 @@ export class DbService {
     }
   }
 
+  // TODO New goal/entry fn return observable - so I can create a new entry after a new goal
   // todo goal occurrence (e.g. daily/weekly/MWF)
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, details: string) {
@@ -137,7 +152,7 @@ export class DbService {
       this._read(false, DbService.paths.goals, (snapshot) => {
         const goals = snapshot.val();
         // If the category-name exists, then write the new goal
-        if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name)) {
+        if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name && g.archived === false)) {
           // If goalCount is not given, then get it from the goal in /goals before making the entry
           if (goalCount) {
             this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: this._getDateKey(Date())});
