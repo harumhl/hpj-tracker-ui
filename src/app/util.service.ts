@@ -30,8 +30,8 @@ export class UtilService {
     }
   }
 
-  // deep-copy an array
-  static deepCopyArray(array: any[]) {
-    return JSON.parse(JSON.stringify(array));
+  // deep-copy
+  static deepCopy(obj: any) {
+    return JSON.parse(JSON.stringify(obj));
   }
 }

@@ -4,5 +4,6 @@ export class Goal {
   archived: boolean;
   goalCount: number;
   unit: string;
+  expectedTimesOfCompletion: string[];
   details?: string;
 }

@@ -9,10 +9,12 @@
       'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
 ({{dbService.today}} {{dbService.dayOfToday}})
-<input id="incomplete" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('incomplete', !displayIncompleteOnly)">
-<label for="incomplete">incomplete</label>
-<input id="fullDisplay" type="checkbox" [checked]="displayFullInfo" (change)="toggle('fullDisplay', !displayFullInfo)">
-<label for="fullDisplay">full display</label>
+<input id="displayIncompleteOnly" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('displayIncompleteOnly', !displayIncompleteOnly)">
+<label for="displayIncompleteOnly">incomplete</label>
+<input id="displayFullInfo" type="checkbox" [checked]="displayFullInfo" (change)="toggle('displayFullInfo', !displayFullInfo)">
+<label for="displayFullInfo">full display</label>
+<input id="displayInSchedules" type="checkbox" [checked]="displayInSchedules" (change)="toggle('displayInSchedules', !displayInSchedules)">
+<label for="displayInSchedules">in schedule</label>
 <br>
 
 <!-- Log in to see data -->
@@ -54,29 +56,6 @@
 <!-- Testing -->
 <label for="testing">testing</label>
 <input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing">
-<br>
-
-<!-- (Testing) Enter a new goal -->
-<label *ngIf="loggedIn && testing">New goal: </label>
-<select id="newGoalCategory" *ngIf="loggedIn && testing">
-  <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
-</select>
-<input id="newGoalName" placeholder="*name" style="width: 100px" *ngIf="loggedIn && testing">
-<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" *ngIf="loggedIn && testing">
-<input id="newGoalUnit" placeholder="*unit" style="width: 50px" *ngIf="loggedIn && testing">
-<input id="newGoalDetails" placeholder="*details" style="width: 100px" *ngIf="loggedIn && testing">
-<button (click)="save('New Goal')" *ngIf="loggedIn && testing">save</button>
-<br>
-
-<!-- (Testing) Update an existing goal -->
-<label *ngIf="loggedIn && testing">Modify goal: </label>
-<select id="modifyGoalName" *ngIf="loggedIn && testing">
-  <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
-</select>
-<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" *ngIf="loggedIn && testing">
-<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" *ngIf="loggedIn && testing">
-<input id="modifyGoalDetails" placeholder="details" style="width: 100px" *ngIf="loggedIn && testing">
-<button (click)="save('Modify Goal')" *ngIf="loggedIn && testing">save</button>
 <br>
 
 <!-- (Testing) display all categories and goals -->

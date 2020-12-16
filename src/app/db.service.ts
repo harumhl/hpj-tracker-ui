@@ -111,10 +111,15 @@ export class DbService {
       document = subdocument;
     }
 
-    // Write a new document
-    ref.set(document).then(callback)
-      .catch((error) => {
-        UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
+    // Check if such document already exists
+    ref.get().then((documentSnapshot: DocumentSnapshot) => {
+        if (!documentSnapshot.exists) {
+          // Write a new document
+          ref.set(document).then(callback)
+            .catch((error) => {
+              UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
+            });
+        }
       });
   }
 
@@ -161,13 +166,13 @@ export class DbService {
   // TODO order of goals for display
   // TODO expected time of completion (can be more than once - brush teeth three times a day)
   // Write a new goal to Firebase database
-  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, details: string) {
+  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, expectedTimesOfCompletion: string[], details: string) {
     if (category !== '' && name !== '' && goalCount > 0 && unit !== '') { // input validation
       // Foreign key constraint - check whether the category already exists in /categories
       this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
         // If the category exists, then write the new goal (and create today's entry)
         if (querySnapshot.docs.length > 0) {
-          this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, details},
+          this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, expectedTimesOfCompletion, details},
             () => this.newEntry(this.today));
         }
       });
@@ -175,13 +180,16 @@ export class DbService {
   }
 
   // Update an existing goal in Firebase database
-  updateGoal(name: string, goalCount?: number, unit?: string, details?: string) {
+  updateGoal(name: string, goalCount?: number, unit?: string, expectedTimesOfCompletion?: string[], details?: string) {
     let dataToModify = {};
     if (goalCount) {
       dataToModify = Object.assign(dataToModify, {goalCount});
     }
     if (unit) {
       dataToModify = Object.assign(dataToModify, {unit});
+    }
+    if (expectedTimesOfCompletion) {
+      dataToModify = Object.assign(dataToModify, {expectedTimesOfCompletion});
     }
     if (details) {
       dataToModify = Object.assign(dataToModify, {details});

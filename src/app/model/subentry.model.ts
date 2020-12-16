@@ -8,4 +8,5 @@ export class Subentry {
   // For display
   unit?: string;
   details?: string;
+  timeToComplete?: string[]; // 'expectedTimesOfCompletion' in database in goals
 }

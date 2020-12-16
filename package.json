@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "1.0.1",
-  "description": "A day's subentries will be added with a new goal even though new entry already exists",
+  "version": "1.1.0",
+  "description": "Display sub-entries in schedule (ordered by time) unoptimized + create/update goals with expectedTiemsOfCompletion + check if doc exists before write",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
