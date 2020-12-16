@@ -61,7 +61,6 @@ export class AppComponent {
     this.firebaseDb = firebase.database();
     this.dbService.firebaseDb = this.firebaseDb;
 
-    // TODO optimize accessing database (frequency-wise)
     this.dbService._read(true, DbService.paths.categories, (snapshot) => {
       this.categories = UtilService.objectToIterable(snapshot.val());
       this.categoryList = this.categories.map(category => category.category);
@@ -132,7 +131,7 @@ export class AppComponent {
     this.dbService.newCategory('Interpersonal');
     this.dbService.newCategory('Hobby');
 
-    // TODO - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), details/descriptions, priorities
+    // TODO - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), priorities
     // TODO copy details from 2020 HPJ tracker spreadsheet
     const mins = 'mins';
     const count = 'count';
@@ -243,7 +242,6 @@ export class AppComponent {
       (document.getElementById('newGoalDetails') as HTMLInputElement).value = '';
 
       this.dbService.newGoal(category, name, false, Number(goalCount), unit, details);
-      this.dbService.newEntry(category, name, 0);
     } else if (type === 'Modify Goal') {
       const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
       const goalCount = (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value;

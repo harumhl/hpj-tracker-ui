@@ -33,6 +33,7 @@ export class DbService {
     return str.replace(/ /g,'');
   }
 
+  // Gets a "primary key" for data given a type/path (e.g. category, goal or entry)
   static _keysToKey(path: string, data: object) {
     // Determine which keys in 'data' dict we will consider as the 'primary key'
     let keys = [];
@@ -54,7 +55,7 @@ export class DbService {
     return key;
   }
 
-  // To use a date as an intermediate-level database key
+  // Convert a Date() to date string in order to use a date as an intermediate-level database key in /entries
   _getDateKey(date?) {
     if (date === null || date === undefined) {
       date = Date();
@@ -62,7 +63,8 @@ export class DbService {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
 
-  _read(subscribe: boolean, path: string, callback) {
+  // Read from Firebase database
+  _read(subscribe: boolean, path: string, callback: (snapshot: any) => any = () => {}) {
     // path can be undefined to access root, but cannot be null or empty string
     if (path === null || path === '') {
       path = undefined;
@@ -75,56 +77,60 @@ export class DbService {
     }
   }
 
-  _writeNew(path: string, data: object) {
+  // Write to Firebase database
+  _writeNew(path: string, data: object, callback: () => any = () => {}) {
     const key = DbService._keysToKey(path, data);
     this.firebaseDb.ref(path + '/' + key).set(data)
-      .then(() => {
-        ;
-      })
+      .then(callback)
       .catch((error) => {
         UtilService.handleError('writeNew', {path, data}, error, {key});
       });
   }
 
-  _update(path: string, key: string, dataToModify: object) {
+  // Update an existing data in Firebase database
+  _update(path: string, key: string, dataToModify: object, callback: () => any = () => {}) {
     this.firebaseDb.ref(path + '/' + key).update(dataToModify)
-      .then(() => {
-        ;
-      })
+      .then(callback)
       .catch((error) => {
         UtilService.handleError('writeNew', {path, key, dataToModify}, error);
       });
   }
 
-  readEntriesOfADay(subscribe: boolean, date: string, callback) {
+  // Read existing entries in a given day from Firebase
+  readEntriesOfADay(subscribe: boolean, date: string, callback: (snapshot: any) => any = () => {}) {
     if (date === null || date === undefined || date === '' || date === 'today') {
       date = this.today;
     }
     this._read(subscribe, '/entries/' + date, callback);
   }
 
+  // Write a new category to Firebase database
   newCategory(category: string) {
     if (category !== '') { // input validation
       this._writeNew(DbService.paths.categories, {category});
     }
   }
 
-  // TODO New goal/entry fn return observable - so I can create a new entry after a new goal
   // todo goal occurrence (e.g. daily/weekly/MWF)
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
+  // TODO order of goals for display
+  // TODO expected time of completion (can be more than once - brush teeth three times a day)
+  // Write a new goal to Firebase database
   newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, details: string) {
     if (category !== '' && name !== '' && goalCount > 0 && unit !== '') { // input validation
       // Foreign key constraint - check whether the category already exists in /categories
       this._read(false, DbService.paths.categories, (snapshot) => {
         const categories = snapshot.val();
-        // If the category exists, then write the new goal
+        // If the category exists, then write the new goal (and create today's entry)
         if (UtilService.objectToIterable(categories).some(c => c.category === category)) {
-          this._writeNew(DbService.paths.goals, {category, name, archived, goalCount, unit, details});
+          this._writeNew(DbService.paths.goals, {category, name, archived, goalCount, unit, details},
+            () => this.newEntry(category, name, 0, null, goalCount));
         }
       });
     }
   }
 
+  // Update an existing goal in Firebase database
   updateGoal(name: string, goalCount?: number, unit?: string, details?: string) {
     let dataToModify = {};
     if (goalCount) {
@@ -142,6 +148,7 @@ export class DbService {
 
   // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)
   // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)
+  // Write a new entry in Firebase database
   newEntry(category: string, name: string, count: number, doneDate?: string, goalCount?: number) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
@@ -151,7 +158,7 @@ export class DbService {
       // Foreign key constraint - check whether the category-name already exist in /goals
       this._read(false, DbService.paths.goals, (snapshot) => {
         const goals = snapshot.val();
-        // If the category-name exists, then write the new goal
+        // If the category-name exists and not archived, then write the new goal
         if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name && g.archived === false)) {
           // If goalCount is not given, then get it from the goal in /goals before making the entry
           if (goalCount) {
@@ -170,6 +177,7 @@ export class DbService {
     }
   }
 
+  // Update the count of an existing entry in Firebase database
   updateEntryCount(category: string, name: string, count: number, doneDate?: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();

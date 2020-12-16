@@ -48,35 +48,38 @@
   </tr>
 </table>
 
-<!-- Enter a new goal -->
-<label *ngIf="loggedIn">New goal: </label>
-<select id="newGoalCategory" *ngIf="loggedIn">
+{{version}}
+
+<!-- Testing -->
+<label for="testing">testing</label>
+<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing">
+<br>
+
+<!-- (Testing) Enter a new goal -->
+<label *ngIf="loggedIn && testing">New goal: </label>
+<select id="newGoalCategory" *ngIf="loggedIn && testing">
   <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
 </select>
-<input id="newGoalName" placeholder="*name" style="width: 100px" *ngIf="loggedIn">
-<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" *ngIf="loggedIn">
-<input id="newGoalUnit" placeholder="*unit" style="width: 50px" *ngIf="loggedIn">
-<input id="newGoalDetails" placeholder="*details" style="width: 100px" *ngIf="loggedIn">
-<button (click)="save('New Goal')" *ngIf="loggedIn">save</button>
+<input id="newGoalName" placeholder="*name" style="width: 100px" *ngIf="loggedIn && testing">
+<input id="newGoalGoalCount" type="number" placeholder="*goalCount" style="width: 70px" *ngIf="loggedIn && testing">
+<input id="newGoalUnit" placeholder="*unit" style="width: 50px" *ngIf="loggedIn && testing">
+<input id="newGoalDetails" placeholder="*details" style="width: 100px" *ngIf="loggedIn && testing">
+<button (click)="save('New Goal')" *ngIf="loggedIn && testing">save</button>
 <br>
 
-<!-- Update an existing goal -->
-<label *ngIf="loggedIn">Modify goal: </label>
-<select id="modifyGoalName" *ngIf="loggedIn">
+<!-- (Testing) Update an existing goal -->
+<label *ngIf="loggedIn && testing">Modify goal: </label>
+<select id="modifyGoalName" *ngIf="loggedIn && testing">
   <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
 </select>
-<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" *ngIf="loggedIn">
-<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" *ngIf="loggedIn">
-<input id="modifyGoalDetails" placeholder="details" style="width: 100px" *ngIf="loggedIn">
-<button (click)="save('Modify Goal')" *ngIf="loggedIn">save</button>
+<input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" *ngIf="loggedIn && testing">
+<input id="modifyGoalUnit" placeholder="unit" style="width: 50px" *ngIf="loggedIn && testing">
+<input id="modifyGoalDetails" placeholder="details" style="width: 100px" *ngIf="loggedIn && testing">
+<button (click)="save('Modify Goal')" *ngIf="loggedIn && testing">save</button>
 <br>
-
-{{version}}
 
 <!-- (Testing) display all categories and goals -->
 <!-- todo display entries of past dates -->
-<label for="testing">testing</label>
-<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing">
 <table *ngIf="testing">
   <tr *ngFor="let row of this.categories">
     <td *ngFor="let column of ['category']" >

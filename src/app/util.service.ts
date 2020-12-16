@@ -7,7 +7,7 @@ export class UtilService {
 
   constructor() { }
 
-  // Firebase returns a json, but sometimes a list is needed to process further
+  // Firebase returns a json, but sometimes a list of its values is needed.
   static objectToIterable(obj: object) {
     if (obj) {
       const iterable = [];
@@ -18,6 +18,7 @@ export class UtilService {
     }
   }
 
+  // Displays an error on console in a consistent way.
   static handleError(functioinName: string, parameters: object, error: object, otherInfo?: object) {
     if (otherInfo) {
       console.error(`Function '${functioinName}' failed with parameters, error and info`, parameters, error, otherInfo);
@@ -26,6 +27,7 @@ export class UtilService {
     }
   }
 
+  // deep-copy an array
   static deepCopyArray(array: any[]) {
     return JSON.parse(JSON.stringify(array));
   }

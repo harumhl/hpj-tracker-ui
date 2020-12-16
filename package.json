@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.5.0",
-  "description": "Display today's date and day + full display to show details + daily entries only from unarchived goals",
+  "version": "0.5.1",
+  "description": "new/modify goals on UI not displayed until 'testing' clicked + docstring for functions + callback parameters have types specified + default values if optional",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
