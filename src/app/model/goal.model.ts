@@ -1,6 +1,6 @@
 export class Goal {
-  category: string;
-  name: string;
+  category: string; // from Category.category
+  name: string; // primary key
   archived: boolean;
   goalCount: number;
   unit: string;

@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import firebase from 'firebase';
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Injectable({
   providedIn: 'root'
@@ -8,14 +11,14 @@ export class UtilService {
   constructor() { }
 
   // Firebase returns a json, but sometimes a list of its values is needed.
-  static objectToIterable(obj: object) {
-    if (obj) {
-      const iterable = [];
-      Object.keys(obj).forEach((key) => iterable.push(obj[key]));
-      return iterable;
-    } else {
-      return [];
+  static snapshotToIterable(snapshot: any) {
+    const iterable = [];
+    if (snapshot instanceof QuerySnapshot) {
+      snapshot.forEach((doc) => iterable.push(doc.data()));
+    } else if (snapshot instanceof DocumentSnapshot) {
+      ;
     }
+    return iterable;
   }
 
   // Displays an error on console in a consistent way.

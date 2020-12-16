@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "0.5.1",
-  "description": "new/modify goals on UI not displayed until 'testing' clicked + docstring for functions + callback parameters have types specified + default values if optional",
+  "version": "1.0.0",
+  "description": "Migrating from Firebase Realtime Database to Firebase Cloud Firestore as it provides more functionalities",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

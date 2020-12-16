@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import firebase from 'firebase';
 import {DatePipe} from '@angular/common';
 import {UtilService} from './util.service';
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
 
-  static paths = {categories: '/categories', goals: '/goals', entries: '/entries'};
+  static collections = {categories: 'categories', goals: 'goals', entries: 'entries'};
 
-  firebaseDb: firebase.database.Database = null;
+  firebaseDb: firebase.firestore.Firestore = null;
   today: string;
   dayOfToday: string;
 
@@ -28,33 +30,23 @@ export class DbService {
     }
   }
 
-  // To make a goal name into a database key
-  static _removeAllSpaces(str: string) {
-    return str.replace(/ /g,'');
-  }
-
-  // Gets a "primary key" for data given a type/path (e.g. category, goal or entry)
-  static _keysToKey(path: string, data: object) {
-    // Determine which keys in 'data' dict we will consider as the 'primary key'
-    let keys = [];
-    if (path === this.paths.categories) {
-      keys = ['category'];
-    } else if (path === this.paths.goals) {
-      keys = ['name'];
-    } else if (path === this.paths.entries) {
-      keys = ['doneDate'];
-    } else if (path.includes(this.paths.entries)) { // e.g. /entries/2020-12-01
-      keys = ['name'];
+  // Gets the document ID (aka the primary key) for data, given a collection name (e.g. categories, goals or entries)
+  static _getDocumentId(collection: string, document: object) {
+    let whichKeyInDocumentToUse = '';
+    if (collection === this.collections.categories) {
+      whichKeyInDocumentToUse = 'category';
+    } else if (collection === this.collections.goals) {
+      whichKeyInDocumentToUse = 'name';
+    } else if (collection === this.collections.entries) {
+      whichKeyInDocumentToUse = 'doneDate';
+    } else {
+      return '';
     }
 
-    // Concatenate values of 'primary key'
-    let key = '';
-    for (const k of keys) {
-      key = this._removeAllSpaces(data[k]);
-    }
-    return key;
+    return document[whichKeyInDocumentToUse].replace(/ /g, ''); // .replace() removes all spaces
   }
 
+  // TODO now database accepts date type // TODO rename the fn?
   // Convert a Date() to date string in order to use a date as an intermediate-level database key in /entries
   _getDateKey(date?) {
     if (date === null || date === undefined) {
@@ -64,50 +56,103 @@ export class DbService {
   }
 
   // Read from Firebase database
-  _read(subscribe: boolean, path: string, callback: (snapshot: any) => any = () => {}) {
-    // path can be undefined to access root, but cannot be null or empty string
-    if (path === null || path === '') {
-      path = undefined;
+  readSingle(subscribe: boolean, collection: string, documentId: string, whereCondition?: any[], callback: (documentSnapshot: DocumentSnapshot) => any = () => {}) {
+    this._read(subscribe, collection, documentId, whereCondition, null, callback);
+  }
+  readAll(subscribe: boolean, collection: string, whereCondition?: any[], callback: (querySnapshot: QuerySnapshot) => any = () => {}) {
+    this._read(subscribe, collection, 'all', whereCondition, null, callback);
+  }
+  readSubcollectionsOfSingleDoc(subscribe: boolean, collection: string, documentId: string, whereCondition?: any[], subcollectionId?: string, callback: (querySnapshot: QuerySnapshot) => any = () => {}) {
+    this._read(subscribe, collection, documentId, whereCondition, subcollectionId, callback);
+  }
+  _read(subscribe: boolean, collection: string, documentId: string, whereCondition?: any[], subcollectionId?: string, callback: (docOrQuerySnapshot: any) => any = () => {}) {
+    // Set up differently for single or multi document read
+    let ref: any = this.firebaseDb.collection(collection);
+    const isDocumentRequested = documentId !== '' && documentId !== 'all';
+    if (isDocumentRequested) {
+      ref = ref.doc(documentId);
     }
 
-    if (subscribe) { // whether to subscribe to the changes in data, or just read once
-      this.firebaseDb.ref(path).on('value', callback);
+    // Read only those documents that meet certain criteria (e.g. ['state', '==', 'CA', 'population', '>=', 100000])
+    if (whereCondition) {
+      for (let i = 0; i < whereCondition.length; i += 3) {
+        ref = ref.where(whereCondition[i], whereCondition[i + 1] as '<' | '<=' | '==' | '!=' | '>=' | '>' | 'array-contains' | 'in' | 'array-contains-any' | 'not-in', whereCondition[i + 2]);
+      }
+    }
+
+    // For subcollections of a single doc
+    if (isDocumentRequested && (subcollectionId !== null && subcollectionId !== undefined && subcollectionId !== '')) {
+      ref = ref.collection(subcollectionId);
+    }
+
+    // Different call to subscribe to the changes in data, or just read once
+    if (subscribe) {
+      ref.onSnapshot(callback);
     } else {
-      this.firebaseDb.ref(path).once('value').then(callback);
+      ref.get().then(callback);
     }
   }
 
   // Write to Firebase database
-  _writeNew(path: string, data: object, callback: () => any = () => {}) {
-    const key = DbService._keysToKey(path, data);
-    this.firebaseDb.ref(path + '/' + key).set(data)
-      .then(callback)
+  writeDoc(collection: string, document: object, callback: () => any = () => {}) {
+    this._write(collection, document, null, null, callback);
+  }
+  writeDocInSubcollection(collection: string, document: object, subcollectionId: string, subdocument: object, callback: () => any = () => {}) {
+    this._write(collection, document, subcollectionId, subdocument, callback);
+  }
+  _write(collection: string, document: object, subcollectionId: string, subdocument: object, callback: () => any = () => {}) {
+    const documentId = DbService._getDocumentId(collection, document);
+    let ref: any = this.firebaseDb.collection(collection).doc(documentId);
+
+    // For a new document in subcollections of a single doc
+    if (subcollectionId && subdocument) {
+      const subdocumentId = DbService._getDocumentId(subcollectionId, subdocument);
+      ref = ref.collection(subcollectionId).doc(subdocumentId);
+      document = subdocument;
+    }
+
+    // Write a new document
+    ref.set(document).then(callback)
       .catch((error) => {
-        UtilService.handleError('writeNew', {path, data}, error, {key});
+        UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
       });
   }
 
   // Update an existing data in Firebase database
-  _update(path: string, key: string, dataToModify: object, callback: () => any = () => {}) {
-    this.firebaseDb.ref(path + '/' + key).update(dataToModify)
-      .then(callback)
+  updateDoc(collection: string, documentId: string, dataToModify: object, callback: () => any = () => {}) {
+    this._update(collection, documentId, dataToModify, null, null, callback);
+  }
+  updateDocInSubcollection(collection: string, documentId: string, dataToModify: object, subcollection: string, subdocumentForId: object, callback: () => any = () => {}) {
+    this._update(collection, documentId, dataToModify, subcollection, subdocumentForId, callback);
+  }
+  _update(collection: string, documentId: string, dataToModify: object, subcollectionId: string, subdocumentForId: object, callback: () => any = () => {}) {
+    let ref: any = this.firebaseDb.collection(collection).doc(documentId);
+
+    // For updating a document in subcollections of a single doc
+    if (subcollectionId && subdocumentForId) {
+      const subdocumentId = DbService._getDocumentId(subcollectionId, subdocumentForId);
+      ref = ref.collection(subcollectionId).doc(subdocumentId);
+    }
+
+    // Update a document
+    ref.update(dataToModify).then(callback)
       .catch((error) => {
-        UtilService.handleError('writeNew', {path, key, dataToModify}, error);
+        UtilService.handleError('_update', {collection, documentId, dataToModify, subcollection: subcollectionId, subdocument: subdocumentForId}, error);
       });
   }
 
   // Read existing entries in a given day from Firebase
-  readEntriesOfADay(subscribe: boolean, date: string, callback: (snapshot: any) => any = () => {}) {
+  readSubcollectionsInAnEntryOfADay(subscribe: boolean, date: string, callback: (querySnapshot: QuerySnapshot) => any = () => {}) {
     if (date === null || date === undefined || date === '' || date === 'today') {
       date = this.today;
     }
-    this._read(subscribe, '/entries/' + date, callback);
+    this.readSubcollectionsOfSingleDoc(subscribe, DbService.collections.entries, date, [], DbService.collections.goals, callback);
   }
 
   // Write a new category to Firebase database
   newCategory(category: string) {
     if (category !== '') { // input validation
-      this._writeNew(DbService.paths.categories, {category});
+      this.writeDoc(DbService.collections.categories, {category});
     }
   }
 
@@ -119,12 +164,11 @@ export class DbService {
   newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, details: string) {
     if (category !== '' && name !== '' && goalCount > 0 && unit !== '') { // input validation
       // Foreign key constraint - check whether the category already exists in /categories
-      this._read(false, DbService.paths.categories, (snapshot) => {
-        const categories = snapshot.val();
+      this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
         // If the category exists, then write the new goal (and create today's entry)
-        if (UtilService.objectToIterable(categories).some(c => c.category === category)) {
-          this._writeNew(DbService.paths.goals, {category, name, archived, goalCount, unit, details},
-            () => this.newEntry(category, name, 0, null, goalCount));
+        if (querySnapshot.docs.length > 0) {
+          this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, details},
+            () => this.newEntry(this.today));
         }
       });
     }
@@ -142,48 +186,46 @@ export class DbService {
     if (details) {
       dataToModify = Object.assign(dataToModify, {details});
     }
-    const path = DbService.paths.goals;
-    this._update(path, DbService._keysToKey(path, {name}), dataToModify);
+    const collection = DbService.collections.goals;
+    this.updateDoc(collection, DbService._getDocumentId(collection, {name}), dataToModify);
   }
 
   // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)
   // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)
   // Write a new entry in Firebase database
-  newEntry(category: string, name: string, count: number, doneDate?: string, goalCount?: number) {
+  newEntry(doneDate: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }
 
-    if (doneDate !== '' && category !== '' && name !== '' && count >= 0) { // input validation // todo regex doneDate validation
-      // Foreign key constraint - check whether the category-name already exist in /goals
-      this._read(false, DbService.paths.goals, (snapshot) => {
-        const goals = snapshot.val();
-        // If the category-name exists and not archived, then write the new goal
-        if (UtilService.objectToIterable(goals).some(g => g.category === category && g.name === name && g.archived === false)) {
-          // If goalCount is not given, then get it from the goal in /goals before making the entry
-          if (goalCount) {
-            this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: this._getDateKey(Date())});
-          } else {
-            const key = DbService._keysToKey('/goals', {category, name});
-            this._read(false, '/goals/' + key, (snapshot2) => {
-              const value = snapshot2.val();
-              goalCount = value.goalCount;
-              this._writeNew(DbService.paths.entries + '/' + this.today, {doneDate, category, name, count, goalCount, updatedTs: this._getDateKey(Date())});
-            });
+    this.readSingle(false, DbService.collections.entries, DbService._getDocumentId(DbService.collections.entries, {doneDate}), [],
+      (documentSnapshot) => {
+      if (documentSnapshot.data() === undefined) {
+        this.writeDoc(DbService.collections.entries, {doneDate}, () => {
+          this.newSubcollectionOfAnEntry(doneDate);
+        });
+      }
+    });
+  }
 
-          }
-        }
-      });
-    }
+  // Write documents of a subcollection for an entry
+  newSubcollectionOfAnEntry(doneDate: string) {
+    this.readAll(false, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
+      const goals = UtilService.snapshotToIterable(querySnapshot);
+      for (const goal of goals) {
+        const subentry = {category: goal.category, name: goal.name, count: 0, goalCount: goal.goalCount};
+        this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
+      }
+    });
   }
 
   // Update the count of an existing entry in Firebase database
-  updateEntryCount(category: string, name: string, count: number, doneDate?: string) {
+  updateEntryCount(name: string, count: number, doneDate?: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }
 
-    const path = DbService.paths.entries + '/' + doneDate;
-    this._update(path, DbService._keysToKey(path, {category, name}), {count});
+    const collection = DbService.collections.entries;
+    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {name, count});
   }
 }

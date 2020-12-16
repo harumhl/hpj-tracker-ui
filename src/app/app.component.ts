@@ -5,8 +5,10 @@ import {environment} from '../environments/environment';
 import {version} from '../../package.json';
 import {UtilService} from './util.service';
 import {Category} from './model/category.model';
-import {Entry} from './model/entry.model';
+import {Subentry} from './model/subentry.model';
 import {Goal} from './model/goal.model';
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Component({
   selector: 'app-root',
@@ -31,7 +33,6 @@ export class AppComponent {
     appId: environment.firebaseAppId,
     measurementId: environment.firebaseMeasurementId
   };
-  firebaseDb: firebase.database.Database = null;
 
   headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored.
@@ -43,38 +44,40 @@ export class AppComponent {
     Interpersonal: '#f5f0ff',
     Hobby: '#f5f0ff'
   };
-  categoryList: string[];
-  goalList: string[];
-  dataQueried: Entry[];
-  dataToDisplay: Entry[];
+  dataQueried: Subentry[] = [];
+  dataToDisplay: Subentry[];
   overallCompletionRate = 0;
   displayIncompleteOnly = true;
   displayFullInfo = true;
 
   testing = false;
+  categoryList: string[];
+  goalList: string[];
   categories: Category[];
   goals: Goal[];
 
   constructor(public dbService: DbService) {
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
-    this.firebaseDb = firebase.database();
-    this.dbService.firebaseDb = this.firebaseDb;
+    this.dbService.firebaseDb = firebase.firestore();
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
 
-    this.dbService._read(true, DbService.paths.categories, (snapshot) => {
-      this.categories = UtilService.objectToIterable(snapshot.val());
+    // Subscribe to categories and goals from database
+    this.dbService.readAll(true, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
+      this.categories = UtilService.snapshotToIterable(querySnapshot);
       this.categoryList = this.categories.map(category => category.category);
     });
-    this.dbService._read(true, DbService.paths.goals, (snapshot) => {
-      this.goals = UtilService.objectToIterable(snapshot.val());
+    this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
+      this.goals = UtilService.snapshotToIterable(querySnapshot);
       this.goalList = this.goals.map(goal => goal.name);
     });
-    // Read in the data
-    this.dbService.readEntriesOfADay(true, 'today', (snapshot) => { // have to have the underscore before date
-      const data = snapshot.val() || {}; // in case there is no entry
-      this.dataQueried = UtilService.objectToIterable(data); // TODO order by category first then by custom
+
+    // Subscribe to today's entry from database (for display)
+    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => { // have to have the underscore before date
+      this.dataQueried = UtilService.snapshotToIterable(querySnapshot); // TODO order by category first then by custom
       this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
+      // Add 'unit' and 'details' from goals to entries for display
       for (const queriedEntry of this.dataQueried) {
         const goal = this.goals.filter(g => g.category === queriedEntry.category && g.name === queriedEntry.name)[0];
         queriedEntry.unit = goal.unit;
@@ -84,6 +87,7 @@ export class AppComponent {
       this.toggle('incomplete', this.displayIncompleteOnly);
 
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
+      // Calculate overall completion rate to display
       this.overallCompletionRate = 0;
       for (const entry of this.dataQueried) {
         const ratio = entry.count / entry.goalCount;
@@ -92,6 +96,7 @@ export class AppComponent {
       this.overallCompletionRate /= this.dataQueried.length ;
       this.overallCompletionRate *= 100;
     });
+
   }
 
   login() { // Login, hide login HTML components, read data
@@ -114,7 +119,7 @@ export class AppComponent {
         // this.initializeDatabase();
 
         // Get data upon successful login
-        this.newEntriesOfTheDay();
+        this.dbService.newEntry(this.dbService.today);
       })
       .catch((error) => {
         (document.getElementById('login') as HTMLInputElement).disabled = false;
@@ -185,28 +190,13 @@ export class AppComponent {
     this.dbService.newGoal('Basic', 'Write diary', false, 1, count, '');
     this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, '');
     this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, '');
-    this.dbService.newGoal('Hobby', 'enjoy/study constellations', false, 5, mins, '');
-  }
-
-  newEntriesOfTheDay() { // Creating an empty list of entries for the day - if such entry doesn't exist
-    this.dbService._read(false, DbService.paths.goals, (snapshot) => {
-      const goals = snapshot.val();
-
-      this.dbService.readEntriesOfADay(false, 'today', (snapshot2) => {
-        const entriesToday = snapshot2.val() || []; // in case there is no entry
-        for (const goal of UtilService.objectToIterable(goals)) {
-          if (UtilService.objectToIterable(entriesToday).some(entry => entry.name === goal.name) === false) {
-            this.dbService.newEntry(goal.category, goal.name, 0, null, goal.goalCount);
-          }
-        }
-      });
-    });
+    this.dbService.newGoal('Hobby', 'study constellations', false, 5, mins, '');
   }
 
   updateEntryCount(row, event) {
     const newCount = parseInt(event.target.value || 0, 10);
     if (row.count !== newCount) {
-      this.dbService.updateEntryCount(row.category, row.name, newCount);
+      this.dbService.updateEntryCount(row.name, newCount);
     }
   }
 
@@ -214,7 +204,7 @@ export class AppComponent {
     if (id === 'incomplete') {
       this.displayIncompleteOnly = value; // actually toggling on/off
       if (this.displayIncompleteOnly) {
-        this.dataToDisplay = UtilService.deepCopyArray(this.dataQueried).filter(entry => entry.count < entry.goalCount);
+        this.dataToDisplay = UtilService.deepCopyArray(this.dataQueried).filter(entry => entry.count < entry.goalCount); // todo for multiple level of filtering, dataQueried shouldn't be used
       } else {
         this.dataToDisplay = this.dataQueried;
       }

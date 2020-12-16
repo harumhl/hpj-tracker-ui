@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true
+    }
+    match /categories/{categoryId} {
+    	allow create: if signedIn() && createCategory()
+    }
+    match /goals/{goalId} {
+    	allow create: if signedIn() && createGoal()
+      allow update: if signedIn() && updateGoal()
+    }
+    match /entries/{entryId} {
+    	allow create: if signedIn() && createEntry()
+
+      match /goals/{subentryId} {
+      	allow create: if signedIn() && createSubentry()
+        allow update: if signedIn() && updateSubentry()
+      }
+    }
+
+
+    function signedIn() {
+      return request.auth.uid == ''
+    }
+    function existingData() {
+      return resource.data;
+    }
+    function incomingData() {
+      return request.resource.data;
+    }
+    function createCategory() {
+    	return incomingData().size() == 1
+      && incomingData().keys().hasOnly(['category'])
+      && incomingData().category is string
+    }
+    function createGoal() {
+    	return incomingData().size() == 6
+      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'details'])
+      && incomingData().category is string
+      && incomingData().name is string
+      && incomingData().archived is bool
+      && incomingData().goalCount is int
+      && incomingData().unit is string
+      && (incomingData().details is string || incomingData().details == '')
+    }
+    function updateGoal() {
+    	return incomingData().size() == 6
+      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'details'])
+      && incomingData().category == existingData().category
+      && incomingData().name == existingData().name
+      && incomingData().archived is bool
+      && incomingData().goalCount is int
+      && incomingData().unit is string
+      && (incomingData().details is string || incomingData().details == '')
+    }
+    function createEntry() {
+    	return incomingData().size() == 1
+      && incomingData().keys().hasOnly(['doneDate'])
+      && incomingData().doneDate is string
+    }
+    function createSubentry() {
+    	return incomingData().size() == 4
+      && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
+      && incomingData().category is string
+      && incomingData().name is string
+      && incomingData().count is int
+      && incomingData().goalCount is int
+    }
+    function updateSubentry() {
+    	return incomingData().size() == 4
+      && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
+      && incomingData().count is int
+      && incomingData().category == existingData().category
+      && incomingData().name == existingData().name
+      && incomingData().goalCount == existingData().goalCount
+    }
+  }
+}
