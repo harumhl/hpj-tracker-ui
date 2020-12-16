@@ -204,6 +204,8 @@ export class DbService {
         this.writeDoc(DbService.collections.entries, {doneDate}, () => {
           this.newSubcollectionOfAnEntry(doneDate);
         });
+      } else {
+        this.newSubcollectionOfAnEntry(doneDate);
       }
     });
   }

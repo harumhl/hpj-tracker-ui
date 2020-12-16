@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "1.0.0",
-  "description": "Migrating from Firebase Realtime Database to Firebase Cloud Firestore as it provides more functionalities",
+  "version": "1.0.1",
+  "description": "A day's subentries will be added with a new goal even though new entry already exists",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

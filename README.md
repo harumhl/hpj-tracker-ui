@@ -30,6 +30,7 @@ Version | Details
 0.5.0 | Display today's date and day + full display to show details + daily entries only from unarchived goals
 0.5.1 | new/modify goals on UI not displayed until 'testing' clicked + docstring for functions + callback parameters have types specified + default values if optional
 1.0.0 | Migrating from Firebase Realtime Database to Firebase Cloud Firestore as it provides more functionalities
+1.0.1 | A day's subentries will be added with a new goal even though new entry already exists
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
