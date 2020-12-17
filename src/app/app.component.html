@@ -30,11 +30,13 @@
 <table>
   <tr>
     <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">
-      {{column}}
+      <label *ngIf="column !== 'goalCount'">{{column}}</label>
+      <label *ngIf="column === 'goalCount'">goal</label>
     </th>
   </tr>
   <tr id="content-row" *ngFor="let row of this.dataToDisplay">
     <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
+      'time-to-highlight': column === 'time' && this.timeToHighlight === row[column],
       'hundred-percent-done': row['count'] >= row['goalCount'],
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
       'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
@@ -46,7 +48,7 @@
       <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateEntryCount(row, $event)">
+             (focusout)="updateSubentryCount(row, $event)">
     </td>
   </tr>
 </table>

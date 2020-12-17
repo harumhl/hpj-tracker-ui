@@ -32,6 +32,7 @@ Version | Details
 1.0.0 | Migrating from Firebase Realtime Database to Firebase Cloud Firestore as it provides more functionalities
 1.0.1 | A day's subentries will be added with a new goal even though new entry already exists
 1.1.0 | Display sub-entries in schedule (ordered by time) unoptimized + create/update goals with expectedTiemsOfCompletion + check if doc exists before write
+1.2.0 | Highlight most close time in schedule view + session persists and login components hide automatically
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

@@ -11,12 +11,14 @@ export class UtilService {
   constructor() { }
 
   // Firebase returns a json, but sometimes a list of its values is needed.
-  static snapshotToIterable(snapshot: any) {
+  static toIterable(obj: any) {
     const iterable = [];
-    if (snapshot instanceof QuerySnapshot) {
-      snapshot.forEach((doc) => iterable.push(doc.data()));
-    } else if (snapshot instanceof DocumentSnapshot) {
+    if (obj instanceof QuerySnapshot) {
+      obj.forEach((doc) => iterable.push(doc.data()));
+    } else if (obj instanceof DocumentSnapshot) {
       ;
+    } else if (obj instanceof Object) {
+      Object.keys(obj).forEach(key => iterable.push(obj[key]));
     }
     return iterable;
   }

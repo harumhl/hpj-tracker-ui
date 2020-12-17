@@ -16,7 +16,7 @@ export class DbService {
   today: string;
   dayOfToday: string;
 
-  constructor(private datePipe: DatePipe) {
+  constructor(public datePipe: DatePipe) {
     // Set today's date and day
     this.today = this._getDateKey();
     switch (new Date().getDay()) {
@@ -47,7 +47,7 @@ export class DbService {
   }
 
   // TODO now database accepts date type // TODO rename the fn?
-  // Convert a Date() to date string in order to use a date as an intermediate-level database key in /entries
+  // Convert a Date() to date string in order to use a date as an intermediate-level database key in entries
   _getDateKey(date?) {
     if (date === null || date === undefined) {
       date = Date();
@@ -146,7 +146,7 @@ export class DbService {
       });
   }
 
-  // Read existing entries in a given day from Firebase
+  // Read existing subcollections in a given day's entry from Firebase
   readSubcollectionsInAnEntryOfADay(subscribe: boolean, date: string, callback: (querySnapshot: QuerySnapshot) => any = () => {}) {
     if (date === null || date === undefined || date === '' || date === 'today') {
       date = this.today;
@@ -164,13 +164,12 @@ export class DbService {
   // todo goal occurrence (e.g. daily/weekly/MWF)
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   // TODO order of goals for display
-  // TODO expected time of completion (can be more than once - brush teeth three times a day)
   // Write a new goal to Firebase database
   newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, expectedTimesOfCompletion: string[], details: string) {
     if (category !== '' && name !== '' && goalCount > 0 && unit !== '') { // input validation
       // Foreign key constraint - check whether the category already exists in /categories
       this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
-        // If the category exists, then write the new goal (and create today's entry)
+        // If the category exists, then write the new goal (and create today's entry + its subcollections)
         if (querySnapshot.docs.length > 0) {
           this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, expectedTimesOfCompletion, details},
             () => this.newEntry(this.today));
@@ -220,8 +219,8 @@ export class DbService {
 
   // Write documents of a subcollection for an entry
   newSubcollectionOfAnEntry(doneDate: string) {
-    this.readAll(false, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
-      const goals = UtilService.snapshotToIterable(querySnapshot);
+    this.readAll(false, DbService.collections.goals, ['archive', '==', false], (querySnapshot: QuerySnapshot) => {
+      const goals = UtilService.toIterable(querySnapshot);
       for (const goal of goals) {
         const subentry = {category: goal.category, name: goal.name, count: 0, goalCount: goal.goalCount};
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
@@ -230,7 +229,7 @@ export class DbService {
   }
 
   // Update the count of an existing entry in Firebase database
-  updateEntryCount(name: string, count: number, doneDate?: string) {
+  updateSubentryCount(name: string, count: number, doneDate?: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }

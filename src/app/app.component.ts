@@ -45,11 +45,13 @@ export class AppComponent {
     Hobby: '#f5f0ff'
   };
   dataQueried: Subentry[] = [];
-  dataToDisplay: Subentry[];
+  dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
   displayInSchedules = true; // schedules <-> category-ordered
   displayIncompleteOnly = true;
   displayFullInfo = true;
+
+  timeToHighlight: string;
 
   testing = false;
   categoryList: string[];
@@ -61,29 +63,24 @@ export class AppComponent {
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
 
-    // Subscribe to categories and goals from database
-    this.dbService.readAll(true, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
-      this.categories = UtilService.snapshotToIterable(querySnapshot);
-      this.categoryList = this.categories.map(category => category.category);
-    });
+    // Subscribe to goals from database
     this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
-      this.goals = UtilService.snapshotToIterable(querySnapshot);
+      this.goals = UtilService.toIterable(querySnapshot);
       this.goalList = this.goals.map(goal => goal.name);
     });
 
-    // Subscribe to today's entry from database (for display)
+    // Subscribe to today's entry (especially its subcollection) from database (for display)
     this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => { // have to have the underscore before date
-      this.dataQueried = UtilService.snapshotToIterable(querySnapshot); // TODO order by category first then by custom
+      this.dataQueried = UtilService.toIterable(querySnapshot); // TODO order by category first then by custom
       this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
-      // Add 'unit' and 'details' from goals to entries for display
-      for (const queriedEntry of this.dataQueried) {
-        const goal = this.goals.filter(g => g.category === queriedEntry.category && g.name === queriedEntry.name)[0];
-        queriedEntry.unit = goal.unit;
-        queriedEntry.details = goal.details;
-        queriedEntry.timeToComplete = goal.expectedTimesOfCompletion;
+      // Add 'unit' and 'details' from goals to subcollections in entry for display
+      for (const queriedSubentry of this.dataQueried) {
+        const goal = this.goals.filter(g => g.name === queriedSubentry.name)[0];
+        queriedSubentry.unit = goal.unit;
+        queriedSubentry.details = goal.details;
+        queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
       }
 
       this.toggle('incomplete', this.displayIncompleteOnly);
@@ -91,34 +88,51 @@ export class AppComponent {
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
       this.overallCompletionRate = 0;
-      for (const entry of this.dataQueried) {
-        const ratio = entry.count / entry.goalCount;
+      for (const subentry of this.dataQueried) {
+        const ratio = subentry.count / subentry.goalCount;
         this.overallCompletionRate += ratio > 1 ? 1 : ratio;
       }
       this.overallCompletionRate /= this.dataQueried.length ;
       this.overallCompletionRate *= 100;
+    });
+
+    /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
+    firebase.auth().onAuthStateChanged((user) => {
+      // If already signed in, then hide login related HTML components and add any missing sub-entries
+      if (user) {
+        this.postLogin();
+      }
+    });
+    // Subscribe to categories from database
+    this.dbService.readAll(true, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
+      this.categories = UtilService.toIterable(querySnapshot);
+      this.categoryList = this.categories.map(category => category.category);
     });
   }
 
   // .
   convertArrayForScheduleDisplay(array: any) {
     // Get all possible times
-    let timeToComplete = [];
+    let time: any = {};
     for (const data of array) {
-      timeToComplete = timeToComplete.concat(data.timeToComplete);
+      for (const t of data.time) {
+        // With object (aka dict), no 'duplicate' sub-entries are introduced
+        time[t] = t;
+      }
     }
     // Get unique time and sort them
-    timeToComplete = this.getUniqueInArray(timeToComplete);
-    timeToComplete = timeToComplete.sort();
+    time = UtilService.toIterable(time);
+    time = time.sort();
 
     // Create an array to return that will be used for display
-    // Sorted by timeToComplete: string (aka expectedTimesOfCompletion: string[] in database)
+    // Sorted by time: string (aka expectedTimesOfCompletion: string[] in database)
     const dataToDisplay = [];
-    for (const time of timeToComplete) {
+    for (const t of time) {
       for (const data of array) {
-        if (data.timeToComplete.some(d => d === time)) {
+        // If a subentry with matching time exists, then addAed to dataToDisplay
+        if (data.time.some(d => d === t)) {
           const newData = UtilService.deepCopy(data);
-          newData.timeToComplete = time;
+          newData.time = t;
           dataToDisplay.push(newData);
         }
       }
@@ -134,19 +148,7 @@ export class AppComponent {
     firebase.auth().signInWithEmailAndPassword(this.email, password)
       .then((user) => {
         console.log(`Successfully logged in as ${this.email}`);
-        this.loggedIn = true;
-
-        // Hide login-related HTML components
-        document.getElementById('emailLabel').hidden = true;
-        document.getElementById('emailInput').hidden = true;
-        document.getElementById('passwordLabel').hidden = true;
-        document.getElementById('passwordInput').hidden = true;
-        document.getElementById('login').hidden = true;
-
-        // this.initializeDatabase();
-
-        // Get data upon successful login
-        this.dbService.newEntry(this.dbService.today);
+        this.postLogin();
       })
       .catch((error) => {
         (document.getElementById('login') as HTMLInputElement).disabled = false;
@@ -154,6 +156,24 @@ export class AppComponent {
       });
   }
 
+  postLogin() {
+    this.loggedIn = true;
+
+    // Hide login-related HTML components
+    document.getElementById('emailLabel').hidden = true;
+    document.getElementById('emailInput').hidden = true;
+    document.getElementById('passwordLabel').hidden = true;
+    document.getElementById('passwordInput').hidden = true;
+    document.getElementById('login').hidden = true;
+
+    // this.initializeDatabase();
+
+    // Add any missing entry & sub-entries
+    this.dbService.newEntry(this.dbService.today);
+  }
+
+  // Can't & Shouldn't rely on this much longer, since deleting the whole collections and adding them new will eat up the quota in the newer (Firestore) database
+  //   Once the "DDL" is almost finalized, then rely on UI to add and modify goals and entries/sub-entries
   initializeDatabase() { // Only to be run after clearing/refreshing the database
     this.dbService.newCategory('Hazel');
     this.dbService.newCategory('Workout');
@@ -162,6 +182,7 @@ export class AppComponent {
     this.dbService.newCategory('Basic');
     this.dbService.newCategory('Interpersonal');
     this.dbService.newCategory('Hobby');
+    this.dbService.newCategory('Others');
 
     // TODO - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), priorities
     // TODO copy details from 2020 HPJ tracker spreadsheet
@@ -169,7 +190,8 @@ export class AppComponent {
     const count = 'count';
     this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, ['10:00'], '');
     this.dbService.newGoal('Hazel', 'Stretching', false, 10, mins, ['07:00'], '');
-    this.dbService.newGoal('Hazel', 'Skincare', false, 2, 'twice a day', ['07:45', '21:00'], '');
+    this.dbService.newGoal('Hazel', 'Toner Lotion VitaminC on face', false, 2, 'twice a day', ['07:45', '21:00'], '');
+    this.dbService.newGoal('Hazel', 'Body lotion', false, 2, 'twice a day', ['07:45', '21:00'], '');
     this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day', ['07:45', '21:00'], '');
     this.dbService.newGoal('Hazel', 'Brush hair', false, 200, 'strokes', ['07:45', '21:00'], '');
     this.dbService.newGoal('Hazel', 'Cold blow dry hair', false, 5, mins, ['07:45'], '');
@@ -219,12 +241,14 @@ export class AppComponent {
     this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, ['14:00'], '');
     this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, ['17:00'], '');
     this.dbService.newGoal('Hobby', 'study constellations', false, 5, mins, ['22:00'], '');
+    this.dbService.newGoal('Others', 'Read Korean out loud', false, 5, mins, ['17:00'], '');
+    this.dbService.newGoal('Others', 'Read English out loud', false, 5, mins, ['17:00'], '');
   }
 
-  updateEntryCount(row, event) {
+  updateSubentryCount(row, event) {
     const newCount = parseInt(event.target.value || 0, 10);
     if (row.count !== newCount) {
-      this.dbService.updateEntryCount(row.name, newCount);
+      this.dbService.updateSubentryCount(row.name, newCount);
     }
   }
 
@@ -238,8 +262,7 @@ export class AppComponent {
       this.displayInSchedules = value;
     }
 
-    this.dataToDisplay = UtilService.deepCopy(this.dataQueried);
-
+    // Change headers for displaying full info
     if (this.displayFullInfo) {
       this.headers = this.addElemInArray(this.headers, 'category', true);
       this.headers = this.addElemInArray(this.headers, 'unit');
@@ -250,15 +273,29 @@ export class AppComponent {
       this.headers = this.removeElemInArray(this.headers, 'details');
     }
 
-    if (this.displayInSchedules) {
-      this.dataToDisplay = this.convertArrayForScheduleDisplay(this.dataToDisplay);
-      this.headers = this.addElemInArray(this.headers, 'timeToComplete', true);
-    } else {
-      this.headers = this.removeElemInArray(this.headers, 'timeToComplete');
+    if (this.displayIncompleteOnly || this.displayInSchedules) {
+      this.dataToDisplay = UtilService.deepCopy(this.dataQueried);
     }
 
+    // Filter out completed sub-entries
     if (this.displayIncompleteOnly) {
-      this.dataToDisplay = this.dataToDisplay.filter(entry => entry.count < entry.goalCount); // todo for multiple level of filtering, dataQueried shouldn't be used
+      this.dataToDisplay = this.dataToDisplay.filter(subentry => subentry.count < subentry.goalCount); // todo for multiple level of filtering, dataQueried shouldn't be used
+    }
+
+    // Display time to complete with restructured data
+    if (this.displayInSchedules) {
+      this.dataToDisplay = this.convertArrayForScheduleDisplay(this.dataToDisplay);
+      this.headers = this.addElemInArray(this.headers, 'time', true);
+
+      // Figure out which time in schedule to highlight
+      const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
+      for (let i = 1; i <= this.dataToDisplay.length; i++) {
+        if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
+          this.timeToHighlight = this.dataToDisplay[i - 1].time;
+        }
+      }
+    } else {
+      this.headers = this.removeElemInArray(this.headers, 'time');
     }
 
     this.headers = this.getUniqueInArray(this.headers);
