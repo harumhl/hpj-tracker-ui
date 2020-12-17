@@ -1,7 +1,7 @@
 {
   "name": "angular.io-example",
-  "version": "1.2.0",
-  "description": "Highlight most close time in schedule view + session persists and login components hide automatically",
+  "version": "1.2.1",
+  "description": "Hide all display options (category-view, completed sub-entries, hide units and details) with a checkbox",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

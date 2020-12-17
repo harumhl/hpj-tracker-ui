@@ -9,12 +9,16 @@
       'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
 ({{dbService.today}} {{dbService.dayOfToday}})
-<input id="displayIncompleteOnly" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('displayIncompleteOnly', !displayIncompleteOnly)">
-<label for="displayIncompleteOnly">incomplete</label>
-<input id="displayFullInfo" type="checkbox" [checked]="displayFullInfo" (change)="toggle('displayFullInfo', !displayFullInfo)">
-<label for="displayFullInfo">full display</label>
-<input id="displayInSchedules" type="checkbox" [checked]="displayInSchedules" (change)="toggle('displayInSchedules', !displayInSchedules)">
-<label for="displayInSchedules">in schedule</label>
+<input id="displayOptions" type="checkbox" [checked]="displayOptions" (change)="toggle('displayOptions', !displayOptions)">
+<label for="displayOptions">display options</label>
+
+<label *ngIf="displayOptions"> // </label>
+<input id="displayIncompleteOnly" type="checkbox" [checked]="displayIncompleteOnly" (change)="toggle('displayIncompleteOnly', !displayIncompleteOnly)" *ngIf="displayOptions">
+<label for="displayIncompleteOnly" *ngIf="displayOptions">incomplete</label>
+<input id="displayFullInfo" type="checkbox" [checked]="displayFullInfo" (change)="toggle('displayFullInfo', !displayFullInfo)" *ngIf="displayOptions">
+<label for="displayFullInfo" *ngIf="displayOptions">full display</label>
+<input id="displayInSchedules" type="checkbox" [checked]="displayInSchedules" (change)="toggle('displayInSchedules', !displayInSchedules)" *ngIf="displayOptions">
+<label for="displayInSchedules" *ngIf="displayOptions">in schedule</label>
 <br>
 
 <!-- Log in to see data -->

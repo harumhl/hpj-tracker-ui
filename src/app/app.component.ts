@@ -47,6 +47,7 @@ export class AppComponent {
   dataQueried: Subentry[] = [];
   dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
+  displayOptions = false;
   displayInSchedules = true; // schedules <-> category-ordered
   displayIncompleteOnly = true;
   displayFullInfo = true;
@@ -260,6 +261,8 @@ export class AppComponent {
       this.displayFullInfo = value;
     } else if (id === 'displayInSchedules') {
       this.displayInSchedules = value;
+    } else if (id === 'displayOptions') {
+      this.displayOptions = value;
     }
 
     // Change headers for displaying full info
