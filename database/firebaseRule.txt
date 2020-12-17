@@ -36,8 +36,8 @@ service cloud.firestore {
       && incomingData().category is string
     }
     function createGoal() {
-    	return incomingData().size() == 6
-      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'details'])
+    	return incomingData().size() == 7
+      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
       && incomingData().category is string
       && incomingData().name is string
       && incomingData().archived is bool
@@ -46,8 +46,8 @@ service cloud.firestore {
       && (incomingData().details is string || incomingData().details == '')
     }
     function updateGoal() {
-    	return incomingData().size() == 6
-      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'details'])
+    	return incomingData().size() == 7
+      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().archived is bool
