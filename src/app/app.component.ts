@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import firebase from 'firebase';
 import {DbService} from './db.service';
 import {environment} from '../environments/environment';
@@ -9,6 +9,7 @@ import {Subentry} from './model/subentry.model';
 import {Goal} from './model/goal.model';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
+import {ChartComponent} from '@syncfusion/ej2-angular-charts';
 
 @Component({
   selector: 'app-root',
@@ -47,10 +48,20 @@ export class AppComponent {
   dataQueried: Subentry[] = [];
   dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
-  displayOptions = false;
-  displayInSchedules = true; // schedules <-> category-ordered
-  displayIncompleteOnly = true;
-  displayFullInfo = true;
+
+  @ViewChild('topChart')
+  public chart: ChartComponent;
+  overallCompletionRates: any[];
+  interval;
+  chartLoaded = false;
+
+  display = {
+    allOptions: false,
+    inSchedules: true,
+    incompleteOnly: true,
+    fullInfo: true,
+    topChart: true // TODO display more dates, display per category
+  };
 
   timeToHighlight: string;
 
@@ -59,8 +70,12 @@ export class AppComponent {
   goalList: string[];
   categories: Category[];
   goals: Goal[];
+  saveMessage = '';
 
   constructor(public dbService: DbService) {
+    // TODO make this a progressive web app?
+    // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
+    // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
@@ -72,7 +87,7 @@ export class AppComponent {
     });
 
     // Subscribe to today's entry (especially its subcollection) from database (for display)
-    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => { // have to have the underscore before date
+    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
       this.dataQueried = UtilService.toIterable(querySnapshot); // TODO order by category first then by custom
       this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
@@ -84,22 +99,16 @@ export class AppComponent {
         queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
       }
 
-      this.toggle('incomplete', this.displayIncompleteOnly);
+      this.toggle('incompleteOnly', this.display.incompleteOnly);
 
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
-      this.overallCompletionRate = 0;
-      for (const subentry of this.dataQueried) {
-        const ratio = subentry.count / subentry.goalCount;
-        this.overallCompletionRate += ratio > 1 ? 1 : ratio;
-      }
-      this.overallCompletionRate /= this.dataQueried.length ;
-      this.overallCompletionRate *= 100;
+      this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
     });
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
+    // If already signed in, then hide login related HTML components and add any missing sub-entries
     firebase.auth().onAuthStateChanged((user) => {
-      // If already signed in, then hide login related HTML components and add any missing sub-entries
       if (user) {
         this.postLogin();
       }
@@ -109,9 +118,48 @@ export class AppComponent {
       this.categories = UtilService.toIterable(querySnapshot);
       this.categoryList = this.categories.map(category => category.category);
     });
+    // Computing overall completion rates of the past 7 days
+    this.overallCompletionRates = [];
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      // date object has to be created one by one, since readSubcollections..() callback needs access to different dates
+      const date = new Date();
+      date.setDate(date.getDate() - 7 + i);
+      dates.push(date);
+    }
+    for (const date of dates) {
+      this.dbService.readSubcollectionsInAnEntryOfADay(true, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
+        const dataQueried = UtilService.toIterable(querySnapshot);
+        this.overallCompletionRates.push({date: this.dbService._getDateKey(date), percent: this.computeOverallCompletionRate(dataQueried)});
+      });
+    }
   }
 
-  // .
+  // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
+  reloadChart(event) {
+    this.interval = setInterval(() => {
+      if (this.chartLoaded === false && this.overallCompletionRates.length >= 7) {
+        event.chart.refresh();
+        this.chartLoaded = true;
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  }
+
+  // Check something over intervals
+  setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
+    let timesRun = 0;
+    const interval = setInterval(() => {
+      timesRun += 1;
+      callbackForEveryInterval();
+      if (timesRun === intervalCount){
+        callbackForClearInterval();
+        clearInterval(interval);
+      }
+    }, frequencyMs);
+  }
+
+  // Convert raw data format from the database to a format for schedule view
   convertArrayForScheduleDisplay(array: any) {
     // Get all possible times
     let time: any = {};
@@ -255,18 +303,10 @@ export class AppComponent {
 
   toggle(id: string, value?: any) {
     // actually toggling on/off
-    if (id === 'displayIncompleteOnly') {
-      this.displayIncompleteOnly = value;
-    } else if (id === 'displayFullInfo') {
-      this.displayFullInfo = value;
-    } else if (id === 'displayInSchedules') {
-      this.displayInSchedules = value;
-    } else if (id === 'displayOptions') {
-      this.displayOptions = value;
-    }
+    this.display[id] = value;
 
     // Change headers for displaying full info
-    if (this.displayFullInfo) {
+    if (this.display.fullInfo) {
       this.headers = this.addElemInArray(this.headers, 'category', true);
       this.headers = this.addElemInArray(this.headers, 'unit');
       this.headers = this.addElemInArray(this.headers, 'details');
@@ -276,32 +316,53 @@ export class AppComponent {
       this.headers = this.removeElemInArray(this.headers, 'details');
     }
 
-    if (this.displayIncompleteOnly || this.displayInSchedules) {
+    if (this.display.incompleteOnly || this.display.inSchedules) {
       this.dataToDisplay = UtilService.deepCopy(this.dataQueried);
     }
 
     // Filter out completed sub-entries
-    if (this.displayIncompleteOnly) {
+    if (this.display.incompleteOnly) {
       this.dataToDisplay = this.dataToDisplay.filter(subentry => subentry.count < subentry.goalCount); // todo for multiple level of filtering, dataQueried shouldn't be used
     }
 
     // Display time to complete with restructured data
-    if (this.displayInSchedules) {
+    if (this.display.inSchedules) {
       this.dataToDisplay = this.convertArrayForScheduleDisplay(this.dataToDisplay);
       this.headers = this.addElemInArray(this.headers, 'time', true);
 
       // Figure out which time in schedule to highlight
       const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
-      for (let i = 1; i <= this.dataToDisplay.length; i++) {
+      for (let i = 1; i < this.dataToDisplay.length; i++) {
         if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
           this.timeToHighlight = this.dataToDisplay[i - 1].time;
         }
+      }
+      // (edge cases)
+      if (now < this.dataToDisplay[0].time) {
+        this.timeToHighlight = this.dataToDisplay[0].time;
+      } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
+        this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
       }
     } else {
       this.headers = this.removeElemInArray(this.headers, 'time');
     }
 
     this.headers = this.getUniqueInArray(this.headers);
+  }
+
+  computeOverallCompletionRate(array: Subentry[]) {
+    if (array.length === 0) {
+      return 0;
+    } else {
+      let overallCompletionRate = 0;
+      for (const subentry of array) {
+        const ratio = subentry.count / subentry.goalCount;
+        overallCompletionRate += ratio > 1 ? 1 : ratio;
+      }
+      overallCompletionRate /= array.length;
+      overallCompletionRate *= 100;
+      return overallCompletionRate;
+    }
   }
 
   getUniqueInArray(array: any[]) {
@@ -321,5 +382,61 @@ export class AppComponent {
       array.splice(index, 1);
     }
     return array;
+  }
+
+  // Fill up Modify Goal input elements automatically based on goal name selection
+  updateModifyGoalInputElements() {
+    if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
+      (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
+    }
+    const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+    const goalInfo = this.goals.filter(g => g.name === goalName)[0];
+    (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
+    (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
+    (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
+    (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
+  }
+
+  // Save new goal or modified goal
+  save(type: string) {
+    if (type === 'New Goal') {
+      const category = (document.getElementById('newGoalCategory') as HTMLInputElement).value;
+      const name = (document.getElementById('newGoalName') as HTMLInputElement).value;
+      const archived = false;
+      const goalCount = Number((document.getElementById('newGoalGoalCount') as HTMLInputElement).value);
+      const unit = (document.getElementById('newGoalUnit') as HTMLInputElement).value;
+      let expectedTimesOfCompletion: any = (document.getElementById('newGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
+      const details = (document.getElementById('newGoalDetails') as HTMLInputElement).value;
+
+      (document.getElementById('newGoalName') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalGoalCount') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalUnit') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalDetails') as HTMLInputElement).value = '';
+
+      expectedTimesOfCompletion = expectedTimesOfCompletion.split(',');
+
+      this.dbService.newGoal(category, name, archived, goalCount, unit, expectedTimesOfCompletion, details,
+        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; }); },
+        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'New Goal failed'; }, () => { this.saveMessage = ''; }); });
+    } else if (type === 'Modify Goal') {
+      const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+      const goalCount = (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value;
+      const unit = (document.getElementById('modifyGoalUnit') as HTMLInputElement).value;
+      let expectedTimeOfCompletion: any = (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
+      const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
+
+      (document.getElementById('modifyGoalName') as HTMLInputElement).value = ''; // TODO change?
+      (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = '';
+
+      expectedTimeOfCompletion = expectedTimeOfCompletion.split(',');
+
+      this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimeOfCompletion, details,
+        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
+        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => { this.saveMessage = ''; }); });
+    }
   }
 }
