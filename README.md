@@ -47,6 +47,7 @@ Version | Details
 1.2.1 | Hide all display options (category-view, completed sub-entries, hide units and details) with a checkbox
 1.3.0 | display top chart in mobile size + hide it conditionally + new/modify goals via UI + fill modify automatically when name selected + success and fail message on UI for a few seconds (not relying on console.log)
 2.0.0 | Nonprod access (ng serve) test_* collections in Firestore db VS 'ng build --prod' access the regular collections
+2.0.1 | Display environment on UI
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

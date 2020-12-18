@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.0.0",
-  "description": "Nonprod access (ng serve) test_* collections in Firestore db VS 'ng build --prod' access the regular collections",
+  "version": "2.0.1",
+  "description": "Display environment on UI",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

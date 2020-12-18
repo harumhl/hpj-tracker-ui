@@ -19,6 +19,7 @@ import {ChartComponent} from '@syncfusion/ej2-angular-charts';
 export class AppComponent {
   title = 'HPJ Tracker';
   version = 'v' + version;
+  environment = environment.environment;
 
   email = 'haru.mhl@gmail.com';
   loggedIn = false;
@@ -57,7 +58,7 @@ export class AppComponent {
 
   display = {
     allOptions: false,
-    inSchedules: true,
+    inSchedules: true, // todo if goal has multiple expected times of completion and there's future one then hide the past one
     incompleteOnly: true,
     fullInfo: true,
     topChart: true // todo display more dates, display per category
