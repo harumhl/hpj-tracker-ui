@@ -22,9 +22,9 @@
 <br *ngIf="display.allOptions">
 <input id="displayIncompleteOnly" type="checkbox" [checked]="display.incompleteOnly" (change)="toggle('incompleteOnly', !display.incompleteOnly)" *ngIf="display.allOptions">
 <label for="displayIncompleteOnly" *ngIf="display.allOptions">incomplete</label>
-<input id="displayFullInfo" type="checkbox" [checked]="display.allOptions" (change)="toggle('fullInfo', !display.fullInfo)" *ngIf="display.allOptions">
+<input id="displayFullInfo" type="checkbox" [checked]="display.fullInfo" (change)="toggle('fullInfo', !display.fullInfo)" *ngIf="display.allOptions">
 <label for="displayFullInfo" *ngIf="display.allOptions">full display</label>
-<input id="displayInSchedules" type="checkbox" [checked]="display.allOptions" (change)="toggle('inSchedules', !display.inSchedules)" *ngIf="display.allOptions">
+<input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)" *ngIf="display.allOptions">
 <label for="displayInSchedules" *ngIf="display.allOptions">in schedule</label>
 <input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)" *ngIf="display.allOptions">
 <label for="displayTopChart" *ngIf="display.allOptions">display chart</label>
@@ -40,6 +40,7 @@
 <!-- todo display notes on top (yearly goal, monthly goal, quotes) -->
 
 <!-- Displaying data -->
+<!-- TODO when scrolling through data, keep the chart and checkboxes and headers on top but only scroll the table data -->
 <table>
   <tr>
     <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">

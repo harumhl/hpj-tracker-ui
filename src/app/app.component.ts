@@ -8,7 +8,6 @@ import {Category} from './model/category.model';
 import {Subentry} from './model/subentry.model';
 import {Goal} from './model/goal.model';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
-import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 import {ChartComponent} from '@syncfusion/ej2-angular-charts';
 
 @Component({
@@ -47,6 +46,7 @@ export class AppComponent {
     Hobby: '#f5f0ff'
   };
   dataQueried: Subentry[] = [];
+  dataQueriedInSchedules: Subentry[] = [];
   dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
 
@@ -100,7 +100,8 @@ export class AppComponent {
         queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
       }
 
-      this.toggle('incompleteOnly', this.display.incompleteOnly);
+      this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
+      this.toggle('inSchedules', this.display.inSchedules);
 
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
@@ -131,7 +132,9 @@ export class AppComponent {
     for (const date of dates) {
       this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = UtilService.toIterable(querySnapshot);
-        this.overallCompletionRates.push({date: this.dbService._getDateKey(date), percent: this.computeOverallCompletionRate(dataQueried)});
+        const dateStr = this.dbService._getDateKey(date)
+        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
+        this.overallCompletionRates.push({date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)});
       });
     }
   }
@@ -160,25 +163,25 @@ export class AppComponent {
     }, frequencyMs);
   }
 
-  // Convert raw data format from the database to a format for schedule view
-  convertArrayForScheduleDisplay(array: any) {
+  // Convert raw data format from the database to a format for schedule view (deep-copying since 'time' goes string[] -> string)
+  convertArrayForScheduleDisplay(queriedData: any) {
     // Get all possible times
-    let time: any = {};
-    for (const data of array) {
+    let times: any = {};
+    for (const data of queriedData) {
       for (const t of data.time) {
         // With object (aka dict), no 'duplicate' sub-entries are introduced
-        time[t] = t;
+        times[t] = t;
       }
     }
-    // Get unique time and sort them
-    time = UtilService.toIterable(time);
-    time = time.sort();
+    // Change object (aka dict) to array and sort them
+    times = UtilService.toIterable(times) as string[];
+    times = times.sort();
 
     // Create an array to return that will be used for display
     // Sorted by time: string (aka expectedTimesOfCompletion: string[] in database)
     const dataToDisplay = [];
-    for (const t of time) {
-      for (const data of array) {
+    for (const t of times) {
+      for (const data of queriedData) {
         // If a subentry with matching time exists, then addAed to dataToDisplay
         if (data.time.some(d => d === t)) {
           const newData = UtilService.deepCopy(data);
@@ -307,48 +310,57 @@ export class AppComponent {
     // actually toggling on/off
     this.display[id] = value;
 
-    // Change headers for displaying full info
-    if (this.display.fullInfo) {
-      this.headers = this.addElemInArray(this.headers, 'category', true);
-      this.headers = this.addElemInArray(this.headers, 'unit');
-      this.headers = this.addElemInArray(this.headers, 'details');
-    } else {
-      this.headers = this.removeElemInArray(this.headers, 'category');
-      this.headers = this.removeElemInArray(this.headers, 'unit');
-      this.headers = this.removeElemInArray(this.headers, 'details');
+    if (id === 'allOptions') { // Nothing to perform
+      return;
+    } else if (id === 'fullInfo') { // Change headers for displaying full info
+      if (this.display.fullInfo) {
+        this.headers = this.addElemInArray(this.headers, 'category', true);
+        this.headers = this.addElemInArray(this.headers, 'unit');
+        this.headers = this.addElemInArray(this.headers, 'details');
+      } else {
+        this.headers = this.removeElemInArray(this.headers, 'category');
+        this.headers = this.removeElemInArray(this.headers, 'unit');
+        this.headers = this.removeElemInArray(this.headers, 'details');
+      }
     }
 
-    if (this.display.incompleteOnly || this.display.inSchedules) {
-      this.dataToDisplay = UtilService.deepCopy(this.dataQueried);
-    }
-
-    // Filter out completed sub-entries
-    if (this.display.incompleteOnly) {
-      this.dataToDisplay = this.dataToDisplay.filter(subentry => subentry.count < subentry.goalCount); // todo for multiple level of filtering, dataQueried shouldn't be used
-    }
-
-    // Display time to complete with restructured data
-    if (this.display.inSchedules) {
-      this.dataToDisplay = this.convertArrayForScheduleDisplay(this.dataToDisplay);
-      this.headers = this.addElemInArray(this.headers, 'time', true);
-
-      // Figure out which time in schedule to highlight
-      if (this.dataToDisplay.length > 0) {
-        const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
-        for (let i = 1; i < this.dataToDisplay.length; i++) {
-          if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
-            this.timeToHighlight = this.dataToDisplay[i - 1].time;
-          }
+    if (id === 'incompleteOnly' || id === 'inSchedules') {
+      if (this.display.incompleteOnly) { // Filter out completed sub-entries (no deep-copy, but just filtering from the queried data))
+        if (this.display.inSchedules) {
+          this.dataToDisplay = this.dataQueriedInSchedules.filter(subentry => subentry.count < subentry.goalCount);
+        } else {
+          this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount);
         }
-        // (edge cases)
-        if (now < this.dataToDisplay[0].time) {
-          this.timeToHighlight = this.dataToDisplay[0].time;
-        } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
-          this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
+      } else {
+        if (this.display.inSchedules) { // Deep-copy happens when this.dataQueried is pulled from database (so already done by now)
+          this.dataToDisplay = this.dataQueriedInSchedules;
+        } else {
+          this.dataToDisplay = this.dataQueried;
         }
       }
-    } else {
-      this.headers = this.removeElemInArray(this.headers, 'time');
+
+      // Display time to complete with restructured data (deep-copying since 'time' goes string[] -> string)
+      if (this.display.inSchedules) {
+        this.headers = this.addElemInArray(this.headers, 'time', true);
+
+        // Figure out which time in schedule to highlight
+        if (this.dataToDisplay.length > 0) {
+          const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
+          for (let i = 1; i < this.dataToDisplay.length; i++) {
+            if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
+              this.timeToHighlight = this.dataToDisplay[i - 1].time;
+            }
+          }
+          // (edge cases)
+          if (now < this.dataToDisplay[0].time) {
+            this.timeToHighlight = this.dataToDisplay[0].time;
+          } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
+            this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
+          }
+        }
+      } else {
+        this.headers = this.removeElemInArray(this.headers, 'time');
+      }
     }
 
     this.headers = this.getUniqueInArray(this.headers);
@@ -390,15 +402,19 @@ export class AppComponent {
 
   // Fill up Modify Goal input elements automatically based on goal name selection
   updateModifyGoalInputElements() {
-    if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
-      (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
+    if (this.testing) {
+      if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
+        (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
+      }
+      const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+      const goalInfo = this.goals.filter(g => g.name === goalName)[0];
+      if (goalInfo !== null && goalInfo !== undefined) {
+        (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
+        (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
+        (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
+        (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
+      }
     }
-    const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
-    const goalInfo = this.goals.filter(g => g.name === goalName)[0];
-    (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
-    (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
-    (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
-    (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
   }
 
   // Save new goal or modified goal

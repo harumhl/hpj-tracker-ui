@@ -17,8 +17,7 @@ Adding --outputHashing=all flag makes the browser to retrieve the newer website 
 
 "firebase use --add" adds a new environment. Now my current setup has 'default' and 'staging'.
 
-=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --outputHashing=all && firebase deploy -P
- default"
+=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
 
 2.  Installation process
 3.	Software dependencies
@@ -48,6 +47,7 @@ Version | Details
 1.3.0 | display top chart in mobile size + hide it conditionally + new/modify goals via UI + fill modify automatically when name selected + success and fail message on UI for a few seconds (not relying on console.log)
 2.0.0 | Nonprod access (ng serve) test_* collections in Firestore db VS 'ng build --prod' access the regular collections
 2.0.1 | Display environment on UI
+2.1.0 | Fixed error logic with toggling checkboxes on top and optimized (less deep-copy, less processing on the fly) + dates on charts only shows dates not year and month
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
