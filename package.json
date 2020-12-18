@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.1.1",
-  "description": "Adding dates to version history in readme",
+  "version": "2.2.0",
+  "description": "Data table has fixed width and invisible scrollbar (width dynamically changed based on chart visibility)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

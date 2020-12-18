@@ -12,13 +12,13 @@
       'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
       'sixty-percent-done': 60 <= overallCompletionRate && overallCompletionRate < 80,
       'forty-percent-done': 40 <= overallCompletionRate && overallCompletionRate < 60,
-      'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}">
+      'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40}" style="color: red">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
 ({{dbService.today}} {{dbService.dayOfToday}})
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
 <label for="displayAllOptions">display options</label>
 
-<!-- TODO web is getting slower, so put a spinning wheel while processing -->
+<!-- todo web is getting slower, so put a spinning wheel while processing -->
 <br *ngIf="display.allOptions">
 <input id="displayIncompleteOnly" type="checkbox" [checked]="display.incompleteOnly" (change)="toggle('incompleteOnly', !display.incompleteOnly)" *ngIf="display.allOptions">
 <label for="displayIncompleteOnly" *ngIf="display.allOptions">incomplete</label>
@@ -41,6 +41,8 @@
 
 <!-- Displaying data -->
 <!-- TODO when scrolling through data, keep the chart and checkboxes and headers on top but only scroll the table data -->
+<div style="display: block; overflow: scroll"
+     [ngClass]="{'div-table-with-chart': this.display.topChart, 'div-table-no-chart': this.display.topChart === false}">
 <table>
   <tr>
     <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">
@@ -50,6 +52,7 @@
   </tr>
   <tr id="content-row" *ngFor="let row of this.dataToDisplay">
     <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
+      'no-wrap': column === 'details',
       'time-to-highlight': column === 'time' && this.timeToHighlight === row[column],
       'hundred-percent-done': row['count'] >= row['goalCount'],
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
@@ -66,6 +69,7 @@
     </td>
   </tr>
 </table>
+</div>
 
 {{version}} {{environment}}
 

@@ -1,11 +1,16 @@
 /* Adjusting height based on window/screen height */
 table {height: 100%;}
-@media screen and (min-height: 200px) {
+@media screen and (min-height: 200px) { /* Designed for iPhone */
+  .div-table-with-chart {height: 400px;}
+  .div-table-no-chart {height: 600px;}
   table {font-size: 10px; padding: 0 5px;}
-  table tr td input {width: 50px; height: 8px;}
+  table tr td input {width: 30px; height: 8px;}
 }
-@media screen and (min-height: 900px) {
-  table {font-size: 15px;}
+@media screen and (min-height: 900px) { /* Designed for desktop */
+  .div-table-with-chart {height: 700px;}
+  .div-table-no-chart {height: 900px;}
+  table {font-size: 15px; padding:5px 5px;}
+  table tr td input {width: 70px; height: 10px;}
 }
 
 table, th, td {
@@ -15,6 +20,7 @@ table, th, td {
   padding: 3px 5px;
 }
 
+/* Fill background color based on completion rate*/
 .twenty-percent-done {
   background: #fdfbf3;
 }
@@ -33,6 +39,17 @@ table, th, td {
   padding-bottom: 0;
 }
 
+/* Fill background color close in current time in schedule view */
 .time-to-highlight {
   background: #99CCFF;
+}
+
+/* make scrollbar invisible */
+::-webkit-scrollbar {
+  background: transparent;
+}
+
+/* Diaplay all text in one line*/
+.no-wrap {
+  white-space: nowrap;
 }

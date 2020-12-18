@@ -74,7 +74,7 @@ export class AppComponent {
   saveMessage = '';
 
   constructor(public dbService: DbService) {
-    // TODO make this a progressive web app?
+    // todo make this a progressive web app?
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
     // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase

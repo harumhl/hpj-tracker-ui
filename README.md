@@ -50,6 +50,7 @@ Version | Date | Details
 2.0.1 | 2020-12-18 | Display environment on UI
 2.1.0 | 2020-12-18 | Fixed error logic with toggling checkboxes on top and optimized (less deep-copy, less processing on the fly) + dates on charts only shows dates not year and month
 2.1.1 | 2020-12-18 | Adding dates to version history in readme 
+2.2.0 | 2020-12-18 | Data table has fixed width and invisible scrollbar (width dynamically changed based on chart visibility)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
