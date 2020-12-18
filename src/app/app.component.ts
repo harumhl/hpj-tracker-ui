@@ -417,6 +417,7 @@ export class AppComponent {
     }
   }
 
+  // todo ability to archive or un-archive goals
   // Save new goal or modified goal
   save(type: string) {
     if (type === 'New Goal') {

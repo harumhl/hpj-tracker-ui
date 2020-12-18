@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.1.0",
-  "description": "Fixed error logic with toggling checkboxes on top and optimized (less deep-copy, less processing on the fly) + dates on charts only shows dates not year and month",
+  "version": "2.1.1",
+  "description": "Adding dates to version history in readme",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
