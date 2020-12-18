@@ -15,7 +15,10 @@ instead of 'npm run-script build' worked.
 Adding --outputHashing=all flag makes the browser to retrieve the newer website instead of cached one after "firebase
  deploy".
 
-=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --outputHashing=all && firebase deploy"
+"firebase use --add" adds a new environment. Now my current setup has 'default' and 'staging'.
+
+=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --outputHashing=all && firebase deploy -P
+ default"
 
 2.  Installation process
 3.	Software dependencies
@@ -43,6 +46,7 @@ Version | Details
 1.2.0 | Highlight most close time in schedule view + session persists and login components hide automatically
 1.2.1 | Hide all display options (category-view, completed sub-entries, hide units and details) with a checkbox
 1.3.0 | display top chart in mobile size + hide it conditionally + new/modify goals via UI + fill modify automatically when name selected + success and fail message on UI for a few seconds (not relying on console.log)
+2.0.0 | Nonprod access (ng serve) test_* collections in Firestore db VS 'ng build --prod' access the regular collections
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

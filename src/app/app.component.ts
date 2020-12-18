@@ -60,7 +60,7 @@ export class AppComponent {
     inSchedules: true,
     incompleteOnly: true,
     fullInfo: true,
-    topChart: true // TODO display more dates, display per category
+    topChart: true // todo display more dates, display per category
   };
 
   timeToHighlight: string;
@@ -88,7 +88,7 @@ export class AppComponent {
 
     // Subscribe to today's entry (especially its subcollection) from database (for display)
     this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
-      this.dataQueried = UtilService.toIterable(querySnapshot); // TODO order by category first then by custom
+      this.dataQueried = UtilService.toIterable(querySnapshot); // todo order by category first then by custom
       this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
 
       // Add 'unit' and 'details' from goals to subcollections in entry for display
@@ -114,7 +114,7 @@ export class AppComponent {
       }
     });
     // Subscribe to categories from database
-    this.dbService.readAll(true, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
+    this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
       this.categories = UtilService.toIterable(querySnapshot);
       this.categoryList = this.categories.map(category => category.category);
     });
@@ -128,7 +128,7 @@ export class AppComponent {
       dates.push(date);
     }
     for (const date of dates) {
-      this.dbService.readSubcollectionsInAnEntryOfADay(true, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
+      this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = UtilService.toIterable(querySnapshot);
         this.overallCompletionRates.push({date: this.dbService._getDateKey(date), percent: this.computeOverallCompletionRate(dataQueried)});
       });
@@ -233,7 +233,8 @@ export class AppComponent {
     this.dbService.newCategory('Hobby');
     this.dbService.newCategory('Others');
 
-    // TODO - add display order, unit with numbers (e.g. push-ups 3 sets of 20 push-ups), priorities
+    // todo add display order / priorities
+    // todo unit with numbers (e.g. push-ups 3 sets of 20 push-ups)
     // TODO copy details from 2020 HPJ tracker spreadsheet
     const mins = 'mins';
     const count = 'count';
@@ -331,17 +332,19 @@ export class AppComponent {
       this.headers = this.addElemInArray(this.headers, 'time', true);
 
       // Figure out which time in schedule to highlight
-      const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
-      for (let i = 1; i < this.dataToDisplay.length; i++) {
-        if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
-          this.timeToHighlight = this.dataToDisplay[i - 1].time;
+      if (this.dataToDisplay.length > 0) {
+        const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
+        for (let i = 1; i < this.dataToDisplay.length; i++) {
+          if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
+            this.timeToHighlight = this.dataToDisplay[i - 1].time;
+          }
         }
-      }
-      // (edge cases)
-      if (now < this.dataToDisplay[0].time) {
-        this.timeToHighlight = this.dataToDisplay[0].time;
-      } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
-        this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
+        // (edge cases)
+        if (now < this.dataToDisplay[0].time) {
+          this.timeToHighlight = this.dataToDisplay[0].time;
+        } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
+          this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
+        }
       }
     } else {
       this.headers = this.removeElemInArray(this.headers, 'time');
@@ -426,7 +429,7 @@ export class AppComponent {
       let expectedTimeOfCompletion: any = (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
       const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
 
-      (document.getElementById('modifyGoalName') as HTMLInputElement).value = ''; // TODO change?
+      (document.getElementById('modifyGoalName') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';

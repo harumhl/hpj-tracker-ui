@@ -4,15 +4,14 @@ import {DatePipe} from '@angular/common';
 import {UtilService} from './util.service';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
-import {Validators} from '@angular/forms';
-import {Category} from './model/category.model';
+import {environment} from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
 
-  static collections = {categories: 'categories', goals: 'goals', entries: 'entries'};
+  static collections = environment.firebaseCollections;
 
   firebaseDb: firebase.firestore.Firestore = null;
   today: string;
@@ -48,7 +47,7 @@ export class DbService {
     return document[whichKeyInDocumentToUse].replace(/ /g, ''); // .replace() removes all spaces
   }
 
-  // TODO now database accepts date type // TODO rename the fn?
+  // todo now database accepts date type (rename the fn)
   // Convert a Date() to date string in order to use a date as an intermediate-level database key in entries
   _getDateKey(date?) {
     if (date === null || date === undefined) {

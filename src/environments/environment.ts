@@ -11,7 +11,8 @@ export const environment = {
   firebaseStorageBucket: '',
   firebaseMessagingSenderId: '',
   firebaseAppId: '',
-  firebaseMeasurementId: ''
+  firebaseMeasurementId: '',
+  firebaseCollections: {categories: 'test_categories', goals: 'test_goals', entries: 'test_entries'}
 };
 
 /*

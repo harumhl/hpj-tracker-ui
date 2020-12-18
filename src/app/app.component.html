@@ -6,7 +6,7 @@
 </ejs-chart>
 
 <!-- todo refresh button to refresh today's entry -->
-<!-- TODO chart and note on top - with checkbox to hide em -->
+<!-- TODO note on top - with checkbox to hide em -->
 <label [ngClass]="{
       'hundred-percent-done': overallCompletionRate >= 100,
       'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
@@ -18,6 +18,7 @@
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
 <label for="displayAllOptions">display options</label>
 
+<!-- TODO web is getting slower, so put a spinning wheel while processing -->
 <br *ngIf="display.allOptions">
 <input id="displayIncompleteOnly" type="checkbox" [checked]="display.incompleteOnly" (change)="toggle('incompleteOnly', !display.incompleteOnly)" *ngIf="display.allOptions">
 <label for="displayIncompleteOnly" *ngIf="display.allOptions">incomplete</label>
