@@ -17,6 +17,9 @@ Adding --outputHashing=all flag makes the browser to retrieve the newer website 
 
 "firebase use --add" adds a new environment. Now my current setup has 'default' and 'staging'.
 
+With a new feature of displaying 7 days' completion rates by reading in the data and computing, daily read quota was met
+ during development and it had to be put on a pause. Here's to check the quotas: https://console.cloud.google.com/appengine/quotadetails
+
 => "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
 
 2.  Installation process
