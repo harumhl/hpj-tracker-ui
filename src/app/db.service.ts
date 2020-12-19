@@ -118,7 +118,7 @@ export class DbService {
           // Write a new document
           ref.set(document).then(callback)
             .catch((error) => {
-              errorCallback()
+              errorCallback();
               UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
             });
         }
@@ -188,7 +188,7 @@ export class DbService {
         // If the category exists, then write the new goal (and create today's entry + its subcollections)
         if (querySnapshot.docs.length > 0) {
           this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, expectedTimesOfCompletion, details},
-            () => { this.newEntry(this.today); callback()}, () => errorCallback());
+            () => { this.newEntry(this.today); callback(); }, () => errorCallback());
         }
       });
     } else {

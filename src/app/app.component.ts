@@ -73,6 +73,12 @@ export class AppComponent {
   goals: Goal[];
   saveMessage = '';
 
+  // TODO will batch work help? - probably not and "ops" is probably counting the number of docs not the number of actual db access
+  // TODO subscribe to goals - false
+  // TODO (one time + non coding) revisit current goals and modify the counts as fit
+  // TODO optimize read in order to prevent meeting quota (or should it matter?) - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
+  // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
+  // todo display firebase quota and how much I used it on UI
   constructor(public dbService: DbService) {
     // todo make this a progressive web app?
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
@@ -121,20 +127,20 @@ export class AppComponent {
       this.categoryList = this.categories.map(category => category.category);
     });
     // Computing overall completion rates of the past 7 days
+    const numberOfDaysToDisplay = 8;
     this.overallCompletionRates = [];
-    const dates = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < numberOfDaysToDisplay; i++) {
+      this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
+
       // date object has to be created one by one, since readSubcollections..() callback needs access to different dates
       const date = new Date();
-      date.setDate(date.getDate() - 7 + i);
-      dates.push(date);
-    }
-    for (const date of dates) {
+      date.setDate(date.getDate() - (numberOfDaysToDisplay - 1) + i);
+
       this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = UtilService.toIterable(querySnapshot);
-        const dateStr = this.dbService._getDateKey(date)
+        const dateStr = this.dbService._getDateKey(date);
         const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
-        this.overallCompletionRates.push({date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)});
+        this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
       });
     }
   }

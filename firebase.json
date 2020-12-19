@@ -1,5 +1,4 @@
 {
-  "rulesFile": "database.rules.json",
   "hosting": {
     "public": "public",
     "ignore": [

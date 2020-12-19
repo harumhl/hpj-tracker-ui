@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.0",
-  "description": "Data table has fixed width and invisible scrollbar (width dynamically changed based on chart visibility)",
+  "version": "2.2.1",
+  "description": "Adding today's date to the top chart (on top of past 7 days) + minor code quality (e.g. typos, missing semi-colons)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

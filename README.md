@@ -45,7 +45,7 @@ Version | Date | Details
 0.5.1 | 2020-12-15 | new/modify goals on UI not displayed until 'testing' clicked + docstring for functions + callback parameters have types specified + default values if optional
 1.0.0 | 2020-12-16 | Migrating from Firebase Realtime Database to Firebase Cloud Firestore as it provides more functionalities
 1.0.1 | 2020-12-16 | A day's subentries will be added with a new goal even though new entry already exists
-1.1.0 | 2020-12-16 | Display sub-entries in schedule (ordered by time) unoptimized + create/update goals with expectedTiemsOfCompletion + check if doc exists before write
+1.1.0 | 2020-12-16 | Display sub-entries in schedule (ordered by time) unoptimized + create/update goals with expectedTimesOfCompletion + check if doc exists before write
 1.2.0 | 2020-12-16 | Highlight most close time in schedule view + session persists and login components hide automatically
 1.2.1 | 2020-12-16 | Hide all display options (category-view, completed sub-entries, hide units and details) with a checkbox
 1.3.0 | 2020-12-17 | display top chart in mobile size + hide it conditionally + new/modify goals via UI again + fill modify automatically when name selected + success and fail message on UI for a few seconds (not relying on console.log)
@@ -54,6 +54,7 @@ Version | Date | Details
 2.1.0 | 2020-12-18 | Fixed error logic with toggling checkboxes on top and optimized (less deep-copy, less processing on the fly) + dates on charts only shows dates not year and month
 2.1.1 | 2020-12-18 | Adding dates to version history in readme 
 2.2.0 | 2020-12-18 | Data table has fixed width and invisible scrollbar (width dynamically changed based on chart visibility)
+2.2.1 | 2020-12-19 | Adding today's date to the top chart (on top of past 7 days) + minor code quality (e.g. typos, missing semi-colons)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
