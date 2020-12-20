@@ -52,6 +52,7 @@ export class AppComponent {
 
   @ViewChild('topChart')
   public chart: ChartComponent;
+  numberOfDaysToDisplay = 8;
   overallCompletionRates: any[];
   interval;
   chartLoaded = false;
@@ -93,6 +94,12 @@ export class AppComponent {
       this.goalList = this.goals.map(goal => goal.name);
     });
 
+    // Set up overall completion rates array for the top chart (modified in two different sections of code)
+    this.overallCompletionRates = [];
+    for (let i = 0; i < this.numberOfDaysToDisplay; i++) {
+      this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
+    }
+
     // Subscribe to today's entry (especially its subcollection) from database (for display)
     this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
       this.dataQueried = UtilService.toIterable(querySnapshot); // todo order by category first then by custom
@@ -112,7 +119,10 @@ export class AppComponent {
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
       this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
-    });
+      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length);
+      this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
+      this.chart.refresh();
+  });
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
     // If already signed in, then hide login related HTML components and add any missing sub-entries
@@ -126,15 +136,11 @@ export class AppComponent {
       this.categories = UtilService.toIterable(querySnapshot);
       this.categoryList = this.categories.map(category => category.category);
     });
-    // Computing overall completion rates of the past 7 days
-    const numberOfDaysToDisplay = 8;
-    this.overallCompletionRates = [];
-    for (let i = 0; i < numberOfDaysToDisplay; i++) {
-      this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
-
+    // Computing overall completion rates of the past 7 days (today will be added from above as the last element)
+    for (let i = 0; i < this.numberOfDaysToDisplay - 1; i++) {
       // date object has to be created one by one, since readSubcollections..() callback needs access to different dates
       const date = new Date();
-      date.setDate(date.getDate() - (numberOfDaysToDisplay - 1) + i);
+      date.setDate(date.getDate() - (this.numberOfDaysToDisplay - 1) + i);
 
       this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = UtilService.toIterable(querySnapshot);
@@ -148,7 +154,8 @@ export class AppComponent {
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
   reloadChart(event) {
     this.interval = setInterval(() => {
-      if (this.chartLoaded === false && this.overallCompletionRates.length >= 7) {
+      if (this.chartLoaded === false && this.overallCompletionRates.every(elem => elem.date !== '0')) {
+        console.log('refresh in reload');
         event.chart.refresh();
         this.chartLoaded = true;
         clearInterval(this.interval);

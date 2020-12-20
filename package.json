@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.1",
-  "description": "Adding today's date to the top chart (on top of past 7 days) + minor code quality (e.g. typos, missing semi-colons)",
+  "version": "2.2.2",
+  "description": "Chart reloads as more tasks/sub-entries are completed throughout the day - without refreshing the page",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "hpj-tracker"
+    "default": "hpj-tracker",
+    "staging": "hpj-tracker"
   }
 }

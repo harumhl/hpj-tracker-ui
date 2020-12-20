@@ -1,3 +1,5 @@
+<!-- TODO put everything in the center of the screen? -->
+
 <ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
            [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
   <e-series-collection>
