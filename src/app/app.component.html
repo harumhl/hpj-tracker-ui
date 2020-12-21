@@ -124,7 +124,7 @@
 <br>
 <table [hidden]="!testing">
   <tr *ngFor="let row of this.goals">
-    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'details']" >
+    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']" >
       <label>{{row[column]}}</label>
     </td>
   </tr>

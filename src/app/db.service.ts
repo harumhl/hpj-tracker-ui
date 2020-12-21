@@ -159,8 +159,7 @@ export class DbService {
 
   // Validating elements of a goal (especially goal >= 0 and expectedTimesOfCompletion)
   _validateGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, expectedTimesOfCompletion: string[], details: string) {
-    const regex: RegExp = new RegExp(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/);
-    expectedTimesOfCompletion[0].match(regex);
+    const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
     return (category !== null && category !== undefined && category !== '')
     && (name !== null && name !== undefined && name !== '')
     && (archived !== null && archived !== undefined)
@@ -211,13 +210,22 @@ export class DbService {
     if (details) {
       dataToModify = Object.assign(dataToModify, {details});
     }
-    this.readAll(false, DbService.collections.goals, ['name', '==', name], (querySnapshot) => {
-      const doc = querySnapshot.docs[0].data();
-      dataToModify = Object.assign(dataToModify, {category: doc.category, archived: doc.archived});
 
-      const collection = DbService.collections.goals;
-      this.updateDoc(collection, DbService._getDocumentId(collection, {name}), dataToModify, callback, errorCallback);
-    });
+    // Validate expectedTimesOfCompletion before actually updating
+    const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
+    if (expectedTimesOfCompletion !== null && expectedTimesOfCompletion !== undefined && expectedTimesOfCompletion.length > 0
+        && expectedTimesOfCompletion.filter(t => t.match(regex)).length === expectedTimesOfCompletion.length) {
+      // Update
+      this.readAll(false, DbService.collections.goals, ['name', '==', name], (querySnapshot) => {
+        const doc = querySnapshot.docs[0].data();
+        dataToModify = Object.assign(dataToModify, {category: doc.category, archived: doc.archived});
+
+        const collection = DbService.collections.goals;
+        this.updateDoc(collection, DbService._getDocumentId(collection, {name}), dataToModify, callback, errorCallback);
+      });
+    } else {
+      errorCallback();
+    }
   }
 
   // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)

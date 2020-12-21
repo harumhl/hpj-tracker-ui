@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.2",
-  "description": "Chart reloads as more tasks/sub-entries are completed throughout the day - without refreshing the page",
+  "version": "2.2.3",
+  "description": "Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

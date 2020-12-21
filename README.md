@@ -56,6 +56,7 @@ Version | Date | Details
 2.2.0 | 2020-12-18 | Data table has fixed width and invisible scrollbar (width dynamically changed based on chart visibility)
 2.2.1 | 2020-12-19 | Adding today's date to the top chart (on top of past 7 days) + minor code quality (e.g. typos, missing semi-colons)
 2.2.2 | 2020-12-20 | Chart reloads as more tasks/sub-entries are completed throughout the day - without refreshing the page
+2.2.3 | 2020-12-21 | Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
