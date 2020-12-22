@@ -122,7 +122,8 @@
 </table>
 <br>
 
-<label [hidden]="!testing">{{this.activeGoals.length}} active goals ({{this.archivedGoals.length}} archived goals)</label>
+<label [hidden]="!testing">{{this.activeGoals.length}} active goals></label>
+<label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
 <table [hidden]="!testing">
   <tr *ngFor="let row of this.goals">
     <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"

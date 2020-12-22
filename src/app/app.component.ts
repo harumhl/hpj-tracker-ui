@@ -72,8 +72,8 @@ export class AppComponent {
   goalList: string[];
   categories: Category[];
   goals: Goal[];
-  activeGoals: Goal[];
-  archivedGoals: Goal[];
+  activeGoals: Goal[] = [];
+  archivedGoals: Goal[] = [];
   saveMessage = '';
 
   // TODO subscribe to goals - false

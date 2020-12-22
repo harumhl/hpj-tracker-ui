@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.4",
-  "description": "Display active/archived goal count & color archived + Allow float entry",
+  "version": "2.2.5",
+  "description": "Fixing errors of checking 'length' of undefined (by setting the variable with an empty array)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

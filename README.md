@@ -58,6 +58,7 @@ Version | Date | Details
 2.2.2 | 2020-12-20 | Chart reloads as more tasks/sub-entries are completed throughout the day - without refreshing the page
 2.2.3 | 2020-12-21 | Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero
 2.2.4 | 2020-12-22 | Display active/archived goal count & color archived + Allow float entry
+2.2.5 | 2020-12-22 | Fixing errors of checking 'length' of undefined (by setting the variable with an empty array)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
