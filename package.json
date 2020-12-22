@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.3",
-  "description": "Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero",
+  "version": "2.2.4",
+  "description": "Display active/archived goal count & color archived + Allow float entry",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -10,13 +10,35 @@ service cloud.firestore {
     match /goals/{goalId} {
     	allow create: if signedIn() && createGoal()
       allow update: if signedIn() && updateGoal()
+      allow delete: if signedIn()
     }
     match /entries/{entryId} {
     	allow create: if signedIn() && createEntry()
+      allow delete: if signedIn()
 
       match /goals/{subentryId} {
       	allow create: if signedIn() && createSubentry()
         allow update: if signedIn() && updateSubentry()
+	      allow delete: if signedIn()
+      }
+    }
+
+    match /test_categories/{categoryId} {
+    	allow create: if signedIn() && createCategory()
+    }
+    match /test_goals/{goalId} {
+    	allow create: if signedIn() && createGoal()
+      allow update: if signedIn() && updateGoal()
+      allow delete: if signedIn()
+    }
+    match /test_entries/{entryId} {
+    	allow create: if signedIn() && createEntry()
+      allow delete: if signedIn()
+
+      match /test_goals/{subentryId} {
+      	allow create: if signedIn() && createSubentry()
+        allow update: if signedIn() && updateSubentry()
+	      allow delete: if signedIn()
       }
     }
 
@@ -71,7 +93,7 @@ service cloud.firestore {
     function updateSubentry() {
     	return incomingData().size() == 4
       && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
-      && incomingData().count is int
+      && incomingData().count is float
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().goalCount == existingData().goalCount

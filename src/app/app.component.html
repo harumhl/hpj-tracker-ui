@@ -42,7 +42,6 @@
 <!-- todo display notes on top (yearly goal, monthly goal, quotes) -->
 
 <!-- Displaying data -->
-<!-- TODO when scrolling through data, keep the chart and checkboxes and headers on top but only scroll the table data -->
 <div style="display: block; overflow: scroll"
      [ngClass]="{'div-table-with-chart': this.display.topChart, 'div-table-no-chart': this.display.topChart === false}">
 <table>
@@ -122,9 +121,12 @@
   </tr>
 </table>
 <br>
+
+<label [hidden]="!testing">{{this.activeGoals.length}} active goals ({{this.archivedGoals.length}} archived goals)</label>
 <table [hidden]="!testing">
   <tr *ngFor="let row of this.goals">
-    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']" >
+    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
+      [ngStyle]="{'background-color': row.archived ? '#FF9999' : 'white'}">
       <label>{{row[column]}}</label>
     </td>
   </tr>

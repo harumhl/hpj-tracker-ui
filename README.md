@@ -57,6 +57,7 @@ Version | Date | Details
 2.2.1 | 2020-12-19 | Adding today's date to the top chart (on top of past 7 days) + minor code quality (e.g. typos, missing semi-colons)
 2.2.2 | 2020-12-20 | Chart reloads as more tasks/sub-entries are completed throughout the day - without refreshing the page
 2.2.3 | 2020-12-21 | Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero
+2.2.4 | 2020-12-22 | Display active/archived goal count & color archived + Allow float entry
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

@@ -72,12 +72,12 @@ export class AppComponent {
   goalList: string[];
   categories: Category[];
   goals: Goal[];
+  activeGoals: Goal[];
+  archivedGoals: Goal[];
   saveMessage = '';
 
-  // TODO will batch work help? - probably not and "ops" is probably counting the number of docs not the number of actual db access
   // TODO subscribe to goals - false
-  // TODO (one time + non coding) revisit current goals and modify the counts as fit
-  // TODO optimize read in order to prevent meeting quota (or should it matter?) - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
+  // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
   // todo display firebase quota and how much I used it on UI
   constructor(public dbService: DbService) {
@@ -92,6 +92,9 @@ export class AppComponent {
     this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
       this.goals = UtilService.toIterable(querySnapshot);
       this.goalList = this.goals.map(goal => goal.name);
+
+      this.activeGoals = this.goals.filter(g => g.archived === false);
+      this.archivedGoals = this.goals.filter(g => g.archived);
     });
 
     // Set up overall completion rates array for the top chart (modified in two different sections of code)
@@ -252,7 +255,6 @@ export class AppComponent {
 
     // todo add display order / priorities
     // todo unit with numbers (e.g. push-ups 3 sets of 20 push-ups)
-    // TODO copy details from 2020 HPJ tracker spreadsheet
     const mins = 'mins';
     const count = 'count';
     this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, ['10:00'], '');
@@ -313,7 +315,7 @@ export class AppComponent {
   }
 
   updateSubentryCount(row, event) {
-    const newCount = parseInt(event.target.value || 0, 10);
+    const newCount = parseFloat(event.target.value || 0);
     if (row.count !== newCount) {
       this.dbService.updateSubentryCount(row.name, newCount);
     }
