@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.2.5",
-  "description": "Fixing errors of checking 'length' of undefined (by setting the variable with an empty array)",
+  "version": "2.3.0",
+  "description": "If a sub-entry is partially done, then do not show it in the early schedules (based on the percentage done and the number of showings in schedule aka expectedTimesOfCompletion.length)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

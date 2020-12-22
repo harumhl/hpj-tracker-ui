@@ -93,7 +93,7 @@ service cloud.firestore {
     function updateSubentry() {
     	return incomingData().size() == 4
       && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
-      && incomingData().count is float
+      && incomingData().count is number
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().goalCount == existingData().goalCount

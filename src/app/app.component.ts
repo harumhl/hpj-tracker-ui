@@ -75,11 +75,15 @@ export class AppComponent {
   activeGoals: Goal[] = [];
   archivedGoals: Goal[] = [];
   saveMessage = '';
+  // TODO calculate overall percentage and save whenever changes
+  // TODO bigger input boxes on web - testing
+  // TODO ngstyle instead for css
 
   // TODO subscribe to goals - false
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
   // todo display firebase quota and how much I used it on UI
+  // todo allow modify archive
   constructor(public dbService: DbService) {
     // todo make this a progressive web app?
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
@@ -180,7 +184,7 @@ export class AppComponent {
   }
 
   // Convert raw data format from the database to a format for schedule view (deep-copying since 'time' goes string[] -> string)
-  convertArrayForScheduleDisplay(queriedData: any) {
+  convertArrayForScheduleDisplay(queriedData: Subentry[]) {
     // Get all possible times
     let times: any = {};
     for (const data of queriedData) {
@@ -198,10 +202,20 @@ export class AppComponent {
     const dataToDisplay = [];
     for (const t of times) {
       for (const data of queriedData) {
+        // If a sub-entry is partially done, then do not show it in the early schedules (based on the percentage done and the number of showings in schedule aka expectedTimesOfCompletion.length)
+        // e.g. [10:00, 16:00, 18:00] -> display all three if <1/3 done, display the last two if 1/3 ~ <2/3 done, display only the last if >2/3 done
+        const completionRate = data.count / data.goalCount;
+        let remainingTimes = UtilService.deepCopy(data.time);
+        for (let i = 1; i <= data.time.length; i++) {
+          if (i / data.time.length > completionRate) {
+            remainingTimes = remainingTimes.slice(i - 1);
+            break;
+          }
+        }
         // If a subentry with matching time exists, then addAed to dataToDisplay
-        if (data.time.some(d => d === t)) {
+        if (remainingTimes.some(d => d === t)) {
           const newData = UtilService.deepCopy(data);
-          newData.time = t;
+          newData.time = t;  // string time, instead of string[]
           dataToDisplay.push(newData);
         }
       }

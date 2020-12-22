@@ -59,6 +59,7 @@ Version | Date | Details
 2.2.3 | 2020-12-21 | Modify Goal validates expectedTimesOfCompletion + regex for New/Modify Goal is fixed and now requires leading zero
 2.2.4 | 2020-12-22 | Display active/archived goal count & color archived + Allow float entry
 2.2.5 | 2020-12-22 | Fixing errors of checking 'length' of undefined (by setting the variable with an empty array)
+2.3.0 | 2020-12-22 | If a sub-entry is partially done, then do not show it in the early schedules (based on the percentage done and the number of showings in schedule aka expectedTimesOfCompletion.length)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

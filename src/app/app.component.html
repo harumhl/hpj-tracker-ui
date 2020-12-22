@@ -66,7 +66,7 @@
       <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateSubentryCount(row, $event)">
+             (focusout)="updateSubentryCount(row, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
     </td>
   </tr>
 </table>
@@ -122,7 +122,7 @@
 </table>
 <br>
 
-<label [hidden]="!testing">{{this.activeGoals.length}} active goals></label>
+<label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
 <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
 <table [hidden]="!testing">
   <tr *ngFor="let row of this.goals">
