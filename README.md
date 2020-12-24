@@ -60,6 +60,7 @@ Version | Date | Details
 2.2.4 | 2020-12-22 | Display active/archived goal count & color archived + Allow float entry
 2.2.5 | 2020-12-22 | Fixing errors of checking 'length' of undefined (by setting the variable with an empty array)
 2.3.0 | 2020-12-22 | If a sub-entry is partially done, then do not show it in the early schedules (based on the percentage done and the number of showings in schedule aka expectedTimesOfCompletion.length)
+2.3.1 | 2020-12-24 | Display overall completion rates of the past 7 days in console.log as well (not just chart)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

@@ -149,11 +149,13 @@ export class AppComponent {
       const date = new Date();
       date.setDate(date.getDate() - (this.numberOfDaysToDisplay - 1) + i);
 
+      // TODO allow modifying sub-entries of the past 7 days since I read these in anyway
       this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = UtilService.toIterable(querySnapshot);
         const dateStr = this.dbService._getDateKey(date);
         const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
         this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
+        console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
       });
     }
   }

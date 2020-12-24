@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.3.0",
-  "description": "If a sub-entry is partially done, then do not show it in the early schedules (based on the percentage done and the number of showings in schedule aka expectedTimesOfCompletion.length)",
+  "version": "2.3.1",
+  "description": "Display overall completion rates of the past 7 days in console.log as well (not just chart)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
