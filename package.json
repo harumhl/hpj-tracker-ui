@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.3.1",
-  "description": "Display overall completion rates of the past 7 days in console.log as well (not just chart)",
+  "version": "2.4.0",
+  "description": "Added a link to my Firestore db + Display notes on top",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -9,6 +9,7 @@ import {Subentry} from './model/subentry.model';
 import {Goal} from './model/goal.model';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import {ChartComponent} from '@syncfusion/ej2-angular-charts';
+import {Note} from './model/note.model';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +35,8 @@ export class AppComponent {
     appId: environment.firebaseAppId,
     measurementId: environment.firebaseMeasurementId
   };
+
+  notes: Note[] = [];
 
   headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored.
@@ -62,7 +65,8 @@ export class AppComponent {
     inSchedules: true, // todo if goal has multiple expected times of completion and there's future one then hide the past one
     incompleteOnly: true,
     fullInfo: true,
-    topChart: true // todo display more dates, display per category
+    topChart: true, // todo display more dates, display per category
+    notes: true,
   };
 
   timeToHighlight: string;
@@ -80,6 +84,7 @@ export class AppComponent {
   // TODO ngstyle instead for css
 
   // TODO subscribe to goals - false
+  // TODO document ID can have spaces, so don't try to remove the spaces when writing
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
   // todo display firebase quota and how much I used it on UI
@@ -91,6 +96,12 @@ export class AppComponent {
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
+
+    // Reading notes
+    this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
+      // todo display notes on top (yearly goal, monthly goal, quotes)
+      this.notes = UtilService.toIterable(querySnapshot);
+    });
 
     // Subscribe to goals from database
     this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
@@ -431,19 +442,21 @@ export class AppComponent {
     return array;
   }
 
-  // Fill up Modify Goal input elements automatically based on goal name selection
-  updateModifyGoalInputElements() {
+  // Fill up input elements automatically based on name selection
+  updateModifyInputElements(type: string) {
     if (this.testing) {
-      if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
-        (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
-      }
-      const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
-      const goalInfo = this.goals.filter(g => g.name === goalName)[0];
-      if (goalInfo !== null && goalInfo !== undefined) {
-        (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
-        (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
-        (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
-        (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
+      if (type === 'Modify Goal') {
+        if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
+          (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
+        }
+        const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+        const goalInfo = this.goals.filter(g => g.name === goalName)[0];
+        if (goalInfo !== null && goalInfo !== undefined) {
+          (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
+          (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
+          (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
+          (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
+        }
       }
     }
   }

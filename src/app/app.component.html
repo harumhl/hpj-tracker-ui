@@ -1,3 +1,10 @@
+<div *ngIf="display.notes">
+  <div *ngFor="let note of this.notes">
+    <label>{{note.name}}: {{note.text}}</label><br>
+  </div>
+  <br>
+</div>
+
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
 <ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
@@ -8,7 +15,6 @@
 </ejs-chart>
 
 <!-- todo refresh button to refresh today's entry -->
-<!-- TODO note on top - with checkbox to hide em -->
 <label [ngClass]="{
       'hundred-percent-done': overallCompletionRate >= 100,
       'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
@@ -31,6 +37,8 @@
 <label for="displayInSchedules" *ngIf="display.allOptions">in schedule</label>
 <input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)" *ngIf="display.allOptions">
 <label for="displayTopChart" *ngIf="display.allOptions">display chart</label>
+<input id="displayNotes" type="checkbox" [checked]="display.notes" (change)="toggle('notes',!display.notes)" *ngIf="display.allOptions">
+<label for="displayNotes" *ngIf="display.allOptions">display notes</label>
 <br>
 
 <!-- Log in to see data -->
@@ -39,8 +47,6 @@
 <label id="passwordLabel" for="passwordInput"> password: </label>
 <input id="passwordInput" type="password">
 <button id="login" (click)="login()">login</button>
-
-<!-- todo display notes on top (yearly goal, monthly goal, quotes) -->
 
 <!-- Displaying data -->
 <div style="display: block; overflow: scroll"
@@ -76,7 +82,7 @@
 {{version}} {{environment}}
 
 <!-- Testing -->
-<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing; updateModifyGoalInputElements()">
+<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing; updateModifyInputElements('Modify Goal')">
 <label for="testing">testing</label>
 <br>
 
@@ -100,7 +106,7 @@
 <div [hidden]="!testing">
   <form (ngSubmit)="save('Modify Goal')">
     <label>Modify goal: </label>
-    <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyGoalInputElements()">
+    <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
       <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
     </select>
     <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
@@ -110,7 +116,11 @@
     <input type="submit" value="save">
   </form>
 </div>
+
 {{saveMessage}}
+
+<a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
+ [hidden]="!testing">My Cloud Firestore database link</a>
 
 <!-- (Testing) display all categories and goals -->
 <!-- todo display entries of past dates -->
