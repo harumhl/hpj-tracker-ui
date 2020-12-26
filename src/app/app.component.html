@@ -1,4 +1,4 @@
-<div *ngIf="display.notes">
+<div *ngIf="display.notes" (click)="display.notes = false;">
   <div *ngFor="let note of this.notes">
     <label>{{note.name}}: {{note.text}}</label><br>
   </div>
@@ -8,7 +8,8 @@
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
 <ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
-           [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
+           [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}"
+            (click)="display.topChart = false">
   <e-series-collection>
     <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
   </e-series-collection>

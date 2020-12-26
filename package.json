@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.4.0",
-  "description": "Added a link to my Firestore db + Display notes on top",
+  "version": "2.4.1",
+  "description": "Clicking (or tapping) the chart and notes hides them (respectively)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
