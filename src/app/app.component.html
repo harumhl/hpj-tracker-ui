@@ -1,3 +1,4 @@
+<!-- TODO tabs and new lines in notes -->
 <div *ngIf="display.notes" (click)="display.notes = false;">
   <div *ngFor="let note of this.notes">
     <label>{{note.name}}: {{note.text}}</label><br>
@@ -73,6 +74,7 @@
       <!-- todo merge category column over multiple rows -->
       <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
+      <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
              (focusout)="updateSubentryCount(row, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
     </td>
@@ -123,6 +125,7 @@
 <a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
  [hidden]="!testing">My Cloud Firestore database link</a>
 
+<!-- TODO Categories has "details" to have this kinda info -->
 <!-- (Testing) display all categories and goals -->
 <!-- todo display entries of past dates -->
 <table [hidden]="!testing">

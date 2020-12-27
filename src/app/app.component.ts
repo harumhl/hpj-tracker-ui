@@ -50,6 +50,8 @@ export class AppComponent {
   };
   dataQueried: Subentry[] = [];
   dataQueriedInSchedules: Subentry[] = [];
+  // TODO hide for the rest of the day (wake up 6am)
+  // TODO select a few to focus now
   dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
 
