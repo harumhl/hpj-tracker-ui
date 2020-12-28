@@ -103,6 +103,10 @@ export class AppComponent {
     this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
       // todo display notes on top (yearly goal, monthly goal, quotes)
       this.notes = UtilService.toIterable(querySnapshot);
+      for (let i = 0; i < this.notes.length; i++) { // Firestore keeps it as '\n' and '\t', but it's read in as '\\n' and '\\t'
+        this.notes[i].text = this.notes[i].text.replace('\\n', '\n');
+        this.notes[i].text = this.notes[i].text.replace('\\t', '\t');
+      }
     });
 
     // Subscribe to goals from database

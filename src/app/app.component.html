@@ -1,7 +1,7 @@
 <!-- TODO tabs and new lines in notes -->
 <div *ngIf="display.notes" (click)="display.notes = false;">
   <div *ngFor="let note of this.notes">
-    <label>{{note.name}}: {{note.text}}</label><br>
+    <label style="white-space: pre-wrap">{{note.name}}: {{note.text}}</label><br>
   </div>
   <br>
 </div>

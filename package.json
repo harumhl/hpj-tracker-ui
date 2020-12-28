@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.4.1",
-  "description": "Clicking (or tapping) the chart and notes hides them (respectively)",
+  "version": "2.4.2",
+  "description": "Tab and new line characters in note texts are applied in HTML when displayed",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

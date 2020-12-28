@@ -63,6 +63,7 @@ Version | Date | Details
 2.3.1 | 2020-12-24 | Display overall completion rates of the past 7 days in console.log as well (not just chart)
 2.4.0 | 2020-12-25 | Added a link to my Firestore db + Display notes on top
 2.4.1 | 2020-12-25 | Clicking (or tapping) the chart and notes hides them (respectively)
+2.4.2 | 2020-12-28 | Tab and new line characters in note texts are applied in HTML when displayed
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
