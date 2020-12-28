@@ -1,20 +1,21 @@
 <!-- TODO tabs and new lines in notes -->
-<div *ngIf="display.notes" (click)="display.notes = false;">
+<div *ngIf="display.notes" (dblclick)="display.notes = false;">
   <div *ngFor="let note of this.notes">
-    <label style="white-space: pre-wrap">{{note.name}}: {{note.text}}</label><br>
+    <div style="white-space: pre-wrap">- {{note.name}}: {{note.text}}</div><br>
   </div>
   <br>
 </div>
 
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
-<ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
-           [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}"
-            (click)="display.topChart = false">
-  <e-series-collection>
-    <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
-  </e-series-collection>
-</ejs-chart>
+<div (dblclick)="display.topChart = false;">
+  <ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
+             [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
+    <e-series-collection>
+      <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
+    </e-series-collection>
+  </ejs-chart>
+</div>
 
 <!-- todo refresh button to refresh today's entry -->
 <label [ngClass]="{

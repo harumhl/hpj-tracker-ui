@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.4.2",
-  "description": "Tab and new line characters in note texts are applied in HTML when displayed",
+  "version": "2.4.3",
+  "description": "Double tap to hide chart and notes instead of single tap. Replaces all tabs and new line chars in note texts",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
