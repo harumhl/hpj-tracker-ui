@@ -13,6 +13,7 @@ export class SubentryTableComponent implements OnInit {
   @Input() dataToDisplay: any[] = [];
   @Input() categoryColors: object = {};
   @Input() timeToHighlight = ''; // todo should be optional
+  @Input() date = null;
 
   constructor(private dbService: DbService) { }
 
@@ -20,9 +21,10 @@ export class SubentryTableComponent implements OnInit {
   }
 
   updateSubentryCount(row, event) {
+    console.log(row, event);
     const newCount = parseFloat(event.target.value || 0);
     if (row.count !== newCount) {
-      this.dbService.updateSubentryCount(row.name, newCount);
+      this.dbService.updateSubentryCount(row.name, newCount, this.date);
     }
   }
 }

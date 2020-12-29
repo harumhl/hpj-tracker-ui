@@ -60,7 +60,7 @@
 <div style="display: block; overflow: scroll" class="div-table">
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
-                  [categoryColors]="categoryColors">
+                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()">
   </subentry-table>
 </div>
 
@@ -125,7 +125,7 @@
 </select>
 <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
                 [dataToDisplay]="this.dataQueriedPast[pastDate]"
-                [categoryColors]="categoryColors">
+                [categoryColors]="categoryColors" [date]="pastDate">
 </subentry-table>
 
 <!-- todo: charts

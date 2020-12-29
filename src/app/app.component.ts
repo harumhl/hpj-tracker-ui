@@ -104,10 +104,9 @@ export class AppComponent {
     // If already signed in, then hide login related HTML components and add any missing sub-entries
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.readAndWriteAfterLogin();
+        this.postLogin();
       }
     });
-    unsubscribe(); // unsubscribe in order to perform initial read and write just once
   }
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
@@ -174,21 +173,24 @@ export class AppComponent {
     firebase.auth().signInWithEmailAndPassword(this.email, password)
       .then((user) => {
         console.log(`Successfully logged in as ${this.email}`);
-        this.loggedIn = true;
-
-        // Hide login-related HTML components
-        document.getElementById('emailLabel').hidden = true;
-        document.getElementById('emailInput').hidden = true;
-        document.getElementById('passwordLabel').hidden = true;
-        document.getElementById('passwordInput').hidden = true;
-        document.getElementById('login').hidden = true;
-
-        this.readAndWriteAfterLogin();
       })
       .catch((error) => {
         (document.getElementById('login') as HTMLInputElement).disabled = false;
         console.error(`Failed to login: ${error.code} - ${error.message}`);
       });
+  }
+
+  postLogin() {
+    this.loggedIn = true;
+
+    // Hide login-related HTML components
+    document.getElementById('emailLabel').hidden = true;
+    document.getElementById('emailInput').hidden = true;
+    document.getElementById('passwordLabel').hidden = true;
+    document.getElementById('passwordInput').hidden = true;
+    document.getElementById('login').hidden = true;
+
+    this.readAndWriteAfterLogin();
   }
 
   readAndWriteAfterLogin() {

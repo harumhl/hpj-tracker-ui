@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.6.0",
-  "description": "Reading data only after login + moving templates to UtilService + Safari respects tab and new line chars without wrapping",
+  "version": "2.6.1",
+  "description": "Auto-login again with session + entries of past 7 days under Testing update the Firestore db correctly",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
