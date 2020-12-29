@@ -11,37 +11,6 @@ table {height: 100%;}
   table tr td input {width: 70px; height: 10px;}
 }
 
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  text-align: left;
-  padding: 3px 5px;
-}
-
-/* Fill background color based on completion rate*/
-.twenty-percent-done {
-  background: #fdfbf3;
-}
-.forty-percent-done {
-  background: #fbf6e7;
-}
-.sixty-percent-done {
-  background: #fae3e0;
-}
-.eighty-percent-done {
-  background: #fdc1dd;
-}
-.hundred-percent-done {
-  background: #ff9fda;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* Fill background color close in current time in schedule view */
-.time-to-highlight {
-  background: #99CCFF;
-}
-
 /* make scrollbar invisible */
 ::-webkit-scrollbar {
   background: transparent;

@@ -39,7 +39,7 @@ export class AppComponent {
   notes: Note[] = [];
 
   headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
-  categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored.
+  categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     Workout: '#e6fbff',
     Mind: '#fff7e1',
@@ -81,6 +81,10 @@ export class AppComponent {
   activeGoals: Goal[] = [];
   archivedGoals: Goal[] = [];
   saveMessage = '';
+  dataQueriedPast: object = {}; // object of Subentry[]
+  pastDates: string[] = []; // 7 past dates to select from
+  pastDate = ''; // date of selection
+
   // TODO calculate overall percentage and save whenever changes
   // todo bigger input boxes on web - testing
   // todo ngstyle instead for css
@@ -122,6 +126,7 @@ export class AppComponent {
     this.overallCompletionRates = [];
     for (let i = 0; i < this.numberOfDaysToDisplay; i++) {
       this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
+      this.pastDates.push('');
     }
 
     // Subscribe to today's entry (especially its subcollection) from database (for display)
@@ -145,6 +150,8 @@ export class AppComponent {
       this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
       const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length);
       this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
+      this.dataQueriedPast[this.dbService._getDateKey()] = this.dataQueried;
+      this.pastDates[this.numberOfDaysToDisplay - 1] = this.dbService._getDateKey();
       this.chart.refresh();
   });
 
@@ -172,6 +179,8 @@ export class AppComponent {
         const dateStr = this.dbService._getDateKey(date);
         const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
         this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
+        this.dataQueriedPast[dateStr] = dataQueried;
+        this.pastDates[i] = dateStr;
         console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
       });
     }

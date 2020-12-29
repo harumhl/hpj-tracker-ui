@@ -1,5 +1,7 @@
 <!-- TODO tabs and new lines in notes -->
-<div *ngIf="display.notes" (dblclick)="display.notes = false;">
+<!-- Notes -->
+<div *ngIf="!display.notes" (dblclick)="display.notes = !display.notes" class="collapsible">Notes</div>
+<div *ngIf="display.notes" (dblclick)="display.notes = !display.notes">
   <div *ngFor="let note of this.notes">
     <div style="white-space: pre-wrap">- {{note.name}}: {{note.text}}</div><br>
   </div>
@@ -8,7 +10,9 @@
 
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
-<div (dblclick)="display.topChart = false;">
+<!-- Chart -->
+<div *ngIf="!display.topChart" (dblclick)="display.topChart = !display.topChart" class="collapsible">Chart</div>
+<div (dblclick)="display.topChart = !display.topChart">
   <ejs-chart #topChart id="chart-container" *ngIf="display.topChart" (loaded)="reloadChart($event)" width="300" height="200"
              [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
     <e-series-collection>
@@ -48,42 +52,17 @@
 <button id="login" (click)="login()">login</button>
 
 <!-- Displaying data -->
-<div style="display: block; overflow: scroll"
-     [ngClass]="{'div-table-with-chart': this.display.topChart, 'div-table-no-chart': this.display.topChart === false}">
-<table>
-  <tr>
-    <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">
-      <label *ngIf="column !== 'goalCount'">{{column}}</label>
-      <label *ngIf="column === 'goalCount'">goal</label>
-    </th>
-  </tr>
-  <tr id="content-row" *ngFor="let row of this.dataToDisplay">
-    <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
-      'no-wrap': column === 'details',
-      'time-to-highlight': column === 'time' && this.timeToHighlight === row[column],
-      'hundred-percent-done': row['count'] >= row['goalCount'],
-      'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
-      'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
-      'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
-      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}"
-      style="background-color:{{categoryColors[row[column]]}}">
-      <!-- todo display data for the past 7 days OR the current week -->
-      <!-- todo merge category column over multiple rows -->
-      <!-- todo display streak -->
-      <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
-      <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
-      <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateSubentryCount(row, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
-    </td>
-  </tr>
-</table>
+<div style="display: block; overflow: scroll" class="div-table">
+  <subentry-table [loggedIn]="loggedIn" [headers]="headers"
+                  [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
+                  [categoryColors]="categoryColors">
+  </subentry-table>
 </div>
 
 {{version}} {{environment}}
 
 <!-- Testing -->
-<input id="testing" type="checkbox" [checked]="testing" (change)="testing = !testing; updateModifyInputElements('Modify Goal')">
-<label for="testing">testing</label>
+<div (dblclick)="testing = !testing" class="collapsible">Testing</div>
 <br>
 
 <!-- (Testing) Enter a new goal -->
@@ -123,29 +102,24 @@
  [hidden]="!testing">My Cloud Firestore database link</a>
 
 <!-- TODO Categories has "details" to have this kinda info -->
-<!-- (Testing) display all categories and goals -->
 <!-- todo display entries of past dates -->
-<table [hidden]="!testing">
-  <tr *ngFor="let row of this.categories">
-    <td *ngFor="let column of ['category']" >
-      <label>{{row[column]}}</label>
-    </td>
-  </tr>
-</table>
+<!-- (Testing) display all categories and goals -->
+<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']" [dataToDisplay]="this.categories"></subentry-table>
 <br>
 
 <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
 <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
-<table [hidden]="!testing">
-  <tr *ngFor="let row of this.goals">
-    <td *ngFor="let column of ['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
-      [ngStyle]="{'background-color': row.archived ? '#FF9999' : 'white'}">
-      <label>{{row[column]}}</label>
-    </td>
-  </tr>
-</table>
+<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
+                [dataToDisplay]="this.goals"></subentry-table>
+<br>
 
-
+<!-- (Testing) display data of past 7 days -->
+<label [hidden]="!testing">Past dates: </label>
+<select id="modifyPastEntry" [hidden]="!testing" [disabled]="loggedIn === false" (change)="pastDate = $event.target.value">
+  <option *ngFor="let date of pastDates" value="{{date}}">{{date}}</option>
+</select>
+<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
+                [dataToDisplay]="this.dataQueriedPast[pastDate]"></subentry-table>
 
 <!-- todo: charts
   - display completion rates over days for multiple goals (with selection options)

@@ -7,10 +7,12 @@ import {DatePipe} from '@angular/common';
 import { CategoryService, LegendService, TooltipService } from '@syncfusion/ej2-angular-charts';
 import { DataLabelService, LineSeriesService} from '@syncfusion/ej2-angular-charts';
 import {FormsModule} from '@angular/forms';
+import { SubentryTableComponent } from './subentry-table/subentry-table.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SubentryTableComponent
   ],
   imports: [
     BrowserModule,
