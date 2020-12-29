@@ -9,14 +9,14 @@
   <tr id="content-row" *ngFor="let row of this.dataToDisplay">
     <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
       'no-wrap': column === 'details',
+      'archived': row.archived,
       'time-to-highlight': column === 'time' && this.timeToHighlight === row[column],
       'hundred-percent-done': row['count'] >= row['goalCount'],
       'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
       'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
       'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
       'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5}"
-        style="background-color:{{categoryColors[row[column]]}}"
-        [ngStyle]="{'background-color': row.archived ? '#FF9999' : 'white'}">
+        style="background-color:{{categoryColors[row[column]]}}">
       <!-- todo display data for the past 7 days OR the current week -->
       <!-- todo merge category column over multiple rows -->
       <!-- todo display streak -->

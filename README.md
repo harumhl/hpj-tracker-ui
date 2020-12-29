@@ -67,6 +67,7 @@ Version | Date | Details
 2.4.3 | 2020-12-28 | Double tap to hide chart and notes instead of single tap. Replaces all tabs and new line chars in note texts
 2.4.4 | 2020-12-28 | Notes do not wrap while keeping \n and \t + collapsible bar for notes chart testing 
 2.5.0 | 2020-12-28 | Adding missed html components for v2.4.4 + A new component named 'subentry-table' to display table consistently across + display entries of past 7 days
+2.5.1 | 2020-12-28 | Fixed color display on subentry-table component
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

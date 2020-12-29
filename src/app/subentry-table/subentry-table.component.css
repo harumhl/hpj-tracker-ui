@@ -29,3 +29,6 @@ table, th, td {
   background: #99CCFF;
 }
 
+.archived {
+  background-color: #FF9999;
+}

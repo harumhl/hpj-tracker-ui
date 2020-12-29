@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.5.0",
-  "description": "Adding missed html components for v2.4.4 + A new component named 'subentry-table' to display table consistently across + display entries of past 7 days",
+  "version": "2.5.1",
+  "description": "Fixed color display on subentry-table component",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
