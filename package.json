@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.4.3",
-  "description": "Double tap to hide chart and notes instead of single tap. Replaces all tabs and new line chars in note texts",
+  "version": "2.4.4",
+  "description": "Notes do not wrap while keeping \n and \t + collapsible bar for notes chart testing",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

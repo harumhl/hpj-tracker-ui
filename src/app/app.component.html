@@ -38,10 +38,6 @@
 <label for="displayFullInfo" *ngIf="display.allOptions">full display</label>
 <input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)" *ngIf="display.allOptions">
 <label for="displayInSchedules" *ngIf="display.allOptions">in schedule</label>
-<input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)" *ngIf="display.allOptions">
-<label for="displayTopChart" *ngIf="display.allOptions">display chart</label>
-<input id="displayNotes" type="checkbox" [checked]="display.notes" (change)="toggle('notes',!display.notes)" *ngIf="display.allOptions">
-<label for="displayNotes" *ngIf="display.allOptions">display notes</label>
 <br>
 
 <!-- Log in to see data -->

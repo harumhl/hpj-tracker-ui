@@ -82,8 +82,8 @@ export class AppComponent {
   archivedGoals: Goal[] = [];
   saveMessage = '';
   // TODO calculate overall percentage and save whenever changes
-  // TODO bigger input boxes on web - testing
-  // TODO ngstyle instead for css
+  // todo bigger input boxes on web - testing
+  // todo ngstyle instead for css
 
   // TODO subscribe to goals - false
   // TODO document ID can have spaces, so don't try to remove the spaces when writing

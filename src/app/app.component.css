@@ -1,14 +1,12 @@
 /* Adjusting height based on window/screen height */
 table {height: 100%;}
-@media screen and (min-height: 200px) { /* Designed for iPhone */
-  .div-table-with-chart {height: 400px;}
-  .div-table-no-chart {height: 600px;}
+@media screen and (min-height: 200px) { /* Designed for iPhone 11 */
+  .div-table {height: 505px;}
   table {font-size: 10px; padding: 0 5px;}
   table tr td input {width: 30px; height: 8px;}
 }
 @media screen and (min-height: 900px) { /* Designed for desktop */
-  .div-table-with-chart {height: 700px;}
-  .div-table-no-chart {height: 900px;}
+  .div-table {height: 790px;}
   table {font-size: 15px; padding:5px 5px;}
   table tr td input {width: 70px; height: 10px;}
 }
@@ -52,4 +50,10 @@ table, th, td {
 /* Display all text in one line*/
 .no-wrap {
   white-space: nowrap;
+}
+
+/* Collapsible */
+.collapsible {
+  background-color: #DDDDDD;
+  padding: 5px 10px;
 }
