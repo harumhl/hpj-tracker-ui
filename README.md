@@ -1,5 +1,6 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+A habit tracker (a type of "to-do list") that can display entries by categories or by time (aka expected times of completion).
+It displays a chart of completion rates over the past few days and notes on top to encourage users to keep up with their tasks. 
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
@@ -22,8 +23,8 @@ With a new feature of displaying 7 days' completion rates by reading in the data
 
 => "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
 
-2.  Installation process
-3.	Software dependencies
+2.  Installation process (npm install)
+3.	Software dependencies (Firestore)
 4.	Latest releases
 5.	API references
 
@@ -68,6 +69,7 @@ Version | Date | Details
 2.4.4 | 2020-12-28 | Notes do not wrap while keeping \n and \t + collapsible bar for notes chart testing 
 2.5.0 | 2020-12-28 | Adding missed html components for v2.4.4 + A new component named 'subentry-table' to display table consistently across + display entries of past 7 days
 2.5.1 | 2020-12-28 | Fixed color display on subentry-table component
+2.6.0 | 2020-12-29 | Reading data only after login + moving templates to UtilService + Safari respects tab and new line chars without wrapping
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

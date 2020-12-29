@@ -36,4 +36,40 @@ export class UtilService {
   static deepCopy(obj: any) {
     return JSON.parse(JSON.stringify(obj));
   }
+
+  // Check something over intervals
+  static setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
+    let timesRun = 0;
+    const interval = setInterval(() => {
+      timesRun += 1;
+      callbackForEveryInterval();
+      if (timesRun === intervalCount){
+        callbackForClearInterval();
+        clearInterval(interval);
+      }
+    }, frequencyMs);
+  }
+
+  // Remove duplicate elements in the array
+  static getUniqueInArray(array: any[]) {
+    return array.filter((value, index, self) => self.indexOf(value) === index);
+  }
+
+  // Add an element in the array (front or back)
+  static addElemInArray(array: any[], elem: any, front = false) {
+    if (front) {
+      return [elem].concat(array);
+    } else {
+      return array.concat([elem]);
+    }
+  }
+
+  // Remove an element in the array
+  static removeElemInArray(array: any[], elem: any) {
+    const index = array.indexOf(elem, 0);
+    if (index > -1) {
+      array.splice(index, 1);
+    }
+    return array;
+  }
 }

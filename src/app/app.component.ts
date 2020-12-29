@@ -50,6 +50,7 @@ export class AppComponent {
   };
   dataQueried: Subentry[] = [];
   dataQueriedInSchedules: Subentry[] = [];
+  timeToHighlight: string;
   // TODO hide for the rest of the day (wake up 6am)
   // TODO select a few to focus now
   dataToDisplay: Subentry[] = [];
@@ -58,20 +59,18 @@ export class AppComponent {
   @ViewChild('topChart')
   public chart: ChartComponent;
   numberOfDaysToDisplay = 8;
-  overallCompletionRates: any[];
+  overallCompletionRates: any[] = [];
   interval;
   chartLoaded = false;
 
-  display = {
+  display = { // whether to display each component or not
     allOptions: false,
     inSchedules: true, // todo if goal has multiple expected times of completion and there's future one then hide the past one
     incompleteOnly: true,
     fullInfo: true,
-    topChart: true, // todo display more dates, display per category
-    notes: true,
+    topChart: false, // todo display more dates, display per category
+    notes: false,
   };
-
-  timeToHighlight: string;
 
   testing = false;
   categoryList: string[];
@@ -89,7 +88,6 @@ export class AppComponent {
   // todo bigger input boxes on web - testing
   // todo ngstyle instead for css
 
-  // TODO subscribe to goals - false
   // TODO document ID can have spaces, so don't try to remove the spaces when writing
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
@@ -103,112 +101,29 @@ export class AppComponent {
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
 
-    // Reading notes
-    this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
-      // todo display notes on top (yearly goal, monthly goal, quotes)
-      this.notes = UtilService.toIterable(querySnapshot);
-      for (let i = 0; i < this.notes.length; i++) { // Firestore keeps it as '\n' and '\t', but it's read in as '\\n' and '\\t'
-        this.notes[i].text = this.notes[i].text.replace(/\\n/g, '\n');
-        this.notes[i].text = this.notes[i].text.replace(/\\t/g, '\t');
-      }
-    });
-
-    // Subscribe to goals from database
-    this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
-      this.goals = UtilService.toIterable(querySnapshot);
-      this.goalList = this.goals.map(goal => goal.name);
-
-      this.activeGoals = this.goals.filter(g => g.archived === false);
-      this.archivedGoals = this.goals.filter(g => g.archived);
-    });
-
-    // Set up overall completion rates array for the top chart (modified in two different sections of code)
-    this.overallCompletionRates = [];
-    for (let i = 0; i < this.numberOfDaysToDisplay; i++) {
-      this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
-      this.pastDates.push('');
-    }
-
-    // Subscribe to today's entry (especially its subcollection) from database (for display)
-    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
-      this.dataQueried = UtilService.toIterable(querySnapshot); // todo order by category first then by custom
-      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
-
-      // Add 'unit' and 'details' from goals to subcollections in entry for display
-      for (const queriedSubentry of this.dataQueried) {
-        const goal = this.goals.filter(g => g.name === queriedSubentry.name)[0];
-        queriedSubentry.unit = goal.unit;
-        queriedSubentry.details = goal.details;
-        queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
-      }
-
-      this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
-      this.toggle('inSchedules', this.display.inSchedules);
-
-      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
-      // Calculate overall completion rate to display
-      this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
-      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length);
-      this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
-      this.dataQueriedPast[this.dbService._getDateKey()] = this.dataQueried;
-      this.pastDates[this.numberOfDaysToDisplay - 1] = this.dbService._getDateKey();
-      this.chart.refresh();
-  });
-
-    /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
     // If already signed in, then hide login related HTML components and add any missing sub-entries
-    firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.postLogin();
+        this.readAndWriteAfterLogin();
       }
     });
-    // Subscribe to categories from database
-    this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
-      this.categories = UtilService.toIterable(querySnapshot);
-      this.categoryList = this.categories.map(category => category.category);
-    });
-    // Computing overall completion rates of the past 7 days (today will be added from above as the last element)
-    for (let i = 0; i < this.numberOfDaysToDisplay - 1; i++) {
-      // date object has to be created one by one, since readSubcollections..() callback needs access to different dates
-      const date = new Date();
-      date.setDate(date.getDate() - (this.numberOfDaysToDisplay - 1) + i);
-
-      // TODO allow modifying sub-entries of the past 7 days since I read these in anyway
-      this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
-        const dataQueried = UtilService.toIterable(querySnapshot);
-        const dateStr = this.dbService._getDateKey(date);
-        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
-        this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
-        this.dataQueriedPast[dateStr] = dataQueried;
-        this.pastDates[i] = dateStr;
-        console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
-      });
-    }
+    unsubscribe(); // unsubscribe in order to perform initial read and write just once
   }
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
-  reloadChart(event) {
+  reloadChart() {
     this.interval = setInterval(() => {
-      if (this.chartLoaded === false && this.overallCompletionRates.every(elem => elem.date !== '0')) {
-        console.log('refresh in reload');
-        event.chart.refresh();
+      // If the data is ready, then enable the chart
+      if (this.chartLoaded === false && this.overallCompletionRates.length > 0 && this.overallCompletionRates.every(elem => elem.date !== '0')) {
+        this.display.topChart = true;
+      }
+      // If the chart is enabled, then actually display the data on chart by refreshing/rerendering
+      if (this.chart !== undefined) {
+        this.chart.refresh();
         this.chartLoaded = true;
         clearInterval(this.interval);
       }
     }, 1000);
-  }
-
-  // Check something over intervals
-  setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
-    let timesRun = 0;
-    const interval = setInterval(() => {
-      timesRun += 1;
-      callbackForEveryInterval();
-      if (timesRun === intervalCount){
-        callbackForClearInterval();
-        clearInterval(interval);
-      }
-    }, frequencyMs);
   }
 
   // Convert raw data format from the database to a format for schedule view (deep-copying since 'time' goes string[] -> string)
@@ -259,7 +174,16 @@ export class AppComponent {
     firebase.auth().signInWithEmailAndPassword(this.email, password)
       .then((user) => {
         console.log(`Successfully logged in as ${this.email}`);
-        this.postLogin();
+        this.loggedIn = true;
+
+        // Hide login-related HTML components
+        document.getElementById('emailLabel').hidden = true;
+        document.getElementById('emailInput').hidden = true;
+        document.getElementById('passwordLabel').hidden = true;
+        document.getElementById('passwordInput').hidden = true;
+        document.getElementById('login').hidden = true;
+
+        this.readAndWriteAfterLogin();
       })
       .catch((error) => {
         (document.getElementById('login') as HTMLInputElement).disabled = false;
@@ -267,20 +191,87 @@ export class AppComponent {
       });
   }
 
-  postLogin() {
-    this.loggedIn = true;
-
-    // Hide login-related HTML components
-    document.getElementById('emailLabel').hidden = true;
-    document.getElementById('emailInput').hidden = true;
-    document.getElementById('passwordLabel').hidden = true;
-    document.getElementById('passwordInput').hidden = true;
-    document.getElementById('login').hidden = true;
-
-    // this.initializeDatabase();
+  readAndWriteAfterLogin() {
+    // this.initializeDatabase(); // to be performed only after db refresh - though its content is outdated
 
     // Add any missing entry & sub-entries
     this.dbService.newEntry(this.dbService.today);
+
+    // Read notes
+    this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
+      this.notes = UtilService.toIterable(querySnapshot);
+      for (const note of this.notes) { // Firestore keeps it as '\n' and '\t', but it's read in as '\\n' and '\\t'
+        note.text = note.text.replace(/\\n/g, '\n');
+        note.text = note.text.replace(/\\t/g, '\t');
+      }
+      this.display.notes = true;
+    });
+
+    // Subscribe to goals from database
+    this.dbService.readAll(false, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
+      this.goals = UtilService.toIterable(querySnapshot);
+      this.goalList = this.goals.map(goal => goal.name);
+
+      this.activeGoals = this.goals.filter(g => g.archived === false);
+      this.archivedGoals = this.goals.filter(g => g.archived);
+    });
+
+    // Set up overall completion rates array for the top chart (modified in two different sections of code)
+    this.overallCompletionRates = [];
+    for (let i = 0; i < this.numberOfDaysToDisplay; i++) {
+      this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
+      this.pastDates.push('');
+    }
+
+    // Subscribe to today's entry (especially its subcollection) from database (for display)
+    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
+      this.dataQueried = UtilService.toIterable(querySnapshot); // todo order by category first then by custom
+      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
+
+      // Add 'unit' and 'details' from goals to subcollections in entry for display
+      for (const queriedSubentry of this.dataQueried) {
+        const goal = this.goals.filter(g => g.name === queriedSubentry.name)[0];
+        queriedSubentry.unit = goal.unit;
+        queriedSubentry.details = goal.details;
+        queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
+      }
+
+      this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
+      this.toggle('inSchedules', this.display.inSchedules);
+
+      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
+      // Calculate overall completion rate to display
+      this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
+      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length);
+      this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
+      this.dataQueriedPast[this.dbService._getDateKey()] = this.dataQueried;
+      this.pastDates[this.numberOfDaysToDisplay - 1] = this.dbService._getDateKey();
+    });
+
+    /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
+    // Subscribe to categories from database
+    this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
+      this.categories = UtilService.toIterable(querySnapshot);
+      this.categoryList = this.categories.map(category => category.category);
+    });
+    // Computing overall completion rates of the past 7 days (today will be added from above as the last element)
+    this.reloadChart();
+    for (let i = 0; i < this.numberOfDaysToDisplay - 1; i++) {
+      // date object has to be created one by one, since readSubcollections..() callback needs access to different dates
+      const date = new Date();
+      date.setDate(date.getDate() - (this.numberOfDaysToDisplay - 1) + i);
+
+      // TODO allow modifying sub-entries of the past 7 days since I read these in anyway
+      this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
+        const dataQueried = UtilService.toIterable(querySnapshot);
+        const dateStr = this.dbService._getDateKey(date);
+        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
+        this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
+        this.dataQueriedPast[dateStr] = dataQueried;
+        this.pastDates[i] = dateStr;
+        console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
+      });
+    }
   }
 
   // Can't & Shouldn't rely on this much longer, since deleting the whole collections and adding them new will eat up the quota in the newer (Firestore) database
@@ -371,13 +362,14 @@ export class AppComponent {
       return;
     } else if (id === 'fullInfo') { // Change headers for displaying full info
       if (this.display.fullInfo) {
-        this.headers = this.addElemInArray(this.headers, 'category', true);
-        this.headers = this.addElemInArray(this.headers, 'unit');
-        this.headers = this.addElemInArray(this.headers, 'details');
+        this.headers = UtilService.addElemInArray(this.headers, 'category', true);
+        this.headers = UtilService.addElemInArray(this.headers, 'time', true);
+        this.headers = UtilService.addElemInArray(this.headers, 'unit');
+        this.headers = UtilService.addElemInArray(this.headers, 'details');
       } else {
-        this.headers = this.removeElemInArray(this.headers, 'category');
-        this.headers = this.removeElemInArray(this.headers, 'unit');
-        this.headers = this.removeElemInArray(this.headers, 'details');
+        this.headers = UtilService.removeElemInArray(this.headers, 'category');
+        this.headers = UtilService.removeElemInArray(this.headers, 'unit');
+        this.headers = UtilService.removeElemInArray(this.headers, 'details');
       }
     }
 
@@ -398,7 +390,7 @@ export class AppComponent {
 
       // Display time to complete with restructured data (deep-copying since 'time' goes string[] -> string)
       if (this.display.inSchedules) {
-        this.headers = this.addElemInArray(this.headers, 'time', true);
+        this.headers = UtilService.addElemInArray(this.headers, 'time', true);
 
         // Figure out which time in schedule to highlight
         if (this.dataToDisplay.length > 0) {
@@ -416,11 +408,11 @@ export class AppComponent {
           }
         }
       } else {
-        this.headers = this.removeElemInArray(this.headers, 'time');
+        this.headers = UtilService.removeElemInArray(this.headers, 'time');
       }
     }
 
-    this.headers = this.getUniqueInArray(this.headers);
+    this.headers = UtilService.getUniqueInArray(this.headers);
   }
 
   computeOverallCompletionRate(array: Subentry[]) {
@@ -436,25 +428,6 @@ export class AppComponent {
       overallCompletionRate *= 100;
       return overallCompletionRate;
     }
-  }
-
-  getUniqueInArray(array: any[]) {
-    return array.filter((value, index, self) => self.indexOf(value) === index);
-  }
-
-  addElemInArray(array: any[], elem: any, front = false) {
-    if (front) {
-      return [elem].concat(array);
-    } else {
-      return array.concat([elem]);
-    }
-  }
-  removeElemInArray(array: any[], elem: any) {
-    const index = array.indexOf(elem, 0);
-    if (index > -1) {
-      array.splice(index, 1);
-    }
-    return array;
   }
 
   // Fill up input elements automatically based on name selection
@@ -497,8 +470,8 @@ export class AppComponent {
       expectedTimesOfCompletion = expectedTimesOfCompletion.split(',');
 
       this.dbService.newGoal(category, name, archived, goalCount, unit, expectedTimesOfCompletion, details,
-        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; }); },
-        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'New Goal failed'; }, () => { this.saveMessage = ''; }); });
+        () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; }); },
+        () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal failed'; }, () => { this.saveMessage = ''; }); });
     } else if (type === 'Modify Goal') {
       const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
       const goalCount = (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value;
@@ -515,8 +488,8 @@ export class AppComponent {
       expectedTimeOfCompletion = expectedTimeOfCompletion.split(',');
 
       this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimeOfCompletion, details,
-        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
-        () => { this.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => { this.saveMessage = ''; }); });
+        () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
+        () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => { this.saveMessage = ''; }); });
     }
   }
 }

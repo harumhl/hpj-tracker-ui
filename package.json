@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.5.1",
-  "description": "Fixed color display on subentry-table component",
+  "version": "2.6.0",
+  "description": "Reading data only after login + moving templates to UtilService + Safari respects tab and new line chars without wrapping",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
