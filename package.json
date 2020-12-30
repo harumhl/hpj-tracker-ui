@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.7.0",
-  "description": "Highlights specific phrases in notes",
+  "version": "2.7.1",
+  "description": "Prevent auto-zoom on input select in subentry-table + + Display 'category' column only on desktop by default",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
