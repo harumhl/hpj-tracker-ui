@@ -20,6 +20,7 @@ export class AppComponent {
   title = 'HPJ Tracker';
   version = 'v' + version;
   environment = environment.environment;
+  mobile: boolean = window.screen.height <= 896;
 
   email = 'haru.mhl@gmail.com';
   loggedIn = false;
@@ -38,7 +39,7 @@ export class AppComponent {
 
   notes: Note[] = [];
 
-  headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     Workout: '#e6fbff',
@@ -101,8 +102,12 @@ export class AppComponent {
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
 
+    if (!this.mobile) { // Display 'category' column only on desktop by default
+      this.headers = UtilService.addElemInArray(this.headers, 'category', true);
+    }
+
     // If already signed in, then hide login related HTML components and add any missing sub-entries
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.postLogin();
       }
