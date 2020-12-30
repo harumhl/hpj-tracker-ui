@@ -2,7 +2,8 @@
 <div *ngIf="!display.notes" (dblclick)="display.notes = !display.notes" class="collapsible">Notes</div>
 <div *ngIf="display.notes" (dblclick)="display.notes = !display.notes">
   <div *ngFor="let note of this.notes">
-    <div style="white-space: pre; word-wrap: normal;">- {{note.name}}: {{note.text}}</div><br>
+    <span style="white-space: pre; word-wrap: normal;" [innerHTML]="'- ' + note.name + ': ' + note.text | highlight : note.highlights"></span>
+    <br>
   </div>
   <br>
 </div>

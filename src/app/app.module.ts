@@ -8,11 +8,13 @@ import { CategoryService, LegendService, TooltipService } from '@syncfusion/ej2-
 import { DataLabelService, LineSeriesService} from '@syncfusion/ej2-angular-charts';
 import {FormsModule} from '@angular/forms';
 import { SubentryTableComponent } from './subentry-table/subentry-table.component';
+import {HighLightPipe} from './highlightpipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SubentryTableComponent
+    SubentryTableComponent,
+    HighLightPipe
   ],
   imports: [
     BrowserModule,

@@ -71,6 +71,7 @@ Version | Date | Details
 2.5.1 | 2020-12-28 | Fixed color display on subentry-table component
 2.6.0 | 2020-12-29 | Reading data only after login + moving templates to UtilService + Safari respects tab and new line chars without wrapping
 2.6.1 | 2020-12-29 | Auto-login again with session + entries of past 7 days under Testing update the Firestore db correctly
+2.7.0 | 2020-12-30 | Highlights specific phrases in notes
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
