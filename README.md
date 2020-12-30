@@ -21,6 +21,8 @@ Adding --outputHashing=all flag makes the browser to retrieve the newer website 
 With a new feature of displaying 7 days' completion rates by reading in the data and computing, daily read quota was met
  during development and it had to be put on a pause. Here's to check the quotas: https://console.cloud.google.com/appengine/quotadetails
 
+After closing out, you may need to "firebase login" again (maybe after "firebase logout"), or even "firebase login --no-localhost"
+
 => "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
 
 2.  Installation process (npm install)
@@ -73,6 +75,7 @@ Version | Date | Details
 2.6.1 | 2020-12-29 | Auto-login again with session + entries of past 7 days under Testing update the Firestore db correctly
 2.7.0 | 2020-12-30 | Highlights specific phrases in notes
 2.7.1 | 2020-12-30 | Display 'category' column only on desktop by default
+2.8.0 | 2020-12-30 | Old table css is correctly applied to subentry-table + the web can act as a standalone app on iPhone without using Safari UI (PWA installation)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

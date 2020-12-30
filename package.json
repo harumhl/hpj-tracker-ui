@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.7.1",
-  "description": "Prevent auto-zoom on input select in subentry-table + + Display 'category' column only on desktop by default",
+  "version": "2.8.0",
+  "description": "Old table css is correctly applied to subentry-table + the web can act as a standalone app on iPhone without using Safari UI (PWA installation)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
