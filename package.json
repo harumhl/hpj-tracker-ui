@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
   "version": "2.8.1",
-  "description": "Patching on PWA installation (removed unused component) + double tapping any part of Testing will hide it",
+  "description": "Generate build timestamp",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -24,6 +24,8 @@
     "@syncfusion/ej2-angular-charts": "^18.4.30",
     "angular-in-memory-web-api": "~0.11.0",
     "firebase": "^8.2.0",
+    "moment-timezone": "^0.5.32",
+    "replace-in-file": "^6.1.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

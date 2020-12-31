@@ -23,7 +23,10 @@ With a new feature of displaying 7 days' completion rates by reading in the data
 
 After closing out, you may need to "firebase login" again (maybe after "firebase logout"), or even "firebase login --no-localhost"
 
-=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
+v2.8.2 started adding a build timestamp on the bottom next to the version and running "node ./timestamp.js" is
+ required to generate the build timestamp in environment.ts.
+
+=> "node ./timestamp.js && node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
 
 2.  Installation process (npm install)
 3.	Software dependencies (Firestore)
@@ -77,7 +80,7 @@ Version | Date | Details
 2.7.1 | 2020-12-30 | Display 'category' column only on desktop by default
 2.8.0 | 2020-12-30 | Old table css is correctly applied to subentry-table + the web can act as a standalone app on iPhone without using Safari UI (PWA installation)
 2.8.1 | 2020-12-30 | Patching on PWA installation (removed unused component) + double tapping any part of Testing will hide it
-2.8.2 | ?
+2.8.2 | 2020-12-30 | Generate build timestamp
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

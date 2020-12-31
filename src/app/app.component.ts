@@ -19,6 +19,7 @@ import {Note} from './model/note.model';
 export class AppComponent {
   title = 'HPJ Tracker';
   version = 'v' + version;
+  buildTimestamp = environment.buildTimestamp;
   environment = environment.environment;
   mobile: boolean = window.screen.height <= 896;
 
