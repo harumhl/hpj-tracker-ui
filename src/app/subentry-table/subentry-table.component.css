@@ -4,7 +4,7 @@
 }
 @media screen and (min-height: 900px) { /* Designed for desktop */
   table {font-size: 15px; padding: 5px 5px;}
-  table tr td input {width: 70px; height: 15px;}
+  table tr td input {width: 70px; height: 15px; font-size: 15px;}
 }
 
 table, th, td {

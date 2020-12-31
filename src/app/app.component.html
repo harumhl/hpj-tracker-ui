@@ -12,8 +12,8 @@
 <!-- todo week-by-week completion rate chart? -->
 <!-- Chart -->
 <div *ngIf="!display.topChart" (dblclick)="toggle('topChart', !display.topChart)" class="collapsible">Chart</div>
-<div (dblclick)="toggle('topChart', !display.topChart)">
-  <ejs-chart #topChart id="overall-completion-rates-chart" *ngIf="display.topChart" width="300" height="200"
+<div *ngIf="display.topChart" (dblclick)="toggle('topChart', !display.topChart)">
+  <ejs-chart #topChart id="overall-completion-rates-chart" width="300" height="200"
              [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
     <e-series-collection>
       <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
@@ -58,7 +58,7 @@
 <button id="login" (click)="login()">login</button>
 
 <!-- Displaying data -->
-<div style="display: block; overflow: scroll" class="div-table">
+<div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
                   [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()">

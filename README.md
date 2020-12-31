@@ -76,7 +76,8 @@ Version | Date | Details
 2.7.0 | 2020-12-30 | Highlights specific phrases in notes
 2.7.1 | 2020-12-30 | Display 'category' column only on desktop by default
 2.8.0 | 2020-12-30 | Old table css is correctly applied to subentry-table + the web can act as a standalone app on iPhone without using Safari UI (PWA installation)
-2.8.1 | 2020-12-30 | double tapping any part of Testing will hide it
+2.8.1 | 2020-12-30 | Patching on PWA installation (removed unused component) + double tapping any part of Testing will hide it
+2.8.2 | ?
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
