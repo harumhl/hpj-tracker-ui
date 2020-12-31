@@ -116,7 +116,7 @@
   <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
   <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
   <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
-                  [dataToDisplay]="this.goals"></subentry-table>
+                  [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors"></subentry-table>
   <br>
 
   <!-- (Testing) display data of past 7 days -->

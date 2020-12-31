@@ -41,7 +41,7 @@ export class AppComponent {
   notes: Note[] = [];
 
   headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
-  categoryColors: object = { // todo instead of here, category in db should have another key/column to have this color value stored
+  categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     Workout: '#e6fbff',
     Mind: '#fff7e1',
@@ -200,6 +200,11 @@ export class AppComponent {
     this.readAndWriteAfterLogin();
   }
 
+  sortByCategory(array: any[]) {
+    array.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }});
+    return array;
+  }
+
   readAndWriteAfterLogin() {
     // this.initializeDatabase(); // to be performed only after db refresh - though its content is outdated
 
@@ -235,7 +240,7 @@ export class AppComponent {
     // Subscribe to today's entry (especially its subcollection) from database (for display)
     this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
       this.dataQueried = UtilService.toIterable(querySnapshot); // todo order by category first then by custom
-      this.dataQueried.sort((a, b) => {if (a.category > b.category) { return 1; } else if (a.category < b.category) { return -1; } else { return 0; }}); // todo temp
+      this.dataQueried = this.sortByCategory(this.dataQueried);
 
       // Add 'unit' and 'details' from goals to subcollections in entry for display
       for (const queriedSubentry of this.dataQueried) {
