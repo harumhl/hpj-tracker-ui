@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.8.0",
-  "description": "Old table css is correctly applied to subentry-table + the web can act as a standalone app on iPhone without using Safari UI (PWA installation)",
+  "version": "2.8.1",
+  "description": "Patching on PWA installation (removed unused component) + double tapping any part of Testing will hide it",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
