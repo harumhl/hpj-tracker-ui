@@ -124,6 +124,7 @@ export class AppComponent {
       // If the chart is enabled, then actually display the data on chart by refreshing/rerendering
       if (this.chart !== undefined) {
         this.chart.refresh();
+        this.toggle('topChart', true);
         this.chartLoaded = true;
         clearInterval(this.interval);
       }
@@ -211,7 +212,7 @@ export class AppComponent {
         note.text = note.text.replace(/\\n/g, '\n');
         note.text = note.text.replace(/\\t/g, '\t');
       }
-      this.display.notes = true;
+      this.toggle('notes', true);
     });
 
     // Subscribe to goals from database

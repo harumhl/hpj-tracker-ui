@@ -1,6 +1,6 @@
 <!-- Notes -->
-<div *ngIf="!display.notes" (dblclick)="display.notes = !display.notes" class="collapsible">Notes</div>
-<div *ngIf="display.notes" (dblclick)="display.notes = !display.notes">
+<div *ngIf="!display.notes" (dblclick)="toggle('notes', !display.notes)" class="collapsible">Notes</div>
+<div *ngIf="display.notes" (dblclick)="toggle('notes', !display.notes)">
   <div *ngFor="let note of this.notes">
     <span style="white-space: pre; word-wrap: normal;" [innerHTML]="'- ' + note.name + ': ' + note.text | highlight : note.highlights"></span>
     <br>
@@ -11,8 +11,8 @@
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
 <!-- Chart -->
-<div *ngIf="!display.topChart" (dblclick)="display.topChart = !display.topChart" class="collapsible">Chart</div>
-<div (dblclick)="display.topChart = !display.topChart">
+<div *ngIf="!display.topChart" (dblclick)="toggle('topChart', !display.topChart)" class="collapsible">Chart</div>
+<div (dblclick)="toggle('topChart', !display.topChart)">
   <ejs-chart #topChart id="overall-completion-rates-chart" *ngIf="display.topChart" width="300" height="200"
              [primaryXAxis]="{valueType:'Category', title: 'Dates'}" [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents'}">
     <e-series-collection>
@@ -70,64 +70,65 @@
 <!-- Testing -->
 <div (dblclick)="testing = !testing" class="collapsible">Testing</div>
 <br>
+<div (dblclick)="testing = false">
+  <!-- (Testing) Enter a new goal -->
+  <div [hidden]="!testing">
+    <form (submit)="save('New Goal')">
+      <label>New goal: </label>
+      <select id="newGoalCategory" [disabled]="loggedIn === false">
+        <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
+      </select>
+      <input id="newGoalName" placeholder="name" style="width: 100px" [disabled]="loggedIn === false" required>
+      <input id="newGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false" required>
+      <input id="newGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false" required>
+      <input id="newGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false" required>
+      <input id="newGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
+      <input type="submit" value="save">
+    </form>
+  </div>
 
-<!-- (Testing) Enter a new goal -->
-<div [hidden]="!testing">
-  <form (submit)="save('New Goal')">
-    <label>New goal: </label>
-    <select id="newGoalCategory" [disabled]="loggedIn === false">
-      <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
-    </select>
-    <input id="newGoalName" placeholder="name" style="width: 100px" [disabled]="loggedIn === false" required>
-    <input id="newGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false" required>
-    <input id="newGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false" required>
-    <input id="newGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false" required>
-    <input id="newGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-    <input type="submit" value="save">
-  </form>
+  <!-- (Testing) Update an existing goal -->
+  <div [hidden]="!testing">
+    <form (ngSubmit)="save('Modify Goal')">
+      <label>Modify goal: </label>
+      <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
+        <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
+      </select>
+      <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
+      <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
+      <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
+      <input id="modifyGoalExpectedTimesOfCompletion" placeholder="*time to complete" style="width: 100px" [disabled]="loggedIn === false">
+      <input type="submit" value="save">
+    </form>
+  </div>
+
+  {{saveMessage}}
+
+  <a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
+     [hidden]="!testing">My Cloud Firestore database link</a>
+
+  <!-- TODO Categories has "details" to have this kinda info -->
+  <!-- todo display entries of past dates -->
+  <!-- (Testing) display all categories and goals -->
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']" [dataToDisplay]="this.categories"></subentry-table>
+  <br>
+
+  <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
+  <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
+                  [dataToDisplay]="this.goals"></subentry-table>
+  <br>
+
+  <!-- (Testing) display data of past 7 days -->
+  <label [hidden]="!testing">Past dates: </label>
+  <select id="modifyPastEntry" [hidden]="!testing" [disabled]="loggedIn === false" (change)="pastDate = $event.target.value">
+    <option *ngFor="let date of pastDates" value="{{date}}">{{date}}</option>
+  </select>
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
+                  [dataToDisplay]="this.dataQueriedPast[pastDate]"
+                  [categoryColors]="categoryColors" [date]="pastDate">
+  </subentry-table>
 </div>
-
-<!-- (Testing) Update an existing goal -->
-<div [hidden]="!testing">
-  <form (ngSubmit)="save('Modify Goal')">
-    <label>Modify goal: </label>
-    <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
-      <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
-    </select>
-    <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
-    <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
-    <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-    <input id="modifyGoalExpectedTimesOfCompletion" placeholder="*time to complete" style="width: 100px" [disabled]="loggedIn === false">
-    <input type="submit" value="save">
-  </form>
-</div>
-
-{{saveMessage}}
-
-<a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
- [hidden]="!testing">My Cloud Firestore database link</a>
-
-<!-- TODO Categories has "details" to have this kinda info -->
-<!-- todo display entries of past dates -->
-<!-- (Testing) display all categories and goals -->
-<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']" [dataToDisplay]="this.categories"></subentry-table>
-<br>
-
-<label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
-<label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
-<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
-                [dataToDisplay]="this.goals"></subentry-table>
-<br>
-
-<!-- (Testing) display data of past 7 days -->
-<label [hidden]="!testing">Past dates: </label>
-<select id="modifyPastEntry" [hidden]="!testing" [disabled]="loggedIn === false" (change)="pastDate = $event.target.value">
-  <option *ngFor="let date of pastDates" value="{{date}}">{{date}}</option>
-</select>
-<subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
-                [dataToDisplay]="this.dataQueriedPast[pastDate]"
-                [categoryColors]="categoryColors" [date]="pastDate">
-</subentry-table>
 
 <!-- todo: charts
   - display completion rates over days for multiple goals (with selection options)
