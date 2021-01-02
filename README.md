@@ -82,6 +82,7 @@ Version | Date | Details
 2.8.1 | 2020-12-30 | Patching on PWA installation (removed unused component) + double tapping any part of Testing will hide it
 2.8.2 | 2020-12-30 | Generate build timestamp
 3.0.0 | 2021-01-02 | goals in Testing is sorted by category and shows with category color + the primary key (aka documentId) for 'goals' is now category_name instead of just goal name + new/modify goal dropdown gets at-0 item as default
+3.0.1 | 2021-01-02 | documentId in document itself is consistent with the actual documentId (no spaces)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

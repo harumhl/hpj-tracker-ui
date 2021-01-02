@@ -189,7 +189,8 @@ export class DbService {
       this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
         // If the category exists, then write the new goal (and create today's entry + its subcollections)
         if (querySnapshot.docs.length > 0) {
-          this.writeDoc(DbService.collections.goals, {category, name, documentId: category + '_' + name, archived, goalCount, unit, expectedTimesOfCompletion, details},
+          const documentId = DbService._getDocumentId(DbService.collections.goals, {documentId: category + '_' + name});
+          this.writeDoc(DbService.collections.goals, {category, name, documentId, archived, goalCount, unit, expectedTimesOfCompletion, details},
             () => { this.newEntry(this.today); callback(); }, () => errorCallback());
         }
       });

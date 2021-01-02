@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.0.0",
-  "description": "goals in Testing is sorted by category and shows with category color + the primary key (aka documentId) for 'goals' is now category_name instead of just goal name + new/modify goal dropdown gets at-0 item as default",
+  "version": "3.0.1",
+  "description": "documentId in document itself is consistent with the actual documentId (no spaces)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
