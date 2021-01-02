@@ -5,6 +5,9 @@ import {UtilService} from './util.service';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 import {environment} from '../environments/environment';
+import {Category} from './model/category.model';
+import {Goal} from './model/goal.model';
+import {Subentry} from './model/subentry.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,18 +36,18 @@ export class DbService {
 
   // Gets the document ID (aka the primary key) for data, given a collection name (e.g. categories, goals or entries)
   static _getDocumentId(collection: string, document: object) {
-    let whichKeyInDocumentToUse = '';
+    let key = '';
     if (collection === this.collections.categories) {
-      whichKeyInDocumentToUse = 'category';
+      key = (document as Category).category;
     } else if (collection === this.collections.goals) {
-      whichKeyInDocumentToUse = 'name';
+      key = (document as Goal).documentId;
     } else if (collection === this.collections.entries) {
-      whichKeyInDocumentToUse = 'doneDate';
+      key = (document as Subentry).doneDate;
     } else {
       return '';
     }
 
-    return document[whichKeyInDocumentToUse].replace(/ /g, ''); // .replace() removes all spaces
+    return key.replace(/ /g, ''); // .replace() removes all spaces
   }
 
   // todo now database accepts date type (rename the fn)
@@ -114,25 +117,25 @@ export class DbService {
 
     // Check if such document already exists
     ref.get().then((documentSnapshot: DocumentSnapshot) => {
-        if (!documentSnapshot.exists) {
-          // Write a new document
-          ref.set(document).then(callback)
-            .catch((error) => {
-              errorCallback();
-              UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
-            });
-        }
-      });
+      if (!documentSnapshot.exists) {
+        // Write a new document
+        ref.set(document).then(callback)
+          .catch((error) => {
+            errorCallback();
+            UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
+          });
+      }
+    });
   }
 
   // Update an existing data in Firebase database
-  updateDoc(collection: string, documentId: string, dataToModify: object, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  updateDoc(collection: string, documentId: string, dataToModify: object, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     this._update(collection, documentId, dataToModify, null, null, callback, errorCallback);
   }
-  updateDocInSubcollection(collection: string, documentId: string, dataToModify: object, subcollection: string, subdocumentForId: object, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  updateDocInSubcollection(collection: string, documentId: string, dataToModify: object, subcollection: string, subdocumentForId: object, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     this._update(collection, documentId, dataToModify, subcollection, subdocumentForId, callback, errorCallback);
   }
-  _update(collection: string, documentId: string, dataToModify: object, subcollectionId: string, subdocumentForId: object, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  _update(collection: string, documentId: string, dataToModify: object, subcollectionId: string, subdocumentForId: object, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     let ref: any = this.firebaseDb.collection(collection).doc(documentId);
 
     // For updating a document in subcollections of a single doc
@@ -144,7 +147,7 @@ export class DbService {
     // Update a document
     ref.update(dataToModify).then(callback)
       .catch((error) => {
-        errorCallback();
+        errorCallback(error);
         UtilService.handleError('_update', {collection, documentId, dataToModify, subcollectionId, subdocumentForId}, error);
       });
   }
@@ -186,7 +189,7 @@ export class DbService {
       this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
         // If the category exists, then write the new goal (and create today's entry + its subcollections)
         if (querySnapshot.docs.length > 0) {
-          this.writeDoc(DbService.collections.goals, {category, name, archived, goalCount, unit, expectedTimesOfCompletion, details},
+          this.writeDoc(DbService.collections.goals, {category, name, documentId: category + '_' + name, archived, goalCount, unit, expectedTimesOfCompletion, details},
             () => { this.newEntry(this.today); callback(); }, () => errorCallback());
         }
       });
@@ -196,7 +199,7 @@ export class DbService {
   }
 
   // Update an existing goal in Firebase database
-  updateGoal(name: string, goalCount?: number, unit?: string, expectedTimesOfCompletion?: string[], details?: string, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  updateGoal(name: string, goalCount?: number, unit?: string, expectedTimesOfCompletion?: string[], details?: string, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     let dataToModify = {name};
     if (goalCount) {
       dataToModify = Object.assign(dataToModify, {goalCount});
@@ -205,27 +208,27 @@ export class DbService {
       dataToModify = Object.assign(dataToModify, {unit});
     }
     if (expectedTimesOfCompletion) {
-      dataToModify = Object.assign(dataToModify, {expectedTimesOfCompletion});
+      // Validate expectedTimesOfCompletion before actually updating
+      const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
+      if (expectedTimesOfCompletion.length > 0 && expectedTimesOfCompletion.filter(t => t.match(regex)).length === expectedTimesOfCompletion.length) {
+        dataToModify = Object.assign(dataToModify, {expectedTimesOfCompletion});
+      } else {
+        errorCallback(null);
+        return;
+      }
     }
     if (details) {
       dataToModify = Object.assign(dataToModify, {details});
     }
 
-    // Validate expectedTimesOfCompletion before actually updating
-    const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
-    if (expectedTimesOfCompletion !== null && expectedTimesOfCompletion !== undefined && expectedTimesOfCompletion.length > 0
-        && expectedTimesOfCompletion.filter(t => t.match(regex)).length === expectedTimesOfCompletion.length) {
-      // Update
-      this.readAll(false, DbService.collections.goals, ['name', '==', name], (querySnapshot) => {
-        const doc = querySnapshot.docs[0].data();
-        dataToModify = Object.assign(dataToModify, {category: doc.category, archived: doc.archived});
+    // Update
+    this.readAll(false, DbService.collections.goals, ['name', '==', name], (querySnapshot) => {
+      const doc = querySnapshot.docs[0].data();
+      dataToModify = Object.assign(dataToModify, {category: doc.category, documentId: doc.documentId, archived: doc.archived});
 
-        const collection = DbService.collections.goals;
-        this.updateDoc(collection, DbService._getDocumentId(collection, {name}), dataToModify, callback, errorCallback);
-      });
-    } else {
-      errorCallback();
-    }
+      const collection = DbService.collections.goals;
+      this.updateDoc(collection, DbService._getDocumentId(collection, {documentId: doc.documentId}), dataToModify, callback, errorCallback);
+    });
   }
 
   // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)
@@ -253,19 +256,19 @@ export class DbService {
     this.readAll(false, DbService.collections.goals, ['archived', '==', false], (querySnapshot: QuerySnapshot) => {
       const goals = UtilService.toIterable(querySnapshot);
       for (const goal of goals) {
-        const subentry = {category: goal.category, name: goal.name, count: 0, goalCount: goal.goalCount};
+        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal), count: 0, goalCount: goal.goalCount};
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
       }
     });
   }
 
   // Update the count of an existing entry in Firebase database
-  updateSubentryCount(name: string, count: number, doneDate?: string) {
+  updateSubentryCount(documentId: string, count: number, doneDate?: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }
 
     const collection = DbService.collections.entries;
-    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {name, count});
+    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {documentId, count});
   }
 }

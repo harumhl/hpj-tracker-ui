@@ -24,7 +24,7 @@ export class SubentryTableComponent implements OnInit {
     console.log(row, event);
     const newCount = parseFloat(event.target.value || 0);
     if (row.count !== newCount) {
-      this.dbService.updateSubentryCount(row.name, newCount, this.date);
+      this.dbService.updateSubentryCount(row.documentId, newCount, this.date);
     }
   }
 }

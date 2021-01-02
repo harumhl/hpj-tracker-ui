@@ -75,10 +75,10 @@ export class AppComponent {
   };
 
   testing = false;
-  categoryList: string[];
-  goalList: string[];
-  categories: Category[];
-  goals: Goal[];
+  categoryList: string[] = [];
+  goalList: string[] = [];
+  categories: Category[] = [];
+  goals: Goal[] = [];
   activeGoals: Goal[] = [];
   archivedGoals: Goal[] = [];
   saveMessage = '';
@@ -244,6 +244,7 @@ export class AppComponent {
 
       // Add 'unit' and 'details' from goals to subcollections in entry for display
       for (const queriedSubentry of this.dataQueried) {
+        // TODO with a new goal, this.dataQueried is updated but this.goals is not, thus below statement fails (returns an empty array)
         const goal = this.goals.filter(g => g.name === queriedSubentry.name)[0];
         queriedSubentry.unit = goal.unit;
         queriedSubentry.details = goal.details;
@@ -361,13 +362,6 @@ export class AppComponent {
     this.dbService.newGoal('Others', 'Read English out loud', false, 5, mins, ['17:00'], '');
   }
 
-  updateSubentryCount(row, event) {
-    const newCount = parseFloat(event.target.value || 0);
-    if (row.count !== newCount) {
-      this.dbService.updateSubentryCount(row.name, newCount);
-    }
-  }
-
   toggle(id: string, value?: any) {
     // actually toggling on/off
     this.display[id] = value;
@@ -467,7 +461,7 @@ export class AppComponent {
   // Save new goal or modified goal
   save(type: string) {
     if (type === 'New Goal') {
-      const category = (document.getElementById('newGoalCategory') as HTMLInputElement).value;
+      const category = (document.getElementById('newGoalCategory') as HTMLInputElement).value || this.categories[0].category;
       const name = (document.getElementById('newGoalName') as HTMLInputElement).value;
       const archived = false;
       const goalCount = Number((document.getElementById('newGoalGoalCount') as HTMLInputElement).value);
@@ -487,10 +481,10 @@ export class AppComponent {
         () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; }); },
         () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal failed'; }, () => { this.saveMessage = ''; }); });
     } else if (type === 'Modify Goal') {
-      const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
+      const name = (document.getElementById('modifyGoalName') as HTMLInputElement).value || this.goals[0].name;
       const goalCount = (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value;
       const unit = (document.getElementById('modifyGoalUnit') as HTMLInputElement).value;
-      let expectedTimeOfCompletion: any = (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
+      let expectedTimesOfCompletion: any = (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
       const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
 
       (document.getElementById('modifyGoalName') as HTMLInputElement).value = '';
@@ -499,11 +493,13 @@ export class AppComponent {
       (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = '';
 
-      expectedTimeOfCompletion = expectedTimeOfCompletion.split(',');
+      if (expectedTimesOfCompletion) {
+        expectedTimesOfCompletion = expectedTimesOfCompletion.split(',');
+      }
 
-      this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimeOfCompletion, details,
+      this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimesOfCompletion, details,
         () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
-        () => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => { this.saveMessage = ''; }); });
+        (error) => { UtilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => {this.saveMessage = ''; }); });
     }
   }
 }

@@ -97,12 +97,13 @@
       <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
       <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
       <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-      <input id="modifyGoalExpectedTimesOfCompletion" placeholder="*time to complete" style="width: 100px" [disabled]="loggedIn === false">
+      <input id="modifyGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false">
       <input type="submit" value="save">
     </form>
   </div>
 
   {{saveMessage}}
+  <br *ngIf="saveMessage.length > 0">
 
   <a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
      [hidden]="!testing">My Cloud Firestore database link</a>

@@ -38,7 +38,7 @@ service cloud.firestore {
       match /test_goals/{subentryId} {
       	allow create: if signedIn() && createSubentry()
         allow update: if signedIn() && updateSubentry()
-	      allow delete: if signedIn()
+      	allow delete: if signedIn()
       }
     }
 
@@ -58,20 +58,22 @@ service cloud.firestore {
       && incomingData().category is string
     }
     function createGoal() {
-    	return incomingData().size() == 7
-      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
+    	return incomingData().size() == 8
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
       && incomingData().category is string
       && incomingData().name is string
+      && incomingData().documentId is string
       && incomingData().archived is bool
       && incomingData().goalCount is int
       && incomingData().unit is string
       && (incomingData().details is string || incomingData().details == '')
     }
     function updateGoal() {
-    	return incomingData().size() == 7
-      && incomingData().keys().hasOnly(['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
+    	return incomingData().size() == 8
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details'])
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
+      && incomingData().documentId == existingData().documentId
       && incomingData().archived is bool
       && incomingData().goalCount is int
       && incomingData().unit is string
@@ -83,19 +85,21 @@ service cloud.firestore {
       && incomingData().doneDate is string
     }
     function createSubentry() {
-    	return incomingData().size() == 4
-      && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
+    	return incomingData().size() == 5
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount'])
       && incomingData().category is string
       && incomingData().name is string
+      && incomingData().documentId is string
       && incomingData().count is int
       && incomingData().goalCount is int
     }
     function updateSubentry() {
-    	return incomingData().size() == 4
-      && incomingData().keys().hasOnly(['category', 'name', 'count', 'goalCount'])
+    	return incomingData().size() == 5
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount'])
       && incomingData().count is number
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
+      && incomingData().documentId == existingData().documentId
       && incomingData().goalCount == existingData().goalCount
     }
   }

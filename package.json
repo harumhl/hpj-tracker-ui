@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "2.8.1",
-  "description": "Generate build timestamp",
+  "version": "3.0.0",
+  "description": "goals in Testing is sorted by category and shows with category color + the primary key (aka documentId) for 'goals' is now category_name instead of just goal name + new/modify goal dropdown gets at-0 item as default",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
