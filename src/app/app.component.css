@@ -12,11 +12,6 @@ table {height: 100%;}
   background: transparent;
 }
 
-/* Display all text in one line*/
-.no-wrap {
-  white-space: nowrap;
-}
-
 /* Collapsible */
 .collapsible {
   background-color: #DDDDDD;

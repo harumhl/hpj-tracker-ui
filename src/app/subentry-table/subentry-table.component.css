@@ -14,34 +14,6 @@ table, th, td {
   padding: 3px 5px;
 }
 
-/* Fill background color based on completion rate*/
-.twenty-percent-done {
-  background: #fdfbf3;
-}
-.forty-percent-done {
-  background: #fbf6e7;
-}
-.sixty-percent-done {
-  background: #fae3e0;
-}
-.eighty-percent-done {
-  background: #fdc1dd;
-}
-.hundred-percent-done {
-  background: #ff9fda;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* Fill background color close in current time in schedule view */
-.time-to-highlight {
-  background: #99CCFF;
-}
-
-.archived {
-  background-color: #FF9999;
-}
-
 /* Don't auto-zoom when an input field is selected - by having font size to be the default size (it'll still auto-center though) */
 input[type="color"],
 input[type="date"],

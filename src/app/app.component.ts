@@ -43,9 +43,10 @@ export class AppComponent {
   headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
+    'Body Care': '#ffeacc',
     Workout: '#e6fbff',
-    Mind: '#fff7e1',
-    ProgrammingAI: '#f3f3f3',
+    Mind: '#fffbd8',
+    ProgramAI: '#f3f3f3',
     Basic: '#FFFFFF',
     Interpersonal: '#f5f0ff',
     Hobby: '#f5f0ff'

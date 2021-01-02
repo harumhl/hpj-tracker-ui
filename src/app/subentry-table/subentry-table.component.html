@@ -7,23 +7,23 @@
     </th>
   </tr>
   <tr id="content-row" *ngFor="let row of this.dataToDisplay">
-    <td id=content-column* *ngFor="let column of this.headers" [ngClass]="{
-      'no-wrap': column === 'details',
-      'archived': row.archived,
-      'time-to-highlight': column === 'time' && this.timeToHighlight === row[column],
-      'twenty-percent-done': row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5,
-      'forty-percent-done': row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5,
-      'sixty-percent-done': row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5,
-      'eighty-percent-done': row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5,
-      'hundred-percent-done': row['count'] >= row['goalCount']}"
-        style="background-color:{{categoryColors[row[column]]}}">
+    <td id=content-column* *ngFor="let column of this.headers"
+        [ngStyle]="{'white-space': column === 'details' ? 'nowrap' : 'inherit',
+        'background-color': row.archived ? '#FF9999' :
+                            column === 'time' && this.timeToHighlight === row[column] ? '#99CCFF' :
+                            row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5 ? '#fdfbf3' :
+                            row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5 ? '#fbf6e7' :
+                            row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5 ? '#fae3e0' :
+                            row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5 ? '#fdc1dd' :
+                            row['count'] >= row['goalCount'] ? '#ff9fda' :
+                            column === 'category' || column === 'name' ? categoryColors[row['category']] : 'inherit'}">
       <!-- todo display data for the past 7 days OR the current week -->
       <!-- todo merge category column over multiple rows -->
       <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateSubentryCount(row, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+             (focusout)="updateSubentryCount(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
     </td>
   </tr>
 </table>

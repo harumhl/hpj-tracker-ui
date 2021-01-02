@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.0.1",
-  "description": "documentId in document itself is consistent with the actual documentId (no spaces)",
+  "version": "3.0.2",
+  "description": "Focus out on input box puts 0 back + more category colors + reorganized subentry-table background colors and goal name also displays colors",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

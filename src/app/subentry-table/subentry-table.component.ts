@@ -20,9 +20,11 @@ export class SubentryTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateSubentryCount(row, event) {
-    console.log(row, event);
+  updateSubentryCount(row, column: string, event) {
     const newCount = parseFloat(event.target.value || 0);
+    if (row[column] === '') {
+      row[column] = 0;
+    }
     if (row.count !== newCount) {
       this.dbService.updateSubentryCount(row.documentId, newCount, this.date);
     }
