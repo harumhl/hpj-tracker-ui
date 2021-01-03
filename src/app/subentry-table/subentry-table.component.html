@@ -11,12 +11,12 @@
         [ngStyle]="{'white-space': column === 'details' ? 'nowrap' : 'inherit',
         'background-color': row.archived ? '#FF9999' :
                             column === 'time' && this.timeToHighlight === row[column] ? '#99CCFF' :
+                            column === 'category' || column === 'name' ? categoryColors[row['category']] :
                             row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5 ? '#fdfbf3' :
                             row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5 ? '#fbf6e7' :
                             row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5 ? '#fae3e0' :
                             row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5 ? '#fdc1dd' :
-                            row['count'] >= row['goalCount'] ? '#ff9fda' :
-                            column === 'category' || column === 'name' ? categoryColors[row['category']] : 'inherit'}">
+                            row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
       <!-- todo display data for the past 7 days OR the current week -->
       <!-- todo merge category column over multiple rows -->
       <!-- todo display streak -->

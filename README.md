@@ -84,6 +84,7 @@ Version | Date | Details
 3.0.0 | 2021-01-02 | goals in Testing is sorted by category and shows with category color + the primary key (aka documentId) for 'goals' is now category_name instead of just goal name + new/modify goal dropdown gets at-0 item as default
 3.0.1 | 2021-01-02 | documentId in document itself is consistent with the actual documentId (no spaces)
 3.0.2 | 2021-01-02 | Focus out on input box puts 0 back + more category colors + reorganized subentry-table background colors and goal name also displays colors
+3.0.3 | 2021-01-02 | category color on top of completion rate colors
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

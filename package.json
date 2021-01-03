@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.0.2",
-  "description": "Focus out on input box puts 0 back + more category colors + reorganized subentry-table background colors and goal name also displays colors",
+  "version": "3.0.3",
+  "description": "category color on top of completion rate colors",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
