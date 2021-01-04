@@ -85,6 +85,7 @@ Version | Date | Details
 3.0.1 | 2021-01-02 | documentId in document itself is consistent with the actual documentId (no spaces)
 3.0.2 | 2021-01-02 | Focus out on input box puts 0 back + more category colors + reorganized subentry-table background colors and goal name also displays colors
 3.0.3 | 2021-01-02 | category color on top of completion rate colors
+3.0.4 | 2021-01-04 | the chart is redrawn/refreshed/reloaded upon successful update on a subentry
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

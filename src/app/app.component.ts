@@ -114,6 +114,12 @@ export class AppComponent {
         this.postLogin();
       }
     });
+
+    this.dbService.refreshChartSubject.subscribe(refresh => {
+      if (refresh) {
+        this.reloadChart();
+      }
+    });
   }
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate

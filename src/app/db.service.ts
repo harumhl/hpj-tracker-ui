@@ -8,6 +8,7 @@ import {environment} from '../environments/environment';
 import {Category} from './model/category.model';
 import {Goal} from './model/goal.model';
 import {Subentry} from './model/subentry.model';
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,8 @@ export class DbService {
   firebaseDb: firebase.firestore.Firestore = null;
   today: string;
   dayOfToday: string;
+
+  refreshChartSubject = new Subject<boolean>();
 
   constructor(public datePipe: DatePipe) {
     // Set today's date and day
@@ -270,6 +273,11 @@ export class DbService {
     }
 
     const collection = DbService.collections.entries;
-    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {documentId, count});
+    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {documentId, count},
+      () => { this.refreshChart(); });
+  }
+
+  refreshChart() {
+    this.refreshChartSubject.next(true);
   }
 }
