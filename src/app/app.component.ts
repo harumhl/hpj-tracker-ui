@@ -229,7 +229,7 @@ export class AppComponent {
     });
 
     // Subscribe to goals from database
-    this.dbService.readAll(false, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
+    this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
       this.goals = UtilService.toIterable(querySnapshot);
       this.goalList = this.goals.map(goal => goal.name);
 
