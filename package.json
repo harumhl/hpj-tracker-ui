@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.0.4",
-  "description": "the chart is redrawn/refreshed/reloaded upon successful update on a subentry",
+  "version": "3.1.0",
+  "description": "subscribe to Goals + entering -1 hides the subentry until 'incomplete & unhidden only' is turned off and the subentry is given an update",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

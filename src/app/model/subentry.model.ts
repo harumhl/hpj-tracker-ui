@@ -4,6 +4,7 @@ export class Subentry {
   name: string;
   count: number;
   goalCount: number;
+  hide: boolean;
 
   // For display
   unit?: string;

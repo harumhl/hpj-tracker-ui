@@ -26,7 +26,7 @@ After closing out, you may need to "firebase login" again (maybe after "firebase
 v2.8.2 started adding a build timestamp on the bottom next to the version and running "node ./timestamp.js" is
  required to generate the build timestamp in environment.ts.
 
-=> "node ./timestamp.js && node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default"
+=> "node ./timestamp.js && node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default && rmdir public /s /q"
 
 2.  Installation process (npm install)
 3.	Software dependencies (Firestore)
@@ -86,6 +86,7 @@ Version | Date | Details
 3.0.2 | 2021-01-02 | Focus out on input box puts 0 back + more category colors + reorganized subentry-table background colors and goal name also displays colors
 3.0.3 | 2021-01-02 | category color on top of completion rate colors
 3.0.4 | 2021-01-04 | the chart is redrawn/refreshed/reloaded upon successful update on a subentry
+3.1.0 | 2021-01-08 | subscribe to Goals + entering -1 hides the subentry until 'incomplete & unhidden only' is turned off and the subentry is given an update
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

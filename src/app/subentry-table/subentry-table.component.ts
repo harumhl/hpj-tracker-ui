@@ -20,13 +20,24 @@ export class SubentryTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateSubentryCount(row, column: string, event) {
+  updateSubentry(row, column: string, event) {
     const newCount = parseFloat(event.target.value || 0);
+
+    // hide a subentry by entering -1
+    if (newCount === -1) {
+      this.dbService.updateSubentry(row.documentId, null, true, this.date);
+      return;
+    }
+
+    // Put 0 back if the input box loses focus without any entry
     if (row[column] === '') {
       row[column] = 0;
     }
+
+    // Updating a subentry count
     if (row.count !== newCount) {
-      this.dbService.updateSubentryCount(row.documentId, newCount, this.date);
+      const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
+      this.dbService.updateSubentry(row.documentId, newCount, hide, this.date);
     }
   }
 }

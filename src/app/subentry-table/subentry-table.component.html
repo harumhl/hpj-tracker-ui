@@ -23,7 +23,7 @@
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
       <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateSubentryCount(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+             (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
     </td>
   </tr>
 </table>

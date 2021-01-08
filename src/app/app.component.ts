@@ -69,7 +69,7 @@ export class AppComponent {
   display = { // whether to display each component or not
     allOptions: false,
     inSchedules: true, // todo if goal has multiple expected times of completion and there's future one then hide the past one
-    incompleteOnly: true,
+    incompleteAndUnhiddenOnly: true,
     fullInfo: true,
     topChart: false, // todo display more dates, display per category
     notes: false,
@@ -79,7 +79,7 @@ export class AppComponent {
   categoryList: string[] = [];
   goalList: string[] = [];
   categories: Category[] = [];
-  goals: Goal[] = [];
+  goals: Goal[] = []; // TODO most and least accomplished goals in the past 7 days
   activeGoals: Goal[] = [];
   archivedGoals: Goal[] = [];
   saveMessage = '';
@@ -388,12 +388,12 @@ export class AppComponent {
       }
     }
 
-    if (id === 'incompleteOnly' || id === 'inSchedules') {
-      if (this.display.incompleteOnly) { // Filter out completed sub-entries (no deep-copy, but just filtering from the queried data))
+    if (id === 'incompleteAndUnhiddenOnly' || id === 'inSchedules') {
+      if (this.display.incompleteAndUnhiddenOnly) { // Filter out completed and/or hidden sub-entries (no deep-copy, but just filtering from the queried data))
         if (this.display.inSchedules) {
-          this.dataToDisplay = this.dataQueriedInSchedules.filter(subentry => subentry.count < subentry.goalCount);
+          this.dataToDisplay = this.dataQueriedInSchedules.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         } else {
-          this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount);
+          this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         }
       } else {
         if (this.display.inSchedules) { // Deep-copy happens when this.dataQueried is pulled from database (so already done by now)

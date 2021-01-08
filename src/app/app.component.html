@@ -39,8 +39,8 @@
 <!-- todo web is getting slower, so put a spinning wheel while processing -->
 <!-- display checkboxes -->
 <br *ngIf="display.allOptions">
-<input id="displayIncompleteOnly" type="checkbox" [checked]="display.incompleteOnly" (change)="toggle('incompleteOnly', !display.incompleteOnly)" *ngIf="display.allOptions">
-<label for="displayIncompleteOnly" *ngIf="display.allOptions">incomplete</label>
+<input id="displayIncompleteAndUnhiddenOnly" type="checkbox" [checked]="display.incompleteAndUnhiddenOnly" (change)="toggle('incompleteAndUnhiddenOnly', !display.incompleteAndUnhiddenOnly)" *ngIf="display.allOptions">
+<label for="displayIncompleteAndUnhiddenOnly" *ngIf="display.allOptions">incomplete & unhidden only</label>
 <input id="displayFullInfo" type="checkbox" [checked]="display.fullInfo" (change)="toggle('fullInfo', !display.fullInfo)" *ngIf="display.allOptions">
 <label for="displayFullInfo" *ngIf="display.allOptions">full display</label>
 <input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)" *ngIf="display.allOptions">

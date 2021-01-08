@@ -85,22 +85,24 @@ service cloud.firestore {
       && incomingData().doneDate is string
     }
     function createSubentry() {
-    	return incomingData().size() == 5
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount'])
+    	return incomingData().size() == 6
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'hide'])
       && incomingData().category is string
       && incomingData().name is string
       && incomingData().documentId is string
       && incomingData().count is int
       && incomingData().goalCount is int
+      && incomingData().hide is bool
     }
     function updateSubentry() {
-    	return incomingData().size() == 5
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount'])
+    	return incomingData().size() == 6
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'hide'])
       && incomingData().count is number
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().documentId == existingData().documentId
       && incomingData().goalCount == existingData().goalCount
+      && incomingData().hide is bool
     }
   }
 }

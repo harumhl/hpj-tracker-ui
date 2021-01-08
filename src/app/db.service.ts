@@ -260,20 +260,27 @@ export class DbService {
     this.readAll(false, DbService.collections.goals, ['archived', '==', false], (querySnapshot: QuerySnapshot) => {
       const goals = UtilService.toIterable(querySnapshot);
       for (const goal of goals) {
-        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal), count: 0, goalCount: goal.goalCount};
+        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal), count: 0, goalCount: goal.goalCount, hide: false};
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
       }
     });
   }
 
-  // Update the count of an existing entry in Firebase database
-  updateSubentryCount(documentId: string, count: number, doneDate?: string) {
+  // Update the count or 'hide' of an existing entry in Firebase database
+  updateSubentry(documentId: string, count?: number, hide?: boolean, doneDate?: string) {
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
     }
+    let dataToModify = {};
+    if (count !== null) {
+      dataToModify = Object.assign(dataToModify, {count});
+    }
+    if (hide !== null) {
+      dataToModify = Object.assign(dataToModify, {hide});
+    }
 
     const collection = DbService.collections.entries;
-    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), {count}, DbService.collections.goals, {documentId, count},
+    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), dataToModify, DbService.collections.goals, Object.assign(dataToModify, {documentId}),
       () => { this.refreshChart(); });
   }
 
