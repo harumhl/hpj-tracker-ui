@@ -23,7 +23,7 @@ export class DbService {
 
   refreshChartSubject = new Subject<boolean>();
 
-  constructor(public datePipe: DatePipe) {
+  constructor(private utilService: UtilService, public datePipe: DatePipe) {
     // Set today's date and day
     this.today = this._getDateKey();
     switch (new Date().getDay()) {
@@ -125,7 +125,7 @@ export class DbService {
         ref.set(document).then(callback)
           .catch((error) => {
             errorCallback();
-            UtilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
+            this.utilService.handleError('_write', {collection, document, subcollection: subcollectionId, subdocument}, error, {documentId});
           });
       }
     });
@@ -151,7 +151,7 @@ export class DbService {
     ref.update(dataToModify).then(callback)
       .catch((error) => {
         errorCallback(error);
-        UtilService.handleError('_update', {collection, documentId, dataToModify, subcollectionId, subdocumentForId}, error);
+        this.utilService.handleError('_update', {collection, documentId, dataToModify, subcollectionId, subdocumentForId}, error);
       });
   }
 
@@ -258,7 +258,7 @@ export class DbService {
   // Write documents of a subcollection for an entry
   newSubcollectionOfAnEntry(doneDate: string) {
     this.readAll(false, DbService.collections.goals, ['archived', '==', false], (querySnapshot: QuerySnapshot) => {
-      const goals = UtilService.toIterable(querySnapshot);
+      const goals = this.utilService.toIterable(querySnapshot);
       for (const goal of goals) {
         const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal), count: 0, goalCount: goal.goalCount, hide: false};
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);

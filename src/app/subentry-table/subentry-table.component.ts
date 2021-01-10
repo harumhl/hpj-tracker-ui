@@ -23,6 +23,7 @@ export class SubentryTableComponent implements OnInit {
   updateSubentry(row, column: string, event) {
     const newCount = parseFloat(event.target.value || 0);
 
+    // TODO introduce "edit" mode where multiple subentries can be selected with (appearing) checkboxes - for hide and more (e.g. delete?) instead of relying on entering -1
     // hide a subentry by entering -1
     if (newCount === -1) {
       this.dbService.updateSubentry(row.documentId, null, true, this.date);

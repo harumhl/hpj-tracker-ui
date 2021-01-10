@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import firebase from 'firebase';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
@@ -6,12 +6,20 @@ import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 @Injectable({
   providedIn: 'root'
 })
-export class UtilService {
+export class UtilService implements OnDestroy {
+
+  intervals: any[] = [];
 
   constructor() { }
 
+  ngOnDestroy() {
+    for (const interval of this.intervals) {
+      clearInterval(interval);
+    }
+  }
+
   // Firebase returns a json, but sometimes a list of its values is needed.
-  static toIterable(obj: any) {
+  toIterable(obj: any) {
     const iterable = [];
     if (obj instanceof QuerySnapshot) {
       obj.forEach((doc) => iterable.push(doc.data()));
@@ -24,7 +32,7 @@ export class UtilService {
   }
 
   // Displays an error on console in a consistent way.
-  static handleError(functionName: string, parameters: object, error: object, otherInfo?: object) {
+  handleError(functionName: string, parameters: object, error: object, otherInfo?: object) {
     if (otherInfo) {
       console.error(`Function '${functionName}' failed with parameters, error and info`, parameters, error, otherInfo);
     } else {
@@ -33,12 +41,12 @@ export class UtilService {
   }
 
   // deep-copy
-  static deepCopy(obj: any) {
+  deepCopy(obj: any) {
     return JSON.parse(JSON.stringify(obj));
   }
 
   // Check something over intervals
-  static setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
+  setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
     let timesRun = 0;
     const interval = setInterval(() => {
       timesRun += 1;
@@ -48,15 +56,16 @@ export class UtilService {
         clearInterval(interval);
       }
     }, frequencyMs);
+    this.intervals.push(interval);
   }
 
   // Remove duplicate elements in the array
-  static getUniqueInArray(array: any[]) {
+  getUniqueInArray(array: any[]) {
     return array.filter((value, index, self) => self.indexOf(value) === index);
   }
 
   // Add an element in the array (front or back)
-  static addElemInArray(array: any[], elem: any, front = false) {
+  addElemInArray(array: any[], elem: any, front = false) {
     if (front) {
       return [elem].concat(array);
     } else {
@@ -65,7 +74,7 @@ export class UtilService {
   }
 
   // Remove an element in the array
-  static removeElemInArray(array: any[], elem: any) {
+  removeElemInArray(array: any[], elem: any) {
     const index = array.indexOf(elem, 0);
     if (index > -1) {
       array.splice(index, 1);

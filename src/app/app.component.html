@@ -121,6 +121,7 @@
                   [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors"></subentry-table>
   <br>
 
+  <!-- TODO maybe subscribe to this.dataQueriedPast? -->
   <!-- (Testing) display data of past 7 days -->
   <label [hidden]="!testing">Past dates: </label>
   <select id="modifyPastEntry" [hidden]="!testing" [disabled]="loggedIn === false" (change)="pastDate = $event.target.value">
