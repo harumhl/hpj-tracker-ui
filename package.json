@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.1.1",
-  "description": "timeToHighlight is updated every 5 mins + no static fn in UtilService",
+  "version": "3.1.2",
+  "description": "entering -1 not only hides but can also unhide the subentry (once 'incomplete & unhidden only' is turned off)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

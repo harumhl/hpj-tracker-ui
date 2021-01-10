@@ -88,6 +88,7 @@ Version | Date | Details
 3.0.4 | 2021-01-04 | the chart is redrawn/refreshed/reloaded upon successful update on a subentry
 3.1.0 | 2021-01-08 | subscribe to Goals + entering -1 hides the subentry until 'incomplete & unhidden only' is turned off and the subentry is given an update
 3.1.1 | 2021-01-10 | timeToHighlight is updated every 5 mins + no static fn in UtilService
+3.1.2 | 2021-01-10 | entering -1 not only hides but can also unhide the subentry (once 'incomplete & unhidden only' is turned off) 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
