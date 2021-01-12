@@ -14,6 +14,7 @@ export class SubentryTableComponent implements OnInit {
   @Input() categoryColors: object = {};
   @Input() timeToHighlight = ''; // todo should be optional
   @Input() date = null;
+  @Input() mobile: boolean;
 
   constructor(private dbService: DbService) { }
 

@@ -63,7 +63,7 @@
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
-                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()">
+                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
   </subentry-table>
 </div>
 
@@ -113,13 +113,14 @@
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
   <!-- (Testing) display all categories and goals -->
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']" [dataToDisplay]="this.categories"></subentry-table>
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']"
+                  [dataToDisplay]="this.categories" [mobile]="this.mobile"></subentry-table>
   <br>
 
   <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
   <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
   <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
-                  [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors"></subentry-table>
+                  [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 
   <!-- TODO maybe subscribe to this.dataQueriedPast? -->
@@ -130,7 +131,7 @@
   </select>
   <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataQueriedPast[pastDate]"
-                  [categoryColors]="categoryColors" [date]="pastDate">
+                  [categoryColors]="categoryColors" [date]="pastDate" [mobile]="this.mobile">
   </subentry-table>
 </div>
 

@@ -90,6 +90,7 @@ Version | Date | Details
 3.1.1 | 2021-01-10 | timeToHighlight is updated every 5 mins + no static fn in UtilService
 3.1.2 | 2021-01-10 | entering -1 not only hides but can also unhide the subentry (once 'incomplete & unhidden only' is turned off) 
 3.1.3 | 2020-01-11 | chart shows monthly percent goal as horizontal strip in background (hard-coded) + x-axis also shows day not just date + entry with input type tel + allow any symbol for dot but expect only one
+3.1.4 | 2020-01-11 | subentry input type='tel' if mobile and type='number' if web
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
