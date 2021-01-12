@@ -26,15 +26,24 @@ export class DbService {
   constructor(private utilService: UtilService, public datePipe: DatePipe) {
     // Set today's date and day
     this.today = this._getDateKey();
-    switch (new Date().getDay()) {
-      case 0: this.dayOfToday = 'Sun'; break;
-      case 1: this.dayOfToday = 'Mon'; break;
-      case 2: this.dayOfToday = 'Tue'; break;
-      case 3: this.dayOfToday = 'Wed'; break;
-      case 4: this.dayOfToday = 'Thu'; break;
-      case 5: this.dayOfToday = 'Fri'; break;
-      case 6: this.dayOfToday = 'Sat'; break;
+    this.dayOfToday = this.findDayOfTheWeek();
+  }
+
+  findDayOfTheWeek(date?) {
+    if (date === null || date === undefined) {
+      date = new Date();
     }
+    let dayOfTheWeek = '';
+    switch (date.getDay()) {
+      case 0: dayOfTheWeek = 'Sun'; break;
+      case 1: dayOfTheWeek = 'Mon'; break;
+      case 2: dayOfTheWeek = 'Tue'; break;
+      case 3: dayOfTheWeek = 'Wed'; break;
+      case 4: dayOfTheWeek = 'Thu'; break;
+      case 5: dayOfTheWeek = 'Fri'; break;
+      case 6: dayOfTheWeek = 'Sat'; break;
+    }
+    return dayOfTheWeek;
   }
 
   // Gets the document ID (aka the primary key) for data, given a collection name (e.g. categories, goals or entries)

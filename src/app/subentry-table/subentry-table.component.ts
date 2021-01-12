@@ -21,7 +21,17 @@ export class SubentryTableComponent implements OnInit {
   }
 
   updateSubentry(row, column: string, event) {
-    const newCount = parseFloat(event.target.value || 0);
+    // iPhone doesn't contains a dot (.) with <input type='tel'>, so allow any other symbols to be used as a dot
+    // Replace any of those symbols to dot, but only expect one
+    const acceptableSymbols = ['+', ',', ';', '*', '#'];
+    let enteredValue = event.target.value || '0';
+    for (const specialChar of acceptableSymbols) {
+      enteredValue = enteredValue.split(specialChar).join('.');
+    }
+    if (enteredValue.split('.').length > 2) { // if it contains more than one dot
+      return;
+    }
+    const newCount = parseFloat(enteredValue);
 
     // TODO introduce "edit" mode where multiple subentries can be selected with (appearing) checkboxes - for hide and more (e.g. delete?) instead of relying on entering -1
     // hide a subentry by entering -1

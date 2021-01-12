@@ -22,7 +22,7 @@
       <!-- todo display streak -->
       <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
       <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
-      <input *ngIf="loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
+      <input *ngIf="loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}"
              (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
     </td>
   </tr>

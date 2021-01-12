@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.1.2",
-  "description": "entering -1 not only hides but can also unhide the subentry (once 'incomplete & unhidden only' is turned off)",
+  "version": "3.1.3",
+  "description": "chart shows monthly percent goal as horizontal strip in background (hard-coded) + x-axis also shows day not just date + entry with input type tel + allow any symbol for dot but expect only one",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

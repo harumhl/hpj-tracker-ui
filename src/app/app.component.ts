@@ -266,7 +266,7 @@ export class AppComponent {
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
       this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
-      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length);
+      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length) + this.dbService.findDayOfTheWeek()[0];
       this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
       this.dataQueriedPast[this.dbService._getDateKey()] = this.dataQueried;
       this.pastDates[this.numberOfDaysToDisplay - 1] = this.dbService._getDateKey();
@@ -289,7 +289,7 @@ export class AppComponent {
       this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = this.utilService.toIterable(querySnapshot);
         const dateStr = this.dbService._getDateKey(date);
-        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length);
+        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length) + this.dbService.findDayOfTheWeek(date)[0];
         this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
         this.dataQueriedPast[dateStr] = dataQueried;
         this.pastDates[i] = dateStr;
