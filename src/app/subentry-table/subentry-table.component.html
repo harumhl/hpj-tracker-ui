@@ -1,5 +1,6 @@
 <table>
   <tr>
+    <th *ngIf="editMode"></th>
     <th id="header" *ngFor="let column of this.headers" style="font-size: 12px">
       <!-- display all column names as they are except display 'goalCount' as 'goal' to keep the column width smaller -->
       <label *ngIf="column !== 'goalCount'">{{column}}</label>
@@ -7,6 +8,7 @@
     </th>
   </tr>
   <tr id="content-row" *ngFor="let row of this.dataToDisplay">
+    <td *ngIf="editMode"><input type="checkbox" [(ngModel)]="row.checked"></td>
     <td id=content-column* *ngFor="let column of this.headers"
         [ngStyle]="{'white-space': column === 'details' ? 'nowrap' : 'inherit',
         'background-color': row.archived ? '#FF9999' :

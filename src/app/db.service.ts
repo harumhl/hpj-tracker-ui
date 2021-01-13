@@ -29,6 +29,22 @@ export class DbService {
     this.dayOfToday = this.findDayOfTheWeek();
   }
 
+  // Gets the document ID (aka the primary key) for data, given a collection name (e.g. categories, goals or entries)
+  static _getDocumentId(collection: string, document: object) {
+    let key = '';
+    if (collection === this.collections.categories) {
+      key = (document as Category).category;
+    } else if (collection === this.collections.goals) {
+      key = (document as Goal).documentId;
+    } else if (collection === this.collections.entries) {
+      key = (document as Subentry).doneDate;
+    } else {
+      return '';
+    }
+
+    return key.replace(/ /g, ''); // .replace() removes all spaces
+  }
+
   findDayOfTheWeek(date?) {
     if (date === null || date === undefined) {
       date = new Date();
@@ -44,22 +60,6 @@ export class DbService {
       case 6: dayOfTheWeek = 'Sat'; break;
     }
     return dayOfTheWeek;
-  }
-
-  // Gets the document ID (aka the primary key) for data, given a collection name (e.g. categories, goals or entries)
-  static _getDocumentId(collection: string, document: object) {
-    let key = '';
-    if (collection === this.collections.categories) {
-      key = (document as Category).category;
-    } else if (collection === this.collections.goals) {
-      key = (document as Goal).documentId;
-    } else if (collection === this.collections.entries) {
-      key = (document as Subentry).doneDate;
-    } else {
-      return '';
-    }
-
-    return key.replace(/ /g, ''); // .replace() removes all spaces
   }
 
   // todo now database accepts date type (rename the fn)

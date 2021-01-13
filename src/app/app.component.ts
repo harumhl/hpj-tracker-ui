@@ -75,6 +75,8 @@ export class AppComponent {
     notes: false,
   };
 
+  editMode = false;
+
   testing = false;
   categoryList: string[] = [];
   goalList: string[] = [];
@@ -514,5 +516,17 @@ export class AppComponent {
         () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
         (error) => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => {this.saveMessage = ''; }); });
     }
+  }
+
+  applyEditMode(editType: string) {
+    if (editType === 'hide' || editType === 'unhide') {
+      const hide = editType === 'hide';
+      for (const subentry of this.dataToDisplay) {
+        if (subentry.checked === true) {
+          this.dbService.updateSubentry(subentry.documentId, null, hide, subentry.doneDate);
+        }
+      }
+    }
+    this.editMode = false;
   }
 }

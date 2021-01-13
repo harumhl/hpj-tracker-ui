@@ -6,6 +6,11 @@ export class Subentry {
   goalCount: number;
   hide: boolean;
 
+  documentId: string;
+
+  // For edit mode
+  checked?: boolean;
+
   // For display
   unit?: string;
   details?: string;

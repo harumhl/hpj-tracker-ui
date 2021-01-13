@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.1.4",
-  "description": "subentry input type='tel' if mobile and type='number' if web",
+  "version": "3.2.0",
+  "description": "edit mode is introduced to hide or unhide rows/subentries - -1 could not be entered with mobile (feature of hiding with -1 is not removed, yet)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

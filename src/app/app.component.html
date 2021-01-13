@@ -32,8 +32,9 @@
       'hundred-percent-done': overallCompletionRate >= 100}" style="color: red">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
 ({{dbService.today}} {{dbService.dayOfToday}})
+<button (click)="editMode = !editMode">edit</button>
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
-<label for="displayAllOptions">display options</label>
+<label for="displayAllOptions">options</label>
 
 <!-- TODO some 'classification' on what I can do in given situations (if I'm out and wearing masks -> smile or mewing / if I'm with friends -> ??)
           -> currently I just have it in Notes in prod -->
@@ -52,6 +53,10 @@
 <label for="displayNotes" *ngIf="display.allOptions">display notes</label>
 <br>
 
+<!-- edit mode options -->
+<button *ngIf="editMode" (click)="applyEditMode('hide')">hide</button>
+<button *ngIf="editMode" (click)="applyEditMode('unhide')">unhide</button>
+
 <!-- Log in to see data -->
 <label id="emailLabel" for="emailInput"> email: </label>
 <input id="emailInput" value={{this.email}}>
@@ -63,7 +68,8 @@
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
-                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
+                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile"
+                  [editMode]="editMode">
   </subentry-table>
 </div>
 
