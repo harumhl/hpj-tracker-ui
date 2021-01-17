@@ -32,7 +32,8 @@
       'hundred-percent-done': overallCompletionRate >= 100}" style="color: red">
   {{overallCompletionRate | number : '0.2-2'}}%</label>
 ({{dbService.today}} {{dbService.dayOfToday}})
-<button (click)="editMode = !editMode">edit</button>
+<input id="edit" type="checkbox" [checked]="editMode" (change)="editMode = !editMode">
+<label for="edit">edit</label>
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
 <label for="displayAllOptions">options</label>
 
@@ -69,7 +70,7 @@
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
                   [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile"
-                  [editMode]="editMode">
+                  [editMode]="this.editMode">
   </subentry-table>
 </div>
 
@@ -131,13 +132,10 @@
 
   <!-- TODO maybe subscribe to this.dataQueriedPast? -->
   <!-- (Testing) display data of past 7 days -->
-  <label [hidden]="!testing">Past dates: </label>
-  <select id="modifyPastEntry" [hidden]="!testing" [disabled]="loggedIn === false" (change)="pastDate = $event.target.value">
-    <option *ngFor="let date of pastDates" value="{{date}}">{{date}}</option>
-  </select>
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headers"
-                  [dataToDisplay]="this.dataQueriedPast[pastDate]"
-                  [categoryColors]="categoryColors" [date]="pastDate" [mobile]="this.mobile">
+  <label [hidden]="!testing">'count' is for yesterday's entry</label>
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headersPast"
+                  [dataToDisplay]="this.dataQueriedPast"
+                  [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.mobile">
   </subentry-table>
 </div>
 

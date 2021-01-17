@@ -26,6 +26,7 @@ After closing out, you may need to "firebase login" again (maybe after "firebase
 v2.8.2 started adding a build timestamp on the bottom next to the version and running "node ./timestamp.js" is
  required to generate the build timestamp in environment.ts.
 
+=> "node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng serve"
 => "node ./timestamp.js && node --max-old-space-size=2048 node_modules/@angular/cli/bin/ng build --prod --outputHashing=all && firebase deploy -P default && rmdir public /s /q"
 
 2.  Installation process (npm install)
@@ -92,6 +93,7 @@ Version | Date | Details
 3.1.3 | 2020-01-11 | chart shows monthly percent goal as horizontal strip in background (hard-coded) + x-axis also shows day not just date + entry with input type tel + allow any symbol for dot but expect only one
 3.1.4 | 2020-01-11 | subentry input type='tel' if mobile and type='number' if web
 3.2.0 | 2020-01-13 | edit mode is introduced to hide or unhide rows/subentries - -1 could not be entered with mobile (feature of hiding with -1 is not removed, yet)
+3.2.1 | 2020-01-16 | In Testing section, the entries of past 7 dates are visible in one table and yesterday's entry can be modified (added/removed goals over time are also handled)
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

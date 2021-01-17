@@ -85,9 +85,9 @@ export class AppComponent {
   activeGoals: Goal[] = [];
   archivedGoals: Goal[] = [];
   saveMessage = '';
-  dataQueriedPast: object = {}; // object of Subentry[]
-  pastDates: string[] = []; // 7 past dates to select from
-  pastDate = ''; // date of selection
+  yesterday = '';
+  headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
+  dataQueriedPast: any[] = []; // similar to Subentry, but 7-8 days of entries instead of single 'count'
 
   // TODO calculate overall percentage and save whenever changes
   // todo bigger input boxes on web - testing
@@ -105,6 +105,11 @@ export class AppComponent {
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore();
+
+    // For testing - allowing yesterday's entry to be modified
+    const yesterday: any = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    this.yesterday = this.dbService._getDateKey(yesterday);
 
     if (!this.mobile) { // Display 'category' column only on desktop by default
       this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
@@ -245,7 +250,6 @@ export class AppComponent {
     this.overallCompletionRates = [];
     for (let i = 0; i < this.numberOfDaysToDisplay; i++) {
       this.overallCompletionRates.push({date: '0', percent: 0}); // initialize
-      this.pastDates.push('');
     }
 
     // Subscribe to today's entry (especially its subcollection) from database (for display)
@@ -270,8 +274,7 @@ export class AppComponent {
       this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
       const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length) + this.dbService.findDayOfTheWeek()[0];
       this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
-      this.dataQueriedPast[this.dbService._getDateKey()] = this.dataQueried;
-      this.pastDates[this.numberOfDaysToDisplay - 1] = this.dbService._getDateKey();
+      this.processPastData(this.dbService._getDateKey(), this.dataQueried);
     });
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
@@ -288,13 +291,13 @@ export class AppComponent {
       date.setDate(date.getDate() - (this.numberOfDaysToDisplay - 1) + i);
 
       // TODO allow modifying sub-entries of the past 7 days since I read these in anyway
-      this.dbService.readSubcollectionsInAnEntryOfADay(false, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
+      // Subscribe only to yesterday's entry, since testing section allows yesterday's subentries to be modified
+      this.dbService.readSubcollectionsInAnEntryOfADay(this.dbService._getDateKey(date) === this.yesterday, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = this.utilService.toIterable(querySnapshot);
         const dateStr = this.dbService._getDateKey(date);
         const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length) + this.dbService.findDayOfTheWeek(date)[0];
         this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
-        this.dataQueriedPast[dateStr] = dataQueried;
-        this.pastDates[i] = dateStr;
+        this.processPastData(dateStr, dataQueried);
         console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
       });
     }
@@ -528,5 +531,53 @@ export class AppComponent {
       }
     }
     this.editMode = false;
+  }
+
+  // todo allow other days to be modified? - with drop down selection and 'count' has different date (then subscription should change too)
+  // Restructure past data to display 7-8 days data into one table
+  processPastData(date: string, entry: Subentry[]) {
+    // Adding a date to headers
+    if (this.headersPast.indexOf(date) === -1) { // this condition exists because this function can be called to initialize AND when yesterday's subentry is updated
+      this.headersPast.push(date);
+      this.headersPast = this.headersPast.sort();
+    }
+
+    // Adding the entry into the array
+    if (this.dataQueriedPast.length === 0) { // if the array is empty, then keep all the other metadata such as goal name
+      this.dataQueriedPast = entry;
+      for (const data of this.dataQueriedPast) {
+        data[date] = data.count;
+      }
+    } else {
+      // if this 'entry' variable has more subentries than this.dataQueriedPast, then add those new subentries
+      const newEntries = [];
+      for (const data2 of entry) {
+        let data2Found = false;
+
+        for (const data1 of this.dataQueriedPast) {
+          if (data1.documentId === data2.documentId) {
+            data2Found = true;
+          }
+        }
+        if (data2Found === false) {
+          newEntries.push(data2);
+        }
+      }
+      this.dataQueriedPast = this.dataQueriedPast.concat(newEntries);
+
+      // Not assuming that the entries from different dates are identical, because goals can change
+      for (const data2 of entry) {
+        for (const data1 of this.dataQueriedPast) {
+          if (data1.documentId === data2.documentId) {
+            data1[date] = data2.count;
+
+            // Currently, 'count' key allows for modification, which will be yesterday's data
+            if (this.yesterday === date) {
+              data1.count = data2.count;
+            }
+          }
+        }
+      }
+    }
   }
 }

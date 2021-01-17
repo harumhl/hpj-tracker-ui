@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.0",
-  "description": "edit mode is introduced to hide or unhide rows/subentries - -1 could not be entered with mobile (feature of hiding with -1 is not removed, yet)",
+  "version": "3.2.1",
+  "description": "In Testing section, the entries of past 7 dates are visible in one table and yesterday's entry can be modified (added/removed goals over time are also handled)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
