@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.1",
-  "description": "In Testing section, the entries of past 7 dates are visible in one table and yesterday's entry can be modified (added/removed goals over time are also handled)",
+  "version": "3.2.2",
+  "description": "Oddly 'edit' button was getting clicked automatically when the page loads (only in prod), so now it's a checkbox - the content is actually in the previous commit due to git issue",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
