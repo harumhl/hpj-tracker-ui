@@ -535,7 +535,6 @@ export class AppComponent {
     } else if (editType === 'unhideAll') {
       for (const subentry of this.dataQueried) {
         if (subentry.hide === true) {
-          console.log(subentry.name);
           this.dbService.updateSubentry(subentry.documentId, null, false, subentry.doneDate);
         }
       }

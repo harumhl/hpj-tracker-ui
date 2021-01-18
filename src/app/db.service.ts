@@ -290,7 +290,7 @@ export class DbService {
 
     const collection = DbService.collections.entries;
     this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), dataToModify, DbService.collections.goals, Object.assign(dataToModify, {documentId}),
-      () => { this.refreshChart(); });
+      () => { if (count !== null) { this.refreshChart(); } });
   }
 
   refreshChart() {

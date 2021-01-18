@@ -98,6 +98,7 @@ Version | Date | Details
 3.2.3 | 2021-01-17 | displaying past data does not mess up displaying today's data by deep-copying the data
 3.2.4 | 2021-01-18 | When multiple subentries are modified at once (e.g. hiding multiple at once), the chart is updated only once
 3.2.5 | 2021-01-18 | Adding 'unhide all' button
+3.2.6 | 2021-01-18 | Chart is updated only when the count is updated (i.e. not with hide/unhide) 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

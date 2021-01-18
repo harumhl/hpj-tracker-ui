@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.5",
-  "description": "Adding 'unhide all' button",
+  "version": "3.2.6",
+  "description": "Chart is updated only when the count is updated (i.e. not with hide/unhide)",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
