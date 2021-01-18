@@ -64,7 +64,7 @@ service cloud.firestore {
       && incomingData().name is string
       && incomingData().documentId is string
       && incomingData().archived is bool
-      && incomingData().goalCount is int
+      && incomingData().goalCount is number
       && incomingData().unit is string
       && (incomingData().subentryDetails is map)
       && (incomingData().details is string || incomingData().details == '')
@@ -76,7 +76,7 @@ service cloud.firestore {
       && incomingData().name == existingData().name
       && incomingData().documentId == existingData().documentId
       && incomingData().archived is bool
-      && incomingData().goalCount is int
+      && incomingData().goalCount is number
       && incomingData().unit is string
       && (incomingData().subentryDetails is map)
       && (incomingData().details is string || incomingData().details == '')
@@ -92,8 +92,8 @@ service cloud.firestore {
       && incomingData().category is string
       && incomingData().name is string
       && incomingData().documentId is string
-      && incomingData().count is int
-      && incomingData().goalCount is int
+      && incomingData().count is number
+      && incomingData().goalCount is number
       && incomingData().hide is bool
       && incomingData().subentryDetails is map
     }
