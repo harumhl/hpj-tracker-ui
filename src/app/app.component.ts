@@ -54,7 +54,6 @@ export class AppComponent {
   dataQueried: Subentry[] = [];
   dataQueriedInSchedules: Subentry[] = [];
   timeToHighlight: string;
-  // TODO hide for the rest of the day (wake up 6am)
   // TODO select a few to focus now
   dataToDisplay: Subentry[] = [];
   overallCompletionRate = 0;
@@ -68,7 +67,7 @@ export class AppComponent {
 
   display = { // whether to display each component or not
     allOptions: false,
-    inSchedules: true, // todo if goal has multiple expected times of completion and there's future one then hide the past one
+    inSchedules: true,
     incompleteAndUnhiddenOnly: true,
     fullInfo: true,
     topChart: false, // todo display more dates, display per category
@@ -99,7 +98,6 @@ export class AppComponent {
   // todo display firebase quota and how much I used it on UI
   // todo allow modify archive
   constructor(public dbService: DbService, private utilService: UtilService) {
-    // todo make this a progressive web app?
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
     // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase
@@ -515,7 +513,7 @@ export class AppComponent {
       const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
       let subentryDetails: any = (document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value;
 
-      // TODO clear out upon successful update
+      // TODO clear out only after successful update
       (document.getElementById('modifyGoalName') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = '';
@@ -569,7 +567,14 @@ export class AppComponent {
       this.dataQueriedPast = this.utilService.deepCopy(entry);
       for (const data of this.dataQueriedPast) {
         data[date] = data.count;
-        data[date + ' subentryDetails'] = data.subentryDetails;
+
+        // Due to the size, only show the 'true' ones
+        data[date + ' subentryDetails'] = {};
+        for (const subentryDetailsKey in data.subentryDetails) {
+          if (data.subentryDetails.hasOwnProperty(subentryDetailsKey) && data.subentryDetails[subentryDetailsKey] === true) {
+            data[date + ' subentryDetails'][subentryDetailsKey] = data.subentryDetails[subentryDetailsKey];
+          }
+        }
       }
     } else {
       // if this 'entry' variable has more subentries than this.dataQueriedPast, then add those new subentries
@@ -593,7 +598,14 @@ export class AppComponent {
         for (const data1 of this.dataQueriedPast) {
           if (data1.documentId === data2.documentId) {
             data1[date] = data2.count;
-            data1[date + ' subentryDetails'] = data2.subentryDetails;
+
+            // Due to the size, only show the 'true' ones
+            data1[date + ' subentryDetails'] = {};
+            for (const subentryDetailsKey in data2.subentryDetails) {
+              if (data2.subentryDetails.hasOwnProperty(subentryDetailsKey) && data2.subentryDetails[subentryDetailsKey] === true) {
+                data1[date + ' subentryDetails'][subentryDetailsKey] = data2.subentryDetails[subentryDetailsKey];
+              }
+            }
 
             // Currently, 'count' key allows for modification, which will be yesterday's data
             if (this.yesterday === date) {

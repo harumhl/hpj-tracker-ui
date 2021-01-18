@@ -20,7 +20,6 @@
                               row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5 ? '#fae3e0' :
                               row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5 ? '#fdc1dd' :
                               row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
-        <!-- todo display data for the past 7 days OR the current week -->
         <!-- todo merge category column over multiple rows -->
         <!-- todo display streak -->
         <label *ngIf="loggedIn === false || (column !== 'count' && !column.includes('subentryDetails'))">{{row[column]}}</label>

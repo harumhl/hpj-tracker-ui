@@ -194,7 +194,7 @@ export class DbService {
     }
   }
 
-  // todo goal occurrence (e.g. daily/weekly/MWF)
+  // TODO goal occurrence (e.g. daily/weekly/MWF)
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   // TODO order of goals for display
   // Write a new goal to Firebase database
@@ -250,7 +250,6 @@ export class DbService {
     });
   }
 
-  // todo detailed entry (e.g. not just writing that I had two servings of fruits, but writing that I had an apple and a kiwi)
   // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)
   // Write a new entry in Firebase database
   newEntry(doneDate: string) {

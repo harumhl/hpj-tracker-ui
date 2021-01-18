@@ -132,7 +132,6 @@
                   [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 
-  <!-- TODO maybe subscribe to this.dataQueriedPast? -->
   <!-- (Testing) display data of past 7 days -->
   <label [hidden]="!testing">'count' is for yesterday's entry</label>
   <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"

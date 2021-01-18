@@ -12,7 +12,7 @@ export class SubentryTableComponent implements OnInit {
   @Input() headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
   @Input() dataToDisplay: any[] = [];
   @Input() categoryColors: object = {};
-  @Input() timeToHighlight = ''; // todo should be optional
+  @Input() timeToHighlight = '';
   @Input() date = null;
   @Input() mobile: boolean;
   @Input() editMode = false;
@@ -35,7 +35,6 @@ export class SubentryTableComponent implements OnInit {
     }
     const newCount = parseFloat(enteredValue);
 
-    // TODO introduce "edit" mode where multiple subentries can be selected with (appearing) checkboxes - for hide and more (e.g. delete?) instead of relying on entering -1
     // hide a subentry by entering -1
     if (newCount === -1) {
       this.dbService.updateSubentry(row.documentId, this.date, null, !row.hide, null);

@@ -100,6 +100,7 @@ Version | Date | Details
 3.2.5 | 2021-01-18 | Adding 'unhide all' button
 3.2.6 | 2021-01-18 | Chart is updated only when the count is updated (i.e. not with hide/unhide)
 3.3.0 | 2021-01-18 | Introducing 'subentryDetails' to mark details of today's subentries - button click to mark whether it's done that day / current goals updated, testing new/modify goal updated, displayed in all relevant tables
+3.3.1 | 2021-01-18 | subentryDetails not show by default + subentryDetails not required with new goal (bug fixed) + in displaying data for past 7-8 days, only completed subentryDetails are displayed ('true' ones) 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

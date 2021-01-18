@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.3.0",
-  "description": "Introducing 'subentryDetails' to mark details of today's subentries - button click to mark whether it's done that day / current goals updated, testing new/modify goal updated, displayed in all relevant tables",
+  "version": "3.3.1",
+  "description": "subentryDetails not show by default + subentryDetails not required with new goal (bug fixed) + in displaying data for past 7-8 days, only completed subentryDetails are displayed ('true' ones) ",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
