@@ -40,7 +40,7 @@ export class AppComponent {
 
   notes: Note[] = [];
 
-  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'subentryDetails', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
