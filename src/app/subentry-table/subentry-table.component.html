@@ -7,29 +7,36 @@
       <label *ngIf="column === 'goalCount'">goal</label>
     </th>
   </tr>
-  <tr id="content-row" *ngFor="let row of this.dataToDisplay">
-    <td *ngIf="editMode"><input type="checkbox" [(ngModel)]="row.checked"></td>
-    <td id=content-column* *ngFor="let column of this.headers"
-        [ngStyle]="{'white-space': column === 'details' ? 'nowrap' : 'inherit',
-        'background-color': row.archived ? '#FF9999' :
-                            column === 'time' && this.timeToHighlight === row[column] ? '#99CCFF' :
-                            column === 'category' || column === 'name' ? categoryColors[row['category']] :
-                            row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5 ? '#fdfbf3' :
-                            row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5 ? '#fbf6e7' :
-                            row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5 ? '#fae3e0' :
-                            row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5 ? '#fdc1dd' :
-                            row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
-      <!-- todo display data for the past 7 days OR the current week -->
-      <!-- todo merge category column over multiple rows -->
-      <!-- todo display streak -->
-      <label *ngIf="loggedIn === false || column !== 'count'">{{row[column]}}</label>
-      <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
+  <ng-template ngFor let-row [ngForOf]="this.dataToDisplay" let-i="index">
+    <tr id="content-row">
+      <td *ngIf="editMode"><input type="checkbox" [(ngModel)]="row.checked"></td>
+      <td id=content-column* *ngFor="let column of this.headers"
+          [ngStyle]="{'white-space': column === 'details' ? 'nowrap' : 'inherit',
+          'background-color': row.archived ? '#FF9999' :
+                              column === 'time' && this.timeToHighlight === row[column] ? '#99CCFF' :
+                              column === 'category' || column === 'name' ? categoryColors[row['category']] :
+                              row['count'] <= row['goalCount']*2/5 && row['count'] >= row['goalCount']/5 ? '#fdfbf3' :
+                              row['count'] <= row['goalCount']*3/5 && row['count'] >= row['goalCount']*2/5 ? '#fbf6e7' :
+                              row['count'] <= row['goalCount']*4/5 && row['count'] >= row['goalCount']*3/5 ? '#fae3e0' :
+                              row['count'] < row['goalCount'] && row['count'] >= row['goalCount']*4/5 ? '#fdc1dd' :
+                              row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
+        <!-- todo display data for the past 7 days OR the current week -->
+        <!-- todo merge category column over multiple rows -->
+        <!-- todo display streak -->
+        <label *ngIf="loggedIn === false || (column !== 'count' && !column.includes('subentryDetails'))">{{row[column]}}</label>
+        <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
 
-      <!-- type="tel" if mobile // type="number" if web -->
-      <input *ngIf="!mobile && loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
-             (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
-      <input *ngIf="mobile && loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}"
-             (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
-    </td>
-  </tr>
+        <!-- type="tel" if mobile // type="number" if web -->
+        <input *ngIf="!mobile && loggedIn === true && column === 'count'" type="number" value="{{row[column]}}"
+               (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+        <input *ngIf="mobile && loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}"
+               (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+
+        <div *ngIf="loggedIn === true && column.includes('subentryDetails')">
+          <button *ngFor="let detail of row[column] | keyvalue" (click)="updateSubentryDetails(row, detail)"
+                  [ngStyle]="{'background-color': detail.value ? '#BBFFBB' : '#FFCCEE'}">{{detail.key}}</button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
 </table>

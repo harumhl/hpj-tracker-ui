@@ -40,7 +40,7 @@ export class AppComponent {
 
   notes: Note[] = [];
 
-  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'subentryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
@@ -275,9 +275,9 @@ export class AppComponent {
       // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
       // Calculate overall completion rate to display
       this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
-      const todayStrDD = this.dbService.today.substring(this.dbService.today.length - 2, this.dbService.today.length) + this.dbService.findDayOfTheWeek()[0];
-      this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDD, percent: this.overallCompletionRate};
-      this.processPastData(this.dbService._getDateKey(), this.dataQueried);
+      const todayStrDDday = this.utilService.formatDate(this.dbService.today, 'DD') + this.dbService.findDayOfTheWeek()[0];
+      this.overallCompletionRates[this.numberOfDaysToDisplay - 1] = {date: todayStrDDday, percent: this.overallCompletionRate};
+      this.processPastData(this.utilService.formatDate(this.dbService.today, 'MM-DD'), this.dataQueried);
     });
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
@@ -298,9 +298,9 @@ export class AppComponent {
       this.dbService.readSubcollectionsInAnEntryOfADay(this.dbService._getDateKey(date) === this.yesterday, this.dbService._getDateKey(date), (querySnapshot: QuerySnapshot) => {
         const dataQueried = this.utilService.toIterable(querySnapshot);
         const dateStr = this.dbService._getDateKey(date);
-        const dateStrDD = dateStr.substring(dateStr.length - 2, dateStr.length) + this.dbService.findDayOfTheWeek(date)[0];
-        this.overallCompletionRates[i] = {date: dateStrDD, percent: this.computeOverallCompletionRate(dataQueried)};
-        this.processPastData(dateStr, dataQueried);
+        const dateStrDDday = this.utilService.formatDate(dateStr, 'DD') + this.dbService.findDayOfTheWeek(date)[0];
+        this.overallCompletionRates[i] = {date: dateStrDDday, percent: this.computeOverallCompletionRate(dataQueried)};
+        this.processPastData(this.utilService.formatDate(dateStr, 'MM-DD'), dataQueried);
         console.log('Overall completion rates in %: ', dateStr, this.overallCompletionRates[i].percent.toFixed(2));
       });
     }
@@ -322,61 +322,61 @@ export class AppComponent {
     // todo unit with numbers (e.g. push-ups 3 sets of 20 push-ups)
     const mins = 'mins';
     const count = 'count';
-    this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, ['10:00'], '');
-    this.dbService.newGoal('Hazel', 'Stretching', false, 10, mins, ['07:00'], '');
-    this.dbService.newGoal('Hazel', 'Toner Lotion VitaminC on face', false, 2, 'twice a day', ['07:45', '21:00'], '');
-    this.dbService.newGoal('Hazel', 'Body lotion', false, 2, 'twice a day', ['07:45', '21:00'], '');
-    this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day', ['07:45', '21:00'], '');
-    this.dbService.newGoal('Hazel', 'Brush hair', false, 200, 'strokes', ['07:45', '21:00'], '');
-    this.dbService.newGoal('Hazel', 'Cold blow dry hair', false, 5, mins, ['07:45'], '');
-    this.dbService.newGoal('Hazel', 'Smile', false, 5, mins, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Hazel', 'Face muscle stretch', false, 5, mins, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Hazel', 'Mewing', false, 5, mins, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Hazel', 'Learn more', false, 10, mins, ['11:00'], '');
-    this.dbService.newGoal('Hazel', 'Posture', false, 3, mins, ['10:00'], '');
-    this.dbService.newGoal('Hazel', 'Posture correction stretch', false, 3, mins, ['10:00'], '');
-    this.dbService.newGoal('Hazel', 'Dress up', true, 10, mins, ['10:00'], '');
-    this.dbService.newGoal('Hazel', 'Voice practice', false, 3, mins, ['10:00'], '');
-    this.dbService.newGoal('Hazel', 'Anal', true, 1, mins, ['10:00'], '');
-    this.dbService.newGoal('Workout', 'Push-ups', false, 50, count, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Workout', 'Ab workout', false, 50, count, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Workout', 'Squats & Lunges', false, 50, count, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Workout', 'Donkey kicks & Fire hydrants', false, 50, count, ['10:00', '14:00', '18:00'], 'with a band');
-    this.dbService.newGoal('Workout', 'Glute bridge', false, 30, count, ['10:00', '14:00', '18:00'], '');
-    this.dbService.newGoal('Workout', 'Running', false, 1.0, 'miles', ['06:00'], '');
-    this.dbService.newGoal('Workout', 'Walking', false, 20, mins, ['06:30'], '');
-    this.dbService.newGoal('Workout', 'No red-meat dish', false, 1, count, ['12:00', '19:00'], '');
-    this.dbService.newGoal('Mind', 'Mindful', false, 5, mins, ['10:00'], '');
-    this.dbService.newGoal('Mind', 'Mirror', false, 3, mins, ['10:00'], '');
-    this.dbService.newGoal('Mind', 'Read', false, 5, mins, ['10:00'], '');
-    this.dbService.newGoal('Mind', 'Talk with Rhami', false, 5, mins, ['10:00'], '');
-    this.dbService.newGoal('Mind', 'Meditate Hypnosis', false, 5, mins, ['10:00'], '');
-    this.dbService.newGoal('ProgrammingAI', 'Programming', false, 10, mins, ['10:00'], '');
-    this.dbService.newGoal('ProgrammingAI', 'AI', false, 10, mins, ['10:00'], '');
-    this.dbService.newGoal('ProgrammingAI', 'Maintain HPJ tracker web', false, 10, mins, ['10:00'], '');
-    this.dbService.newGoal('Basic', 'Sleep 7 hours', false, 1, count, ['06:00'], '');
-    this.dbService.newGoal('Basic', 'Wake up at 6am', false, 1, count, ['06:00'], '');
-    this.dbService.newGoal('Basic', 'Eat fruits', false, 2, 'fruits', ['07:00'], '');
-    this.dbService.newGoal('Basic', 'Eat healthy', false, 2, 'meals', ['12:00', '19:00'], '');
-    // this.dbService.newGoal('Basic', 'Red meat limit', false, 3, 'meals per week', ['10:00'], '');
-    this.dbService.newGoal('Basic', 'Drink water', false, 6, 'cups', ['08:00', '11:00', '14:00', '17:00'], '');
-    this.dbService.newGoal('Basic', 'Shave', false, 1, count, ['07:30'], '');
-    this.dbService.newGoal('Basic', 'Brush teeth', false, 2, count, ['07:30'], '');
-    this.dbService.newGoal('Basic', 'Retainer', false, 2, count, ['21:00'], '');
-    // this.dbService.newGoal('Basic', 'Floss', false, 1, count, 'weekly');
-    this.dbService.newGoal('Basic', 'Poop', false, 1, count, ['08:00'], '');
-    this.dbService.newGoal('Basic', 'Shower', false, 2, count, ['08:00'], '');
-    this.dbService.newGoal('Basic', 'Condition hair', false, 2, count, ['08:30'], 'conditioner & leave-in conditioner daily');
-    // this.dbService.newGoal('Basic', 'Hair pack', false, 2, count, ['10:00'], '');
-    this.dbService.newGoal('Basic', 'Remove body hair', false, 30, 'hair', ['08:30'], '');
-    this.dbService.newGoal('Basic', 'Chores', false, 5, mins, ['17:00'], '');
-    this.dbService.newGoal('Basic', 'Nap', false, 5, mins, ['13:00'], '');
-    this.dbService.newGoal('Basic', 'Write diary', false, 1, count, ['22:00'], '');
-    this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, ['14:00'], '');
-    this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, ['17:00'], '');
-    this.dbService.newGoal('Hobby', 'study constellations', false, 5, mins, ['22:00'], '');
-    this.dbService.newGoal('Others', 'Read Korean out loud', false, 5, mins, ['17:00'], '');
-    this.dbService.newGoal('Others', 'Read English out loud', false, 5, mins, ['17:00'], '');
+    this.dbService.newGoal('Hazel', 'Makeup practice', false, 3, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Stretching', false, 10, mins, ['07:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Toner Lotion VitaminC on face', false, 2, 'twice a day', ['07:45', '21:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Body lotion', false, 2, 'twice a day', ['07:45', '21:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Haircare', false, 2, 'twice a day', ['07:45', '21:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Brush hair', false, 200, 'strokes', ['07:45', '21:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Cold blow dry hair', false, 5, mins, ['07:45'], '', {});
+    this.dbService.newGoal('Hazel', 'Smile', false, 5, mins, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Face muscle stretch', false, 5, mins, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Mewing', false, 5, mins, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Learn more', false, 10, mins, ['11:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Posture', false, 3, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Posture correction stretch', false, 3, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Dress up', true, 10, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Voice practice', false, 3, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Hazel', 'Anal', true, 1, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Workout', 'Push-ups', false, 50, count, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Workout', 'Ab workout', false, 50, count, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Workout', 'Squats & Lunges', false, 50, count, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Workout', 'Donkey kicks & Fire hydrants', false, 50, count, ['10:00', '14:00', '18:00'], 'with a band', {});
+    this.dbService.newGoal('Workout', 'Glute bridge', false, 30, count, ['10:00', '14:00', '18:00'], '', {});
+    this.dbService.newGoal('Workout', 'Running', false, 1.0, 'miles', ['06:00'], '', {});
+    this.dbService.newGoal('Workout', 'Walking', false, 20, mins, ['06:30'], '', {});
+    this.dbService.newGoal('Workout', 'No red-meat dish', false, 1, count, ['12:00', '19:00'], '', {});
+    this.dbService.newGoal('Mind', 'Mindful', false, 5, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Mind', 'Mirror', false, 3, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Mind', 'Read', false, 5, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Mind', 'Talk with Rhami', false, 5, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Mind', 'Meditate Hypnosis', false, 5, mins, ['10:00'], '', {});
+    this.dbService.newGoal('ProgrammingAI', 'Programming', false, 10, mins, ['10:00'], '', {});
+    this.dbService.newGoal('ProgrammingAI', 'AI', false, 10, mins, ['10:00'], '', {});
+    this.dbService.newGoal('ProgrammingAI', 'Maintain HPJ tracker web', false, 10, mins, ['10:00'], '', {});
+    this.dbService.newGoal('Basic', 'Sleep 7 hours', false, 1, count, ['06:00'], '', {});
+    this.dbService.newGoal('Basic', 'Wake up at 6am', false, 1, count, ['06:00'], '', {});
+    this.dbService.newGoal('Basic', 'Eat fruits', false, 2, 'fruits', ['07:00'], '', {});
+    this.dbService.newGoal('Basic', 'Eat healthy', false, 2, 'meals', ['12:00', '19:00'], '', {});
+    // this.dbService.newGoal('Basic', 'Red meat limit', false, 3, 'meals per week', ['10:00'], '', {});
+    this.dbService.newGoal('Basic', 'Drink water', false, 6, 'cups', ['08:00', '11:00', '14:00', '17:00'], '', {});
+    this.dbService.newGoal('Basic', 'Shave', false, 1, count, ['07:30'], '', {});
+    this.dbService.newGoal('Basic', 'Brush teeth', false, 2, count, ['07:30'], '', {});
+    this.dbService.newGoal('Basic', 'Retainer', false, 2, count, ['21:00'], '', {});
+    // this.dbService.newGoal('Basic', 'Floss', false, 1, count, 'weekly', {});
+    this.dbService.newGoal('Basic', 'Poop', false, 1, count, ['08:00'], '', {});
+    this.dbService.newGoal('Basic', 'Shower', false, 2, count, ['08:00'], '', {});
+    this.dbService.newGoal('Basic', 'Condition hair', false, 2, count, ['08:30'], 'conditioner & leave-in conditioner daily', {});
+    // this.dbService.newGoal('Basic', 'Hair pack', false, 2, count, ['10:00'], '', {});
+    this.dbService.newGoal('Basic', 'Remove body hair', false, 30, 'hair', ['08:30'], '', {});
+    this.dbService.newGoal('Basic', 'Chores', false, 5, mins, ['17:00'], '', {});
+    this.dbService.newGoal('Basic', 'Nap', false, 5, mins, ['13:00'], '', {});
+    this.dbService.newGoal('Basic', 'Write diary', false, 1, count, ['22:00'], '', {});
+    this.dbService.newGoal('Interpersonal', 'Text or call', false, 1, count, ['14:00'], '', {});
+    this.dbService.newGoal('Hobby', 'hobby', false, 5, mins, ['17:00'], '', {});
+    this.dbService.newGoal('Hobby', 'study constellations', false, 5, mins, ['22:00'], '', {});
+    this.dbService.newGoal('Others', 'Read Korean out loud', false, 5, mins, ['17:00'], '', {});
+    this.dbService.newGoal('Others', 'Read English out loud', false, 5, mins, ['17:00'], '', {});
   }
 
   toggle(id: string, value?: any) {
@@ -390,10 +390,12 @@ export class AppComponent {
         this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
         this.headers = this.utilService.addElemInArray(this.headers, 'time', true);
         this.headers = this.utilService.addElemInArray(this.headers, 'unit');
+        this.headers = this.utilService.addElemInArray(this.headers, 'subentryDetails');
         this.headers = this.utilService.addElemInArray(this.headers, 'details');
       } else {
         this.headers = this.utilService.removeElemInArray(this.headers, 'category');
         this.headers = this.utilService.removeElemInArray(this.headers, 'unit');
+        this.headers = this.utilService.removeElemInArray(this.headers, 'subentryDetails');
         this.headers = this.utilService.removeElemInArray(this.headers, 'details');
       }
     }
@@ -472,6 +474,7 @@ export class AppComponent {
           (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
           (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
           (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
+          (document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value = this.utilService.objectKeysToCommaSeparatedString(goalInfo.subentryDetails);
           (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
         }
       }
@@ -488,17 +491,20 @@ export class AppComponent {
       const goalCount = Number((document.getElementById('newGoalGoalCount') as HTMLInputElement).value);
       const unit = (document.getElementById('newGoalUnit') as HTMLInputElement).value;
       let expectedTimesOfCompletion: any = (document.getElementById('newGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
+      let subentryDetails: any = (document.getElementById('newGoalSubentryDetails') as HTMLInputElement).value;
       const details = (document.getElementById('newGoalDetails') as HTMLInputElement).value;
 
       (document.getElementById('newGoalName') as HTMLInputElement).value = '';
       (document.getElementById('newGoalGoalCount') as HTMLInputElement).value = '';
       (document.getElementById('newGoalUnit') as HTMLInputElement).value = '';
       (document.getElementById('newGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';
+      (document.getElementById('newGoalSubentryDetails') as HTMLInputElement).value = '';
       (document.getElementById('newGoalDetails') as HTMLInputElement).value = '';
 
       expectedTimesOfCompletion = expectedTimesOfCompletion.split(',');
+      subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(subentryDetails, false);
 
-      this.dbService.newGoal(category, name, archived, goalCount, unit, expectedTimesOfCompletion, details,
+      this.dbService.newGoal(category, name, archived, goalCount, unit, expectedTimesOfCompletion, details, subentryDetails,
         () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; }); },
         () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal failed'; }, () => { this.saveMessage = ''; }); });
     } else if (type === 'Modify Goal') {
@@ -507,18 +513,24 @@ export class AppComponent {
       const unit = (document.getElementById('modifyGoalUnit') as HTMLInputElement).value;
       let expectedTimesOfCompletion: any = (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value;
       const details = (document.getElementById('modifyGoalDetails') as HTMLInputElement).value;
+      let subentryDetails: any = (document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value;
 
+      // TODO clear out upon successful update
       (document.getElementById('modifyGoalName') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = '';
       (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = '';
+      (document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value = '';
 
       if (expectedTimesOfCompletion) {
         expectedTimesOfCompletion = expectedTimesOfCompletion.split(',');
       }
+      if (subentryDetails) {
+        subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(subentryDetails, false);
+      }
 
-      this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimesOfCompletion, details,
+      this.dbService.updateGoal(name, Number(goalCount), unit, expectedTimesOfCompletion, details, subentryDetails,
         () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; }); },
         (error) => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal failed'; }, () => {this.saveMessage = ''; }); });
     }
@@ -529,13 +541,13 @@ export class AppComponent {
       const hide = editType === 'hide';
       for (const subentry of this.dataToDisplay) {
         if (subentry.checked === true) {
-          this.dbService.updateSubentry(subentry.documentId, null, hide, subentry.doneDate);
+          this.dbService.updateSubentry(subentry.documentId, subentry.doneDate, null, hide, null);
         }
       }
     } else if (editType === 'unhideAll') {
       for (const subentry of this.dataQueried) {
         if (subentry.hide === true) {
-          this.dbService.updateSubentry(subentry.documentId, null, false, subentry.doneDate);
+          this.dbService.updateSubentry(subentry.documentId, subentry.doneDate, null, false, null);
         }
       }
     }
@@ -548,6 +560,7 @@ export class AppComponent {
     // Adding a date to headers
     if (this.headersPast.indexOf(date) === -1) { // this condition exists because this function can be called to initialize AND when yesterday's subentry is updated
       this.headersPast.push(date);
+      this.headersPast.push(date + ' subentryDetails');
       this.headersPast = this.headersPast.sort();
     }
 
@@ -556,6 +569,7 @@ export class AppComponent {
       this.dataQueriedPast = this.utilService.deepCopy(entry);
       for (const data of this.dataQueriedPast) {
         data[date] = data.count;
+        data[date + ' subentryDetails'] = data.subentryDetails;
       }
     } else {
       // if this 'entry' variable has more subentries than this.dataQueriedPast, then add those new subentries
@@ -579,6 +593,7 @@ export class AppComponent {
         for (const data1 of this.dataQueriedPast) {
           if (data1.documentId === data2.documentId) {
             data1[date] = data2.count;
+            data1[date + ' subentryDetails'] = data2.subentryDetails;
 
             // Currently, 'count' key allows for modification, which will be yesterday's data
             if (this.yesterday === date) {

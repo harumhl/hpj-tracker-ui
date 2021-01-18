@@ -5,6 +5,7 @@ export class Subentry {
   count: number;
   goalCount: number;
   hide: boolean;
+  subentryDetails: object;
 
   documentId: string;
 

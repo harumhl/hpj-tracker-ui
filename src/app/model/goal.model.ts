@@ -7,4 +7,5 @@ export class Goal {
   unit: string;
   expectedTimesOfCompletion: string[];
   details?: string;
+  subentryDetails?: object;
 }

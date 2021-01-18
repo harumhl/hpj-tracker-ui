@@ -81,4 +81,37 @@ export class UtilService implements OnDestroy {
     }
     return array;
   }
+
+  formatDate(date: string, format: string) {
+    const regex: RegExp = new RegExp(/^20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]$/); // expecting YYYY-MM-DD
+    if (date.match(regex)) {
+      if (format === 'MM-DD') {
+        return date.substring(date.length - 5, date.length);
+      } else if (format === 'DD') {
+        return date.substring(date.length - 2, date.length);
+      }
+      return date;
+    }
+    return date;
+  }
+
+  objectKeysToCommaSeparatedString(obj: object) {
+    let str = '';
+    for (const objKey in obj) {
+      if (str === '') {
+        str = objKey;
+      } else {
+        str += ',' + objKey;
+      }
+    }
+    return str;
+  }
+
+  commaSeparatedStringToObjectKeys(str: string, defaultValue: any) {
+    const obj = {};
+    for (const elem of str.split(',')) {
+      obj[elem] = defaultValue;
+    }
+    return obj;
+  }
 }

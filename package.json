@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.6",
-  "description": "Chart is updated only when the count is updated (i.e. not with hide/unhide)",
+  "version": "3.3.0",
+  "description": "Introducing 'subentryDetails' to mark details of today's subentries - button click to mark whether it's done that day / current goals updated, testing new/modify goal updated, displayed in all relevant tables",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

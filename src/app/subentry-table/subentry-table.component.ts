@@ -38,7 +38,7 @@ export class SubentryTableComponent implements OnInit {
     // TODO introduce "edit" mode where multiple subentries can be selected with (appearing) checkboxes - for hide and more (e.g. delete?) instead of relying on entering -1
     // hide a subentry by entering -1
     if (newCount === -1) {
-      this.dbService.updateSubentry(row.documentId, null, !row.hide, this.date);
+      this.dbService.updateSubentry(row.documentId, this.date, null, !row.hide, null);
       return;
     }
 
@@ -50,7 +50,13 @@ export class SubentryTableComponent implements OnInit {
     // Updating a subentry count
     if (row.count !== newCount) {
       const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
-      this.dbService.updateSubentry(row.documentId, newCount, hide, this.date);
+      this.dbService.updateSubentry(row.documentId, this.date, newCount, hide, null);
     }
+  }
+
+  updateSubentryDetails(row, detail) {
+    // Since the button is clicked, save the opposite value of the current value in the database
+    row.subentryDetails[detail.key] = !detail.value;
+    this.dbService.updateSubentry(row.documentId, this.date, null, null, row.subentryDetails);
   }
 }

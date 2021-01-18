@@ -69,16 +69,15 @@
 <!-- Displaying data -->
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
   <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
-                  [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight"
-                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile"
-                  [editMode]="this.editMode">
+                  [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
+                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
   </subentry-table>
 </div>
 
 {{version}} {{environment}} {{buildTimestamp}}
 
 <!-- Testing -->
-<div (dblclick)="testing = !testing" class="collapsible">Testing</div>
+<div (dblclick)="testing = !testing; this.updateModifyInputElements('Modify Goal');" class="collapsible">Testing</div>
 <br>
 <div (dblclick)="testing = false">
   <!-- (Testing) Enter a new goal -->
@@ -92,6 +91,7 @@
       <input id="newGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false" required>
       <input id="newGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false" required>
       <input id="newGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false" required>
+      <input id="newGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
       <input id="newGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
       <input type="submit" value="save">
     </form>
@@ -106,8 +106,9 @@
       </select>
       <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
       <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
-      <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
       <input id="modifyGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false">
+      <input id="modifyGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
+      <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
       <input type="submit" value="save">
     </form>
   </div>
@@ -127,15 +128,14 @@
 
   <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
   <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'details']"
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
                   [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 
   <!-- TODO maybe subscribe to this.dataQueriedPast? -->
   <!-- (Testing) display data of past 7 days -->
   <label [hidden]="!testing">'count' is for yesterday's entry</label>
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headersPast"
-                  [dataToDisplay]="this.dataQueriedPast"
+  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
                   [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.mobile">
   </subentry-table>
 </div>
