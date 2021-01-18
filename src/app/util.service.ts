@@ -108,8 +108,13 @@ export class UtilService implements OnDestroy {
   }
 
   commaSeparatedStringToObjectKeys(str: string, defaultValue: any) {
+    const array = str.split(',');
+    if (array.length === 1 && array[0] === '') {
+      return {};
+    }
+
     const obj = {};
-    for (const elem of str.split(',')) {
+    for (const elem of array) {
       obj[elem] = defaultValue;
     }
     return obj;
