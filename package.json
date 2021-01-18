@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.3",
-  "description": "displaying past data does not mess up displaying today's data by deep-copying the data",
+  "version": "3.2.5",
+  "description": "Adding 'unhide all' button",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

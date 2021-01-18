@@ -57,6 +57,7 @@
 <!-- edit mode options -->
 <button *ngIf="editMode" (click)="applyEditMode('hide')">hide</button>
 <button *ngIf="editMode" (click)="applyEditMode('unhide')">unhide</button>
+<button *ngIf="editMode" (click)="applyEditMode('unhideAll')">unhide all</button>
 
 <!-- Log in to see data -->
 <label id="emailLabel" for="emailInput"> email: </label>

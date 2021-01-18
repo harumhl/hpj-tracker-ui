@@ -96,6 +96,8 @@ Version | Date | Details
 3.2.1 | 2021-01-16 | In Testing section, the entries of past 7 dates are visible in one table and yesterday's entry can be modified (added/removed goals over time are also handled)
 3.2.2 | 2021-01-17 | Oddly 'edit' button was getting clicked automatically when the page loads (only in prod), so now it's a checkbox - the content is actually in the previous commit due to git issue
 3.2.3 | 2021-01-17 | displaying past data does not mess up displaying today's data by deep-copying the data
+3.2.4 | 2021-01-18 | When multiple subentries are modified at once (e.g. hiding multiple at once), the chart is updated only once
+3.2.5 | 2021-01-18 | Adding 'unhide all' button
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

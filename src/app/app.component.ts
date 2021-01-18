@@ -532,6 +532,13 @@ export class AppComponent {
           this.dbService.updateSubentry(subentry.documentId, null, hide, subentry.doneDate);
         }
       }
+    } else if (editType === 'unhideAll') {
+      for (const subentry of this.dataQueried) {
+        if (subentry.hide === true) {
+          console.log(subentry.name);
+          this.dbService.updateSubentry(subentry.documentId, null, false, subentry.doneDate);
+        }
+      }
     }
     this.editMode = false;
   }
