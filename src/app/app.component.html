@@ -15,7 +15,7 @@
 <div *ngIf="display.topChart" (dblclick)="toggle('topChart', !display.topChart)">
   <ejs-chart #topChart id="overall-completion-rates-chart" width="300" height="200" [primaryXAxis]="{valueType:'Category', title: 'Dates'}"
              [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents',
-             stripLines: [{start: 50, end: 75, text: 'January goal', color: 'pink', opacity: 0.5, visible: true}]}">
+             stripLines: [{start: 60, end: 85, text: 'January goal', color: 'pink', opacity: 0.5, visible: true}]}">
     <e-series-collection>
       <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
     </e-series-collection>

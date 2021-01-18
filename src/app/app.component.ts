@@ -63,7 +63,7 @@ export class AppComponent {
   public chart: ChartComponent;
   numberOfDaysToDisplay = 8;
   overallCompletionRates: any[] = [];
-  interval;
+  interval = null;
   chartLoaded = false;
 
   display = { // whether to display each component or not
@@ -133,19 +133,22 @@ export class AppComponent {
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
   reloadChart() {
-    this.interval = setInterval(() => {
-      // If the data is ready, then enable the chart
-      if (this.chartLoaded === false && this.overallCompletionRates.length > 0 && this.overallCompletionRates.every(elem => elem.date !== '0')) {
-        this.display.topChart = true;
-      }
-      // If the chart is enabled, then actually display the data on chart by refreshing/rerendering
-      if (this.chart !== undefined) {
-        this.chart.refresh();
-        this.toggle('topChart', true);
-        this.chartLoaded = true;
-        clearInterval(this.interval);
-      }
-    }, 1000);
+    if (this.interval === null) { // if reloadChart() gets called multiple times at once, setting this up once should be enough
+      this.interval = setInterval(() => {
+        // If the data is ready, then enable the chart
+        if (this.chartLoaded === false && this.overallCompletionRates.length > 0 && this.overallCompletionRates.every(elem => elem.date !== '0')) {
+          this.display.topChart = true;
+        }
+        // If the chart is enabled, then actually display the data on chart by refreshing/rerendering
+        if (this.chart !== undefined) {
+          this.chart.refresh();
+          this.toggle('topChart', true);
+          this.chartLoaded = true;
+          clearInterval(this.interval);
+          this.interval = null;
+        }
+      }, 1000);
+    }
   }
 
   // Convert raw data format from the database to a format for schedule view (deep-copying since 'time' goes string[] -> string)
