@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.2.2",
-  "description": "Oddly 'edit' button was getting clicked automatically when the page loads (only in prod), so now it's a checkbox - the content is actually in the previous commit due to git issue",
+  "version": "3.2.3",
+  "description": "displaying past data does not mess up displaying today's data by deep-copying the data",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

@@ -544,7 +544,7 @@ export class AppComponent {
 
     // Adding the entry into the array
     if (this.dataQueriedPast.length === 0) { // if the array is empty, then keep all the other metadata such as goal name
-      this.dataQueriedPast = entry;
+      this.dataQueriedPast = this.utilService.deepCopy(entry);
       for (const data of this.dataQueriedPast) {
         data[date] = data.count;
       }

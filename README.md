@@ -95,7 +95,7 @@ Version | Date | Details
 3.2.0 | 2021-01-13 | edit mode is introduced to hide or unhide rows/subentries - -1 could not be entered with mobile (feature of hiding with -1 is not removed, yet)
 3.2.1 | 2021-01-16 | In Testing section, the entries of past 7 dates are visible in one table and yesterday's entry can be modified (added/removed goals over time are also handled)
 3.2.2 | 2021-01-17 | Oddly 'edit' button was getting clicked automatically when the page loads (only in prod), so now it's a checkbox - the content is actually in the previous commit due to git issue
-3.2.3 | 2021-???
+3.2.3 | 2021-01-17 | displaying past data does not mess up displaying today's data by deep-copying the data
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
