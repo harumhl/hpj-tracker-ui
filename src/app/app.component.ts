@@ -40,7 +40,7 @@ export class AppComponent {
 
   notes: Note[] = [];
 
-  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'subentryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
@@ -107,7 +107,7 @@ export class AppComponent {
     // For testing - allowing yesterday's entry to be modified
     const yesterday: any = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    this.yesterday = this.dbService._getDateKey(yesterday);
+    this.yesterday = this.utilService.formatDate(this.dbService._getDateKey(yesterday), 'MM-DD');
 
     if (!this.mobile) { // Display 'category' column only on desktop by default
       this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
@@ -562,55 +562,36 @@ export class AppComponent {
       this.headersPast = this.headersPast.sort();
     }
 
-    // Adding the entry into the array
-    if (this.dataQueriedPast.length === 0) { // if the array is empty, then keep all the other metadata such as goal name
-      this.dataQueriedPast = this.utilService.deepCopy(entry);
-      for (const data of this.dataQueriedPast) {
-        data[date] = data.count;
-
-        // Due to the size, only show the 'true' ones
-        data[date + ' subentryDetails'] = {};
-        for (const subentryDetailsKey in data.subentryDetails) {
-          if (data.subentryDetails.hasOwnProperty(subentryDetailsKey) && data.subentryDetails[subentryDetailsKey] === true) {
-            data[date + ' subentryDetails'][subentryDetailsKey] = data.subentryDetails[subentryDetailsKey];
-          }
-        }
+    // Adding the new subentries of the 'entry' into the array
+    //   if the 'entry' variable has more subentries than this.dataQueriedPast, then add those new subentries (e.g. new goals recently)
+    const newEntries = [];
+    entry.forEach(data2 => {
+      if (this.dataQueriedPast.some(data1 => data1.documentId === data2.documentId) === false) {
+        const copy = this.utilService.deepCopy(data2);
+        delete copy.count; // instead of showing wrong data (as I want only yesterday's count out of all dates), I choose to show no data
+        newEntries.push(copy);
       }
-    } else {
-      // if this 'entry' variable has more subentries than this.dataQueriedPast, then add those new subentries
-      const newEntries = [];
-      for (const data2 of entry) {
-        let data2Found = false;
+    });
+    this.dataQueriedPast = this.dataQueriedPast.concat(newEntries);
 
-        for (const data1 of this.dataQueriedPast) {
-          if (data1.documentId === data2.documentId) {
-            data2Found = true;
+    // Adding the 'counts' in the respective dates in the array
+    //   not assuming that the entries from different dates are identical, because goals can change
+    for (const data2 of entry) {
+      for (const data1 of this.dataQueriedPast) {
+        if (data1.documentId === data2.documentId) {
+          data1[date] = data2.count;
+
+          // Due to the size, only show the 'true' ones of SubentryDetails
+          data1[date + ' subentryDetails'] = {};
+          for (const subentryDetailsKey in data2.subentryDetails) {
+            if (data2.subentryDetails.hasOwnProperty(subentryDetailsKey) && data2.subentryDetails[subentryDetailsKey] === true) {
+              data1[date + ' subentryDetails'][subentryDetailsKey] = data2.subentryDetails[subentryDetailsKey];
+            }
           }
-        }
-        if (data2Found === false) {
-          newEntries.push(data2);
-        }
-      }
-      this.dataQueriedPast = this.dataQueriedPast.concat(newEntries);
 
-      // Not assuming that the entries from different dates are identical, because goals can change
-      for (const data2 of entry) {
-        for (const data1 of this.dataQueriedPast) {
-          if (data1.documentId === data2.documentId) {
-            data1[date] = data2.count;
-
-            // Due to the size, only show the 'true' ones
-            data1[date + ' subentryDetails'] = {};
-            for (const subentryDetailsKey in data2.subentryDetails) {
-              if (data2.subentryDetails.hasOwnProperty(subentryDetailsKey) && data2.subentryDetails[subentryDetailsKey] === true) {
-                data1[date + ' subentryDetails'][subentryDetailsKey] = data2.subentryDetails[subentryDetailsKey];
-              }
-            }
-
-            // Currently, 'count' key allows for modification, which will be yesterday's data
-            if (this.yesterday === date) {
-              data1.count = data2.count;
-            }
+          // Currently, 'count' key allows for modification, which will be yesterday's data
+          if (this.yesterday === date) {
+            data1.count = data2.count;
           }
         }
       }
