@@ -17,6 +17,8 @@ export class SubentryTableComponent implements OnInit {
   @Input() mobile: boolean;
   @Input() editMode = false;
 
+  checkboxAll = false;
+
   constructor(private dbService: DbService) { }
 
   ngOnInit(): void {
@@ -57,5 +59,10 @@ export class SubentryTableComponent implements OnInit {
     // Since the button is clicked, save the opposite value of the current value in the database
     row.subentryDetails[detail.key] = !detail.value;
     this.dbService.updateSubentry(row.documentId, this.date, null, null, row.subentryDetails);
+  }
+
+  selectAll() {
+    this.checkboxAll = !this.checkboxAll;
+    this.dataToDisplay.forEach(row => row.checked = this.checkboxAll);
   }
 }

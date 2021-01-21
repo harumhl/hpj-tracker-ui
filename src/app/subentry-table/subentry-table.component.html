@@ -1,6 +1,6 @@
 <table>
   <tr>
-    <th *ngIf="editMode"></th>
+    <th *ngIf="editMode"><input type="checkbox" [(ngModel)]="checkboxAll" (click)="selectAll()"></th>
     <th id="header" *ngFor="let column of this.headers" style="font-size: 12px" (dblclick)="this.headers.splice(this.headers.indexOf(column), 1);">
       <!-- display all column names as they are except display 'goalCount' as 'goal' to keep the column width smaller -->
       <label *ngIf="column !== 'goalCount'">{{column}}</label>
