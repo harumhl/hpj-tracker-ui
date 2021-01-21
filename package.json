@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.3.2",
-  "description": "goal count and count can be float not just int +  double-click column name to hide it + testing past 7-8 day entries now show yesterday's subentries under 'count' column",
+  "version": "3.3.3",
+  "description": "select-all checkbox",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
