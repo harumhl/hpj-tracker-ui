@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "3.3.3",
-  "description": "select-all checkbox",
+  "version": "4.0.0",
+  "description": "highlights on Notes can have different colors",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
