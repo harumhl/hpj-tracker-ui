@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "4.0.0",
-  "description": "highlights on Notes can have different colors",
+  "version": "4.0.1",
+  "description": "highlights on Notes work with special characters",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

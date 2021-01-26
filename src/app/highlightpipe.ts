@@ -13,7 +13,7 @@ export class HighLightPipe implements PipeTransform {
     for (const highlight of highlights) {
       const textToHighlight = highlight.text;
       const highlightColor = highlight.color ? highlight.color : '#FFFF00'; // default is yellow
-      text = text.replace(new RegExp(textToHighlight, 'i'), `<span style="background-color: ${highlightColor}">${textToHighlight}</span>`);
+      text = text.replace(textToHighlight, `<span style="background-color: ${highlightColor}">${textToHighlight}</span>`);
     }
     // Angular sanitizes the HTML by removing 'style' added by this 'highlight' pipe. Bypassing it to keep the style
     return this.sanitizer.bypassSecurityTrustHtml(text) as string;

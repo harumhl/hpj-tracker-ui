@@ -104,6 +104,7 @@ Version | Date | Details
 3.3.2 | 2021-01-20 | goal count and count can be float not just int +  double-click column name to hide it + testing past 7-8 day entries now show yesterday's subentries under 'count' column
 3.3.3 | 2021-01-21 | select-all checkbox
 4.0.0 | 2021-01-24 | highlights on Notes can have different colors
+4.0.1 | 2021-01-25 | highlights on Notes work with special characters
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
