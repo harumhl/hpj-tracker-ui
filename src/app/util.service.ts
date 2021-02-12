@@ -22,7 +22,11 @@ export class UtilService implements OnDestroy {
   toIterable(obj: any) {
     const iterable = [];
     if (obj instanceof QuerySnapshot) {
-      obj.forEach((doc) => iterable.push(doc.data()));
+      obj.forEach((doc) => {
+        const data = doc.data();
+        data.id = doc.id;
+        iterable.push(data);
+      });
     } else if (obj instanceof DocumentSnapshot) {
 
     } else if (obj instanceof Object) {

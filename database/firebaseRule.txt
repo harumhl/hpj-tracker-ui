@@ -21,6 +21,11 @@ service cloud.firestore {
         allow update: if signedIn() && updateSubentry()
 	      allow delete: if signedIn()
       }
+      match /basics/{subentryId} {
+      	allow create: if signedIn() && createSubbasic()
+        allow update: if signedIn() && updateSubbasic()
+	      allow delete: if signedIn()
+      }
     }
 
     match /test_categories/{categoryId} {
@@ -39,6 +44,11 @@ service cloud.firestore {
       	allow create: if signedIn() && createSubentry()
         allow update: if signedIn() && updateSubentry()
       	allow delete: if signedIn()
+      }
+      match /test_basics/{subentryId} {
+      	allow create: if signedIn() && createSubbasic()
+        allow update: if signedIn() && updateSubbasic()
+	      allow delete: if signedIn()
       }
     }
 
@@ -107,6 +117,12 @@ service cloud.firestore {
       && incomingData().goalCount == existingData().goalCount
       && incomingData().hide is bool
       && incomingData().subentryDetails is map
+    }
+    function createSubbasic() {
+    	return true
+    }
+    function updateSubbasic() {
+    	return true
     }
   }
 }

@@ -38,6 +38,8 @@ export class DbService {
       key = (document as Goal).documentId;
     } else if (collection === this.collections.entries) {
       key = (document as Subentry).doneDate;
+    } else if (collection === this.collections.basics) {
+      key = (document as Subentry).id;
     } else {
       return '';
     }
@@ -265,6 +267,13 @@ export class DbService {
         });
       } else {
         this.newSubcollectionOfAnEntry(doneDate);
+      }
+    });
+
+    this.readAll(false, DbService.collections.basics, [], (querySnapshot: QuerySnapshot) => {
+      const basics = this.utilService.toIterable(querySnapshot);
+      for (const basic of basics) {
+        this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.basics, basic);
       }
     });
   }

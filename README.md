@@ -105,6 +105,7 @@ Version | Date | Details
 3.3.3 | 2021-01-21 | select-all checkbox
 4.0.0 | 2021-01-24 | highlights on Notes can have different colors
 4.0.1 | 2021-01-25 | highlights on Notes work with special characters
+4.1.0 | 2021-02-11 | 'basics' collection is added and is copied under each entry every day (no UI capability yet - everything needs to be done via db directly besides adding it daily automatically) 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

@@ -16,4 +16,7 @@ export class Subentry {
   unit?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
+
+  // From document-id in Firestore db
+  id?: string;
 }

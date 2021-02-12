@@ -13,7 +13,7 @@ export const environment = {
   firebaseMessagingSenderId: '',
   firebaseAppId: '',
   firebaseMeasurementId: '',
-  firebaseCollections: {categories: 'test_categories', goals: 'test_goals', entries: 'test_entries', notes: 'test_notes'},
+  firebaseCollections: {categories: 'test_categories', goals: 'test_goals', entries: 'test_entries', notes: 'test_notes', basics: 'test_basics'},
   environment: 'staging'
 };
 
