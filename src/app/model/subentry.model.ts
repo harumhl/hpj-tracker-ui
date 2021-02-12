@@ -8,6 +8,7 @@ export class Subentry {
   subentryDetails: object;
 
   documentId: string;
+  id?: string; // From document-id in Firestore db
 
   // For edit mode
   checked?: boolean;
@@ -16,7 +17,4 @@ export class Subentry {
   unit?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
-
-  // From document-id in Firestore db
-  id?: string;
 }

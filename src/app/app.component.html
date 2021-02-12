@@ -80,6 +80,10 @@
 <div (dblclick)="testing = !testing; this.updateModifyInputElements('Modify Goal');" class="collapsible">Testing</div>
 <br>
 <div (dblclick)="testing = false">
+  <!-- (Testing) Update Basics (sleep, food, mood) -->
+  <textarea id="updatedBasics" [hidden]="!testing" style="width: 100%; height: 250px" [innerHTML]="basics | json"></textarea>
+  <button [hidden]="!testing" (click)="updateBasics()">Save</button>
+
   <!-- (Testing) Enter a new goal -->
   <div [hidden]="!testing">
     <form (submit)="save('New Goal')">

@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "4.1.0",
-  "description": "'basics' collection is added and is copied under each entry every day (no UI capability yet - everything needs to be done via db directly besides adding it daily automatically)",
+  "version": "4.1.1",
+  "description": "'basics' collection for today's entry can be modified in an input box where a json is represented in a string",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

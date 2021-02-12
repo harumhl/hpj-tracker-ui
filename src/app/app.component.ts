@@ -77,6 +77,7 @@ export class AppComponent {
   editMode = false;
 
   testing = false;
+  basics: any[] = [];
   categoryList: string[] = [];
   goalList: string[] = [];
   categories: Category[] = [];
@@ -279,6 +280,10 @@ export class AppComponent {
     });
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
+    // Subscribe today's 'basic' entry
+    this.dbService.readSubcollectionsOfSingleDoc(false, DbService.collections.entries, this.dbService.today, [], DbService.collections.basics, (querySnapshot: QuerySnapshot) => {
+      this.basics = this.utilService.toIterable(querySnapshot);
+    });
     // Subscribe to categories from database
     this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
       this.categories = this.utilService.toIterable(querySnapshot);
@@ -595,6 +600,25 @@ export class AppComponent {
           }
         }
       }
+    }
+  }
+
+  updateBasics() {
+    // Get the string representation of json data to json/dict/object
+    let updatedBasics = [];
+    try {
+      updatedBasics = JSON.parse((document.getElementById('updatedBasics') as HTMLInputElement).value)
+    } catch(error) {
+      this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Failed to parse updated "basics"'; }, () => {this.saveMessage = ''; });
+      return;
+    }
+
+    // Update the db under /entries/today's-date/basics (all of the 'documents' regardless of whether it's updated or not)
+    const collection = DbService.collections.basics;
+    for (const updatedBasic of updatedBasics) {
+      this.dbService.updateDocInSubcollection(DbService.collections.entries, this.dbService.today, updatedBasic, collection, updatedBasic,
+        () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics successful'; }, () => { this.saveMessage = ''; }); },
+        (error) => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics failed'; }, () => {this.saveMessage = ''; }); });
     }
   }
 }
