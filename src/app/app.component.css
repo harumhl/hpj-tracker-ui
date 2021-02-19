@@ -1,7 +1,7 @@
 /* Adjusting height based on window/screen height */
 table {height: 100%;}
 @media screen and (min-height: 200px) { /* Designed for iPhone 11 */
-  .div-table {height: 505px;}
+  .div-table {height: 680px;}
 }
 @media screen and (min-height: 900px) { /* Designed for desktop */
   .div-table {height: 790px;}
