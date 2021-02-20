@@ -4,6 +4,7 @@ export class Subentry {
   name: string;
   count: number;
   goalCount: number;
+  countToMinutes: number;
   hide: boolean;
   subentryDetails: object;
 

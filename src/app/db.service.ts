@@ -178,13 +178,14 @@ export class DbService {
   }
 
   // Validating elements of a goal (especially goal >= 0 and expectedTimesOfCompletion)
-  _validateGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, expectedTimesOfCompletion: string[], details: string, subentryDetails: object) {
+  _validateGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, countToMinutes: number, expectedTimesOfCompletion: string[], details: string, subentryDetails: object) {
     const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
     return (category !== null && category !== undefined && category !== '')
     && (name !== null && name !== undefined && name !== '')
     && (archived !== null && archived !== undefined)
     && (goalCount !== null && goalCount !== undefined && goalCount >= 0)
     && (unit !== null && unit !== undefined && unit !== '')
+    && (countToMinutes !== null && countToMinutes !== undefined && countToMinutes > 0)
     && (expectedTimesOfCompletion !== null && expectedTimesOfCompletion !== undefined && expectedTimesOfCompletion.length > 0
         && expectedTimesOfCompletion.filter(t => t.match(regex)).length === expectedTimesOfCompletion.length);
   }
@@ -200,14 +201,14 @@ export class DbService {
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   // TODO order of goals for display
   // Write a new goal to Firebase database
-  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, expectedTimesOfCompletion: string[], details: string, subentryDetails: object, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
-    if (this._validateGoal(category, name, archived, goalCount, unit, expectedTimesOfCompletion, details, subentryDetails)) {
+  newGoal(category: string, name: string, archived: boolean, goalCount: number, unit: string, countToMinutes: number, expectedTimesOfCompletion: string[], details: string, subentryDetails: object, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+    if (this._validateGoal(category, name, archived, goalCount, unit, countToMinutes, expectedTimesOfCompletion, details, subentryDetails)) {
       // Foreign key constraint - check whether the category already exists in /categories
       this.readAll(false, DbService.collections.categories, ['category', '==', category], (querySnapshot) => {
         // If the category exists, then write the new goal (and create today's entry + its subcollections)
         if (querySnapshot.docs.length > 0) {
           const documentId = DbService._getDocumentId(DbService.collections.goals, {documentId: category + '_' + name});
-          this.writeDoc(DbService.collections.goals, {category, name, documentId, archived, goalCount, unit, expectedTimesOfCompletion, details, subentryDetails},
+          this.writeDoc(DbService.collections.goals, {category, name, documentId, archived, goalCount, unit, countToMinutes, expectedTimesOfCompletion, details, subentryDetails},
             () => { this.newEntry(this.today); callback(); }, () => errorCallback());
         }
       });
@@ -217,13 +218,16 @@ export class DbService {
   }
 
   // Update an existing goal in Firebase database
-  updateGoal(name: string, goalCount?: number, unit?: string, expectedTimesOfCompletion?: string[], details?: string, subentryDetails?: object, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
+  updateGoal(name: string, goalCount?: number, unit?: string, countToMinutes?: number, expectedTimesOfCompletion?: string[], details?: string, subentryDetails?: object, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     let dataToModify = {name};
     if (goalCount) {
       dataToModify = Object.assign(dataToModify, {goalCount});
     }
     if (unit) {
       dataToModify = Object.assign(dataToModify, {unit});
+    }
+    if (countToMinutes) {
+      dataToModify = Object.assign(dataToModify, {countToMinutes});
     }
     if (expectedTimesOfCompletion) {
       // Validate expectedTimesOfCompletion before actually updating
@@ -283,7 +287,8 @@ export class DbService {
     this.readAll(false, DbService.collections.goals, ['archived', '==', false], (querySnapshot: QuerySnapshot) => {
       const goals = this.utilService.toIterable(querySnapshot);
       for (const goal of goals) {
-        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal), count: 0, goalCount: goal.goalCount, hide: false, subentryDetails: goal.subentryDetails};
+        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal),
+          count: 0, goalCount: goal.goalCount, countToMinutes: goal.countToMinutes, hide: false, subentryDetails: goal.subentryDetails};
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
       }
     });

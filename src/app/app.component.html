@@ -1,5 +1,4 @@
 <!-- Notes -->
-<div *ngIf="!display.notes" (dblclick)="toggle('notes', !display.notes)" class="collapsible">Notes</div>
 <div *ngIf="display.notes" (dblclick)="toggle('notes', !display.notes)">
   <div *ngFor="let note of this.notes">
     <span style="white-space: pre; word-wrap: normal;" [innerHTML]="'- ' + note.name + ': ' + note.text | highlight : note.highlights"></span>
@@ -11,15 +10,18 @@
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
 <!-- Chart -->
-<div *ngIf="!display.topChart" (dblclick)="toggle('topChart', !display.topChart)" class="collapsible">Chart</div>
 <div *ngIf="display.topChart" (dblclick)="toggle('topChart', !display.topChart)">
-  <ejs-chart #topChart id="overall-completion-rates-chart" width="300" height="200" [primaryXAxis]="{valueType:'Category', title: 'Dates'}"
-             [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: 'Percents',
-             stripLines: [{start: 60, end: 85, text: 'January goal', color: 'pink', opacity: 0.5, visible: true}]}">
-    <e-series-collection>
-      <e-series [dataSource]='this.overallCompletionRates' type='Line' xName='date' yName='percent' name="overall"></e-series>
-    </e-series-collection>
-  </ejs-chart>
+  <div style="display: inline-block"> <!-- inline-block displays <div>s side by side -->
+    <ejs-chart #topChart id="completion-hours-by-categories-as-percentage-chart" width="300" height="200" [legendSettings]="{visible: false}"
+               [primaryXAxis]="{valueType:'Category', title: '', labelPosition: 'Inside'}"
+               [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: '',
+                 stripLines: [{start: 65, end: 85, text: 'Feb-Mar goal', color: 'pink', opacity: 0.5, visible: true}]}">
+      <e-series-collection>
+        <e-series [dataSource]='this.completionPercentageByCategories' type='Bar' xName='category' yName='percent' name="hours as percent"
+                  [marker]="{dataLabel: {visible: true, position: 'Top', font: {fontWeight: '600', color: '#ffffff'}}}"></e-series>
+      </e-series-collection>
+    </ejs-chart>
+  </div>
 </div>
 
 <!-- todo refresh button to refresh today's entry -->
@@ -41,17 +43,22 @@
           -> currently I just have it in Notes in prod -->
 <!-- todo web is getting slower, so put a spinning wheel while processing -->
 <!-- display checkboxes -->
-<br *ngIf="display.allOptions">
-<input id="displayIncompleteAndUnhiddenOnly" type="checkbox" [checked]="display.incompleteAndUnhiddenOnly" (change)="toggle('incompleteAndUnhiddenOnly', !display.incompleteAndUnhiddenOnly)" *ngIf="display.allOptions">
-<label for="displayIncompleteAndUnhiddenOnly" *ngIf="display.allOptions">incomplete & unhidden only</label>
-<input id="displayFullInfo" type="checkbox" [checked]="display.fullInfo" (change)="toggle('fullInfo', !display.fullInfo)" *ngIf="display.allOptions">
-<label for="displayFullInfo" *ngIf="display.allOptions">full display</label>
-<input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)" *ngIf="display.allOptions">
-<label for="displayInSchedules" *ngIf="display.allOptions">in schedule</label>
-<input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)" *ngIf="display.allOptions">
-<label for="displayTopChart" *ngIf="display.allOptions">display chart</label>
-<input id="displayNotes" type="checkbox" [checked]="display.notes" (change)="toggle('notes',!display.notes)" *ngIf="display.allOptions">
-<label for="displayNotes" *ngIf="display.allOptions">display notes</label>
+<div *ngIf="display.allOptions">
+  <input id="displayIncompleteAndUnhiddenOnly" type="checkbox" [checked]="display.incompleteAndUnhiddenOnly" (change)="toggle('incompleteAndUnhiddenOnly', !display.incompleteAndUnhiddenOnly)">
+  <label for="displayIncompleteAndUnhiddenOnly">incomplete & unhidden only</label><br>
+  <input id="displayFullInfo" type="checkbox" [checked]="display.fullInfo" (change)="toggle('fullInfo', !display.fullInfo)">
+  <label for="displayFullInfo">full display</label><br>
+  <input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)">
+  <label for="displayInSchedules">in schedule</label><br>
+  <input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)">
+  <label for="displayTopChart">display chart</label><br>
+  <input id="displayNotes" type="checkbox" [checked]="display.notes" (change)="toggle('notes',!display.notes)">
+  <label for="displayNotes">display notes</label><br>
+  <input id="displayBasics" type="checkbox" [checked]="display.basics" (change)="toggle('basics', !display.basics)">
+  <label for="displayBasics">display basics</label><br>
+  <input id="displayTesting" type="checkbox" [checked]="display.testing" (change)="toggle('testing', !display.testing)">
+  <label for="displayTesting">display testing</label>
+</div>
 <br>
 
 <!-- edit mode options -->
@@ -74,18 +81,19 @@
   </subentry-table>
 </div>
 
+<!-- (Testing) Update Basics (sleep, food, mood) -->
+<div *ngIf="display.basics" (click)="toggle('basics', !display.basics)">
+  <textarea id="updatedBasics" style="width: 100%; height: 250px" [innerHTML]="basics | json"></textarea>
+  <button (click)="updateBasics()">Save Basics</button><br>
+</div>
+
 {{version}} {{environment}} {{buildTimestamp}}
 
 <!-- Testing -->
-<div (dblclick)="testing = !testing; this.updateModifyInputElements('Modify Goal');" class="collapsible">Testing</div>
 <br>
-<div (dblclick)="testing = false">
-  <!-- (Testing) Update Basics (sleep, food, mood) -->
-  <textarea id="updatedBasics" [hidden]="!testing" style="width: 100%; height: 250px" [innerHTML]="basics | json"></textarea>
-  <button [hidden]="!testing" (click)="updateBasics()">Save</button>
-
+<div (dblclick)="display.testing = false">
   <!-- (Testing) Enter a new goal -->
-  <div [hidden]="!testing">
+  <div [hidden]="!display.testing">
     <form (submit)="save('New Goal')">
       <label>New goal: </label>
       <select id="newGoalCategory" [disabled]="loggedIn === false">
@@ -94,6 +102,7 @@
       <input id="newGoalName" placeholder="name" style="width: 100px" [disabled]="loggedIn === false" required>
       <input id="newGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false" required>
       <input id="newGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false" required>
+      <input id="newGoalCountToMinutes" placeholder="count to minutes" style="width: 100px" [disabled]="loggedIn === false" required>
       <input id="newGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false" required>
       <input id="newGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
       <input id="newGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
@@ -102,7 +111,7 @@
   </div>
 
   <!-- (Testing) Update an existing goal -->
-  <div [hidden]="!testing">
+  <div [hidden]="!display.testing">
     <form (ngSubmit)="save('Modify Goal')">
       <label>Modify goal: </label>
       <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
@@ -110,6 +119,7 @@
       </select>
       <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
       <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
+      <input id="modifyGoalCountToMinutes" placeholder="count to minutes" style="width: 100px" [disabled]="loggedIn === false">
       <input id="modifyGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false">
       <input id="modifyGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
       <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
@@ -121,24 +131,24 @@
   <br *ngIf="saveMessage.length > 0">
 
   <a href="#" onclick="window.open('https://console.firebase.google.com/u/0/project/hpj-tracker/firestore/data~2F'); return false;"
-     [hidden]="!testing">My Cloud Firestore database link</a>
+     [hidden]="!display.testing">My Cloud Firestore database link</a>
 
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
   <!-- (Testing) display all categories and goals -->
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category']"
+  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category']"
                   [dataToDisplay]="this.categories" [mobile]="this.mobile"></subentry-table>
   <br>
 
-  <label [hidden]="!testing">{{this.activeGoals.length}} active goals </label>
-  <label [hidden]="!testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
+  <label [hidden]="!display.testing">{{this.activeGoals.length}} active goals </label>
+  <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
+  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'countToMinutes', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
                   [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 
   <!-- (Testing) display data of past 7 days -->
-  <label [hidden]="!testing">'count' is for yesterday's entry</label>
-  <subentry-table [hidden]="!testing" [loggedIn]="loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
+  <label [hidden]="!display.testing">'count' is for yesterday's entry</label>
+  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
                   [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.mobile">
   </subentry-table>
 </div>

@@ -5,6 +5,7 @@ export class Goal {
   archived: boolean;
   goalCount: number;
   unit: string;
+  countToMinutes: number;
   expectedTimesOfCompletion: string[];
   details?: string;
   subentryDetails?: object;

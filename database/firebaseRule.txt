@@ -68,26 +68,28 @@ service cloud.firestore {
       && incomingData().category is string
     }
     function createGoal() {
-    	return incomingData().size() == 9
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details'])
+    	return incomingData().size() == 10
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'countToMinutes', 'expectedTimesOfCompletion', 'subentryDetails', 'details'])
       && incomingData().category is string
       && incomingData().name is string
       && incomingData().documentId is string
       && incomingData().archived is bool
       && incomingData().goalCount is number
       && incomingData().unit is string
+      && incomingData().countToMinutes is number
       && (incomingData().subentryDetails is map)
       && (incomingData().details is string || incomingData().details == '')
     }
     function updateGoal() {
-    	return incomingData().size() == 9
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details'])
+    	return incomingData().size() == 10
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'archived', 'goalCount', 'unit', 'countToMinutes', 'expectedTimesOfCompletion', 'subentryDetails', 'details'])
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().documentId == existingData().documentId
       && incomingData().archived is bool
       && incomingData().goalCount is number
       && incomingData().unit is string
+      && incomingData().countToMinutes is number
       && (incomingData().subentryDetails is map)
       && (incomingData().details is string || incomingData().details == '')
     }
@@ -97,24 +99,26 @@ service cloud.firestore {
       && incomingData().doneDate is string
     }
     function createSubentry() {
-    	return incomingData().size() == 7
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'hide', 'subentryDetails'])
+    	return incomingData().size() == 8
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'countToMinutes', 'hide', 'subentryDetails'])
       && incomingData().category is string
       && incomingData().name is string
       && incomingData().documentId is string
       && incomingData().count is number
       && incomingData().goalCount is number
+      && incomingData().countToMinutes is number
       && incomingData().hide is bool
       && incomingData().subentryDetails is map
     }
     function updateSubentry() {
-    	return incomingData().size() == 7
-      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'hide', 'subentryDetails'])
+    	return incomingData().size() == 8
+      && incomingData().keys().hasOnly(['category', 'name', 'documentId', 'count', 'goalCount', 'countToMinutes', 'hide', 'subentryDetails'])
       && incomingData().count is number
       && incomingData().category == existingData().category
       && incomingData().name == existingData().name
       && incomingData().documentId == existingData().documentId
       && incomingData().goalCount == existingData().goalCount
+      && incomingData().countToMinutes == existingData().countToMinutes
       && incomingData().hide is bool
       && incomingData().subentryDetails is map
     }

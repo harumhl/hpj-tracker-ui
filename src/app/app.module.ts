@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ChartModule, StripLineService } from '@syncfusion/ej2-angular-charts';
+import {BarSeriesService, ChartModule, StripLineService} from '@syncfusion/ej2-angular-charts';
 import { AppComponent } from './app.component';
 import {DatePipe} from '@angular/common';
 import { CategoryService, LegendService, TooltipService } from '@syncfusion/ej2-angular-charts';
@@ -22,7 +22,7 @@ import {HighLightPipe} from './highlightpipe';
     ChartModule,
     FormsModule
   ],
-  providers: [DatePipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService],
+  providers: [DatePipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService, BarSeriesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
