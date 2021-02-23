@@ -9,6 +9,8 @@ import { DataLabelService, LineSeriesService} from '@syncfusion/ej2-angular-char
 import {FormsModule} from '@angular/forms';
 import { SubentryTableComponent } from './subentry-table/subentry-table.component';
 import {HighLightPipe} from './highlightpipe';
+import {ToastrModule} from 'ngx-toastr';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,10 @@ import {HighLightPipe} from './highlightpipe';
     BrowserModule,
     HttpClientModule,
     ChartModule,
-    FormsModule
+    FormsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
+    NoopAnimationsModule
   ],
   providers: [DatePipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService, BarSeriesService],
   bootstrap: [AppComponent]

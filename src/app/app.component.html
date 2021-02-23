@@ -24,6 +24,8 @@
   </div>
 </div>
 
+{{this.tempMessage}}<br *ngIf="this.tempMessage.length > 0">
+
 <!-- todo refresh button to refresh today's entry -->
 <!-- Today's completion rate & today's date & display option checkbox -->
 <label [ngClass]="{
@@ -75,7 +77,7 @@
 
 <!-- Displaying data -->
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
-  <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers"
+  <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers" [disable]="disableInput"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
                   [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
   </subentry-table>

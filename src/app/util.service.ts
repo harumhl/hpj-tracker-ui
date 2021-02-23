@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import firebase from 'firebase';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 export class UtilService implements OnDestroy {
 
   intervals: any[] = [];
+  updateTempMessageSubject = new Subject<string>();
 
   constructor() { }
 
@@ -55,12 +57,16 @@ export class UtilService implements OnDestroy {
     const interval = setInterval(() => {
       timesRun += 1;
       callbackForEveryInterval();
-      if (timesRun === intervalCount){
+      if (timesRun >= intervalCount){
         callbackForClearInterval();
         clearInterval(interval);
       }
     }, frequencyMs);
     this.intervals.push(interval);
+  }
+
+  displayTempMessage(message: string, displaySeconds: number) {
+    this.setInterval(1, displaySeconds * 1000, () => { this.updateTempMessageSubject.next(message); }, () => { this.updateTempMessageSubject.next(''); });
   }
 
   // Remove duplicate elements in the array
@@ -122,5 +128,9 @@ export class UtilService implements OnDestroy {
       obj[elem] = defaultValue;
     }
     return obj;
+  }
+
+  listOfObjectsToCsv(listOfObjects: any[]) {
+
   }
 }

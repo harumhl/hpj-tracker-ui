@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {DbService} from '../db.service';
+import {HttpClient} from '@angular/common/http';
+import {UtilService} from '../util.service';
 
 @Component({
   selector: 'subentry-table',
@@ -16,10 +18,11 @@ export class SubentryTableComponent implements OnInit {
   @Input() date = null;
   @Input() mobile: boolean;
   @Input() editMode = false;
+  @Input() disable = false;
 
   checkboxAll = false;
 
-  constructor(private dbService: DbService) { }
+  constructor(private dbService: DbService, private utilService: UtilService, private http: HttpClient) { }
 
   ngOnInit(): void {
   }
@@ -52,6 +55,13 @@ export class SubentryTableComponent implements OnInit {
     if (row.count !== newCount) {
       const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
       this.dbService.updateSubentry(row.documentId, this.date, newCount, hide, null);
+
+      const copyOfRow = Object.assign({}, row);
+      copyOfRow.count = newCount;
+      this.http.put('https://hpj-tracker.herokuapp.com/entries', copyOfRow, this.dbService.httpOption).subscribe(entry => {
+        this.utilService.displayTempMessage('Updated entries - refreshing data', 3);
+        this.dbService.refreshData();
+      });
     }
   }
 

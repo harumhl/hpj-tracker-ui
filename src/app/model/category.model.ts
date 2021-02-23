@@ -1,4 +1,4 @@
 export class Category {
-  category: string; // primary key
+  name: string;
   colors?: string;
 }
