@@ -177,6 +177,11 @@ export class DbService {
 */
   }
 
+  getTasks() {
+    this.utilService.displayToast('info', 'retriving tasks', 'Retrieving');
+    return this.http.get(this.backendUrl + '/tasks', this.httpOption);
+  }
+
   postEntriesOfToday() {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
     return this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.httpOption);

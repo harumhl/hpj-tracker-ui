@@ -90,11 +90,11 @@ notes: Note[] = [];
 
   basics: any[] = [];
   categoryList: string[] = [];
-  goalList: string[] = [];
+  taskList: string[] = [];
   categories: Category[] = [];
-  goals: Task[] = []; // TODO most and least accomplished goals in the past 7 days
-  activeGoals: Task[] = [];
-  archivedGoals: Task[] = [];
+  tasks: Task[] = []; // TODO most and least accomplished goals in the past 7 days
+  activeTasks: Task[] = [];
+  archivedTasks: Task[] = [];
   saveMessage = '';
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
@@ -353,6 +353,20 @@ notes: Note[] = [];
       this.display.allOptions = false;
     }
 
+    if (id === 'testing' && this.display.testing) {
+      this.dbService.getTasks().subscribe((tasks: Task[]) => {
+        this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
+        this.tasks = tasks;
+        for (const task of this.tasks) {
+          // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
+        }
+        this.taskList = this.tasks.map(goal => goal.name);
+
+        this.activeTasks = this.tasks.filter(g => g.archived === false);
+        this.archivedTasks = this.tasks.filter(g => g.archived);
+      });
+    }
+
     if (id === 'allOptions') { // Nothing to perform
       return;
     } else if (id === 'fullInfo') { // Change headers for displaying full info
@@ -436,10 +450,10 @@ notes: Note[] = [];
     if (this.display.testing) {
       if (type === 'Modify Goal') {
         if (document.getElementById('modifyGoalName') as HTMLInputElement === null) {
-          (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.goals[0].name;
+          (document.getElementById('modifyGoalName') as HTMLInputElement).value = this.tasks[0].name;
         }
         const goalName = (document.getElementById('modifyGoalName') as HTMLInputElement).value;
-        const goalInfo = this.goals.filter(g => g.name === goalName)[0];
+        const goalInfo = this.tasks.filter(g => g.name === goalName)[0];
         if (goalInfo !== null && goalInfo !== undefined) {
           (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
           (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
@@ -492,7 +506,7 @@ notes: Note[] = [];
 
     } else if (type === 'Modify Goal') {
       // Create a goal object
-      const name = this.getHtmlInputElementValue('modifyGoalName') || this.goals[0].name;
+      const name = this.getHtmlInputElementValue('modifyGoalName') || this.tasks[0].name;
       const goalCount = Number(this.getHtmlInputElementValue('modifyGoalGoalCount'));
       const unit = this.getHtmlInputElementValue('modifyGoalUnit');
       const expectedTimesOfCompletion = this.getHtmlInputElementValue('modifyGoalExpectedTimesOfCompletion').split(',');

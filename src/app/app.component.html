@@ -117,7 +117,7 @@
     <form (ngSubmit)="save('Modify Goal')">
       <label>Modify goal: </label>
       <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
-        <option *ngFor="let name of goalList" value="{{name}}">{{name}}</option>
+        <option *ngFor="let name of taskList" value="{{name}}">{{name}}</option>
       </select>
       <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
       <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
@@ -139,10 +139,10 @@
                   [dataToDisplay]="this.categories" [mobile]="this.mobile"></subentry-table>
   <br>
 
-  <label [hidden]="!display.testing">{{this.activeGoals.length}} active goals </label>
-  <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
+  <label [hidden]="!display.testing">{{this.activeTasks.length}} active goals </label>
+  <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.archivedTasks.length}} archived goals)</label>
   <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
-                  [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
+                  [dataToDisplay]="sortByCategory(this.tasks)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 
   <!-- (Testing) display data of past 7 days -->

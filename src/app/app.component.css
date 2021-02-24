@@ -4,7 +4,7 @@ table {height: 100%;}
   .div-table {height: 680px;}
 }
 @media screen and (min-height: 900px) { /* Designed for desktop */
-  .div-table {height: 790px;}
+  .div-table {height: auto;}
 }
 
 /* make scrollbar invisible */
