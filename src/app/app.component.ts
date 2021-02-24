@@ -560,7 +560,7 @@ notes: Note[] = [];
       for (const completionUnit of completionUnits) {
         for (const completionPercentage of this.completionPercentageByCategories) {
           if (completionPercentage.category.includes(completionUnit.categoryName)) {
-            completionPercentage.percent = completionUnit.completionPercent;
+            completionPercentage.percent = Math.round(completionUnit.completionPercent);
           }
         }
       }
