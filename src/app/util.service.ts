@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 export class UtilService implements OnDestroy {
 
   intervals: any[] = [];
-  updateTempMessageSubject = new Subject<any>();
+  displayToastSubject = new Subject<any>();
 
   constructor() { }
 
@@ -31,6 +31,10 @@ export class UtilService implements OnDestroy {
     return JSON.parse(JSON.stringify(obj));
   }
 
+  copyAsJson(obj: any) {
+    return Object.assign({}, obj);
+  }
+
   // Check something over intervals
   setInterval(intervalCount: number, frequencyMs: number, callbackForEveryInterval: () => any = () => {}, callbackForClearInterval: () => any = () => {}) {
     let timesRun = 0;
@@ -46,7 +50,7 @@ export class UtilService implements OnDestroy {
   }
 
   displayToast(type: string, message: string, title?: string, error = null) {
-    this.updateTempMessageSubject.next({type, message, title, error});
+    this.displayToastSubject.next({type, message, title, error});
   }
 
   // Remove duplicate elements in the array

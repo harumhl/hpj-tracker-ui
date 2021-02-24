@@ -9,7 +9,7 @@ import {Category} from './model/category.model';
 import {Task} from './model/task.model';
 import {Entry} from './model/entry.model';
 import {Subject} from 'rxjs';
-import {HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +20,10 @@ export class DbService {
   today: string;
   dayOfToday: string;
 
+  disableDisplaySubject = new Subject<boolean>();
   updateDisplaySubject = new Subject<boolean>();
 
+  backendUrl = environment.backendUrl;
   httpOption = {
     headers: new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
@@ -30,7 +32,7 @@ export class DbService {
     }),
   };
 
-  constructor(private utilService: UtilService, public datePipe: DatePipe) {
+  constructor(private utilService: UtilService, public datePipe: DatePipe, private http: HttpClient) {
     // Set today's date and day
     this.today = this._getDateKey();
     this.dayOfToday = this.findDayOfTheWeek();
@@ -75,7 +77,7 @@ export class DbService {
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   // TODO order of goals for display
   // Write a new goal to Firebase database
-  newGoal(newGoal: Task, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  newTask(newGoal: Task, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
 /*
     if (this._validateGoal(newGoal, true)) {
       // Foreign key constraint - check whether the category already exists in /categories
@@ -94,7 +96,7 @@ export class DbService {
   }
 
   // Update an existing goal in Firebase database
-  updateGoal(updateGoal: Task, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
+  updateTask(updateGoal: Task, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     let dataToModify = {name};/*
     if (goalCount) {
       dataToModify = Object.assign(dataToModify, {goalCount});
@@ -175,27 +177,25 @@ export class DbService {
 */
   }
 
-  // Update the count or 'hide' of an existing entry in Firebase database
-  updateEntry(documentId: string, doneDate?: string, count?: number, hide?: boolean, subentryDetails?: object) {
-/*
-    if (doneDate === null || doneDate === undefined) {
-      doneDate = this._getDateKey();
-    }
-    let dataToModify = {};
-    if (count !== null) {
-      dataToModify = Object.assign(dataToModify, {count});
-    }
-    if (hide !== null) {
-      dataToModify = Object.assign(dataToModify, {hide});
-    }
-    if (subentryDetails !== null) {
-      dataToModify = Object.assign(dataToModify, {subentryDetails});
-    }
+  postEntriesOfToday() {
+    this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
+    return this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.httpOption);
+  }
 
-    const collection = DbService.collections.entries;
-    this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), dataToModify, DbService.collections.goals, Object.assign(dataToModify, {documentId}),
-      () => { if (count !== null) { this.refreshChart(); } });
-*/
+  getEntriesOfToday() {
+    this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
+    return this.http.get(this.backendUrl + '/entries/today', this.httpOption);
+  }
+
+  // Update the count or 'hide' of an existing entry in Firebase database
+  updateEntry(updatedEntry: Entry) {
+    this.utilService.displayToast('info', 'updating entries', 'Updating');
+    return this.http.put('https://hpj-tracker.herokuapp.com/entries', updatedEntry, this.httpOption);
+  }
+
+  getChart() {
+    this.utilService.displayToast('info', 'retriving chart', 'Retrieving');
+    return this.http.get('https://hpj-tracker.herokuapp.com/completion-unit/today', this.httpOption);
   }
 
   refreshData() {

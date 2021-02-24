@@ -13,6 +13,7 @@ export const environment = {
   firebaseMessagingSenderId: '',
   firebaseAppId: '',
   firebaseMeasurementId: '',
+  backendUrl: '',
   backendPassword: '',
   environment: 'staging'
 };

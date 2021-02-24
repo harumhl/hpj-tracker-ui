@@ -12,6 +12,7 @@ export class SubentryTableComponent implements OnInit {
 
   @Input() loggedIn = false;
   @Input() headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
+  @Input() editableColumns: string[] = [];
   @Input() dataToDisplay: any[] = [];
   @Input() categoryColors: object = {};
   @Input() timeToHighlight = '';
@@ -22,7 +23,7 @@ export class SubentryTableComponent implements OnInit {
 
   checkboxAll = false;
 
-  constructor(private dbService: DbService, private utilService: UtilService, private http: HttpClient) { }
+  constructor(private dbService: DbService, private utilService: UtilService) { }
 
   ngOnInit(): void {
   }
@@ -42,24 +43,26 @@ export class SubentryTableComponent implements OnInit {
 
     // hide a subentry by entering -1
     if (newCount === -1) {
-      this.dbService.updateEntry(row.documentId, this.date, null, !row.hide, null);
+      const copyOfRow = this.utilService.copyAsJson(row);
+      copyOfRow.hide = !row.hide;
+      this.dbService.updateEntry(copyOfRow);
       return;
     }
 
     // Put 0 back if the input box loses focus without any entry
+    // TODO what if this is not 'count'? Maybe keep it empty and just perform GET request?
     if (row[column] === '') {
       row[column] = 0;
     }
 
     // Updating a subentry count
     if (row.count !== newCount) {
-      const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
-      this.dbService.updateEntry(row.documentId, this.date, newCount, hide, null);
+      //const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
+      //this.dbService.updateEntry(row.documentId, this.date, newCount, hide, null);
 
-      const copyOfRow = Object.assign({}, row);
+      const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.count = newCount;
-      this.utilService.displayToast('info', 'updating entries', 'Updating');
-      this.http.put('https://hpj-tracker.herokuapp.com/entries', copyOfRow, this.dbService.httpOption).subscribe(entry => {
+      this.dbService.updateEntry(copyOfRow).subscribe(entry => {
         this.utilService.displayToast('success', 'Updated entries - refreshing data', 'Updated');
         this.dbService.refreshData();
       });
@@ -69,7 +72,7 @@ export class SubentryTableComponent implements OnInit {
   updateSubentryDetails(row, detail) {
     // Since the button is clicked, save the opposite value of the current value in the database
     row.subentryDetails[detail.key] = !detail.value;
-    this.dbService.updateEntry(row.documentId, this.date, null, null, row.subentryDetails);
+    //this.dbService.updateEntry(row.documentId, this.date, null, null, row.subentryDetails);
   }
 
   selectAll() {

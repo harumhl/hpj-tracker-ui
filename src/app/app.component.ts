@@ -138,7 +138,7 @@ notes: Note[] = [];
         this.computeCompletionPercentageByCategories();
       }
     });
-    this.utilService.updateTempMessageSubject.subscribe(object => {
+    this.utilService.displayToastSubject.subscribe(object => {
       const type = object.type;
       const message = object.message;
       const title = object.title;
@@ -251,8 +251,7 @@ notes: Note[] = [];
 
   readEntiresOfToday(recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
-    this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
-    this.http.get('https://hpj-tracker.herokuapp.com/entries/today', this.dbService.httpOption).subscribe(entries => {
+    this.dbService.getEntriesOfToday().subscribe(entries => {
       this.dataQueried = entries as Entry[];
       if (this.dataQueried.length > 0) {
         this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
@@ -265,8 +264,8 @@ notes: Note[] = [];
 
       } else if (recurse) {
         // If nothing got retrieved, then add entries for today
-        this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
-        this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.dbService.httpOption).subscribe(e => {
+        this.dbService.postEntriesOfToday().subscribe(e => {
+          this.utilService.displayToast('success', 'entries created', 'Created');
           this.readEntiresOfToday(false);
         });
       }
@@ -477,7 +476,7 @@ notes: Note[] = [];
       newGoal.details = this.getHtmlInputElementValue('newGoalDetails');
 
       // Create a new goal
-      this.dbService.newGoal(newGoal, () => {
+      this.dbService.newTask(newGoal, () => {
         this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'New Goal successful'; }, () => { this.saveMessage = ''; });
 
         // Clear out the fields only if the write was successful
@@ -502,7 +501,7 @@ notes: Note[] = [];
       //updateGoal.subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(this.getHtmlInputElementValue('modifyGoalSubentryDetails'), false);
       updateGoal.details = this.getHtmlInputElementValue('modifyGoalDetails');
 
-      this.dbService.updateGoal(updateGoal, () => {
+      this.dbService.updateTask(updateGoal, () => {
         this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Modify Goal successful'; }, () => { this.saveMessage = ''; });
 
           // Clear out the fields only if the update was successful
@@ -560,7 +559,8 @@ notes: Note[] = [];
   }
 
   computeCompletionPercentageByCategories() {
-    this.http.get('https://hpj-tracker.herokuapp.com/completion-unit/today', this.dbService.httpOption).subscribe((completionUnits: any[]) => {
+    this.dbService.getChart().subscribe((completionUnits: any[]) => {
+      this.utilService.displayToast('success', 'chart retrieved', 'Retrieved');
       for (const completionUnit of completionUnits) {
         for (const completionPercentage of this.completionPercentageByCategories) {
           if (completionPercentage.category.includes(completionUnit.categoryName)) {
