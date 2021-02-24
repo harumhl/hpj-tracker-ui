@@ -6,9 +6,7 @@ import {version} from '../../package.json';
 import {UtilService} from './util.service';
 import {Category} from './model/category.model';
 import {Entry} from './model/entry.model';
-import {Goal} from './model/task.model';
-//import {Task} from './model/task.model';
-import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import {Task} from './model/task.model';
 import {ChartComponent} from '@syncfusion/ej2-angular-charts';
 import {Note} from './model/note.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
@@ -41,11 +39,11 @@ export class AppComponent {
     measurementId: environment.firebaseMeasurementId
   };
 
-  notes: Note[] = [];
+notes: Note[] = [];
 
   tempMessage = '';
 
-  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'countToMinutes', 'subentryDetails', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'subentryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
@@ -94,9 +92,9 @@ export class AppComponent {
   categoryList: string[] = [];
   goalList: string[] = [];
   categories: Category[] = [];
-  goals: Goal[] = []; // TODO most and least accomplished goals in the past 7 days
-  activeGoals: Goal[] = [];
-  archivedGoals: Goal[] = [];
+  goals: Task[] = []; // TODO most and least accomplished goals in the past 7 days
+  activeGoals: Task[] = [];
+  archivedGoals: Task[] = [];
   saveMessage = '';
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
@@ -109,14 +107,13 @@ export class AppComponent {
   // TODO document ID can have spaces, so don't try to remove the spaces when writing
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
-  // todo display firebase quota and how much I used it on UI
   // todo allow modify archive
   constructor(public dbService: DbService, private utilService: UtilService, private http: HttpClient, private toastr: ToastrService) {
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
     // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase
     firebase.initializeApp(this.firebaseConfig);
-    this.dbService.firebaseDb = firebase.firestore();
+    this.dbService.firebaseDb = firebase.firestore(); // todo not needed?
 
     // For testing - allowing yesterday's entry to be modified
     const yesterday: any = new Date();
@@ -134,11 +131,6 @@ export class AppComponent {
       }
     });
 
-    this.dbService.refreshChartSubject.subscribe(refresh => {
-      if (refresh) {
-        this.reloadChart();
-      }
-    });
     this.dbService.updateDisplaySubject.subscribe(update => {
       if (update) {
         this.disableInput = true;
@@ -199,7 +191,9 @@ export class AppComponent {
       }
     }
     // Change object (aka dict) to array and sort them
-    times = this.utilService.toIterable(times) as string[];
+    times = [];
+    Object.keys(times).forEach(key => times.push(times[key])); // = this.utilService.toIterable();
+    // times = this.utilService.toIterable(times) as string[];
     times = times.sort();
 
     // Create an array to return that will be used for display
@@ -455,9 +449,8 @@ export class AppComponent {
         if (goalInfo !== null && goalInfo !== undefined) {
           (document.getElementById('modifyGoalGoalCount') as HTMLInputElement).value = goalInfo.goalCount.toString();
           (document.getElementById('modifyGoalUnit') as HTMLInputElement).value = goalInfo.unit;
-          (document.getElementById('modifyGoalCountToMinutes') as HTMLInputElement).value = goalInfo.countToMinutes.toString();
           (document.getElementById('modifyGoalExpectedTimesOfCompletion') as HTMLInputElement).value = goalInfo.expectedTimesOfCompletion.join(',');
-          (document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value = this.utilService.objectKeysToCommaSeparatedString(goalInfo.subentryDetails);
+          //(document.getElementById('modifyGoalSubentryDetails') as HTMLInputElement).value = this.utilService.objectKeysToCommaSeparatedString(goalInfo.subentryDetails);
           (document.getElementById('modifyGoalDetails') as HTMLInputElement).value = goalInfo.details;
         }
       }
@@ -482,11 +475,10 @@ export class AppComponent {
       const archived = false;
       const goalCount = Number(this.getHtmlInputElementValue('newGoalGoalCount'));
       const unit = this.getHtmlInputElementValue('newGoalUnit');
-      const countToMinutes = Number(this.getHtmlInputElementValue('newGoalCountToMinutes'));
       const expectedTimesOfCompletion = this.getHtmlInputElementValue('newGoalExpectedTimesOfCompletion').split(',');
 
-      const newGoal = new Goal(category, name, archived, goalCount, unit, countToMinutes, expectedTimesOfCompletion);
-      newGoal.subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(this.getHtmlInputElementValue('newGoalSubentryDetails'), false);
+      const newGoal = new Task(category, name, archived, goalCount, unit, expectedTimesOfCompletion);
+      //newGoal.subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(this.getHtmlInputElementValue('newGoalSubentryDetails'), false);
       newGoal.details = this.getHtmlInputElementValue('newGoalDetails');
 
       // Create a new goal
@@ -509,11 +501,10 @@ export class AppComponent {
       const name = this.getHtmlInputElementValue('modifyGoalName') || this.goals[0].name;
       const goalCount = Number(this.getHtmlInputElementValue('modifyGoalGoalCount'));
       const unit = this.getHtmlInputElementValue('modifyGoalUnit');
-      const countToMinutes = Number(this.getHtmlInputElementValue('modifyGoalCountToMinutes'));
       const expectedTimesOfCompletion = this.getHtmlInputElementValue('modifyGoalExpectedTimesOfCompletion').split(',');
 
-      const updateGoal = new Goal(null, name, null, goalCount, unit, countToMinutes, expectedTimesOfCompletion);
-      updateGoal.subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(this.getHtmlInputElementValue('modifyGoalSubentryDetails'), false);
+      const updateGoal = new Task(null, name, null, goalCount, unit, expectedTimesOfCompletion);
+      //updateGoal.subentryDetails = this.utilService.commaSeparatedStringToObjectKeys(this.getHtmlInputElementValue('modifyGoalSubentryDetails'), false);
       updateGoal.details = this.getHtmlInputElementValue('modifyGoalDetails');
 
       this.dbService.updateGoal(updateGoal, () => {
@@ -533,20 +524,22 @@ export class AppComponent {
   }
 
   applyEditMode(editType: string) {
+/*
     if (editType === 'hide' || editType === 'unhide') {
       const hide = editType === 'hide';
       for (const subentry of this.dataToDisplay) {
         if (subentry.checked === true) {
-          this.dbService.updateSubentry(subentry.documentId, subentry.doneDate, null, hide, null);
+          this.dbService.updateEntry(subentry.documentId, subentry.doneDate, null, hide, null);
         }
       }
     } else if (editType === 'unhideAll') {
       for (const subentry of this.dataQueried) {
         if (subentry.hide === true) {
-          this.dbService.updateSubentry(subentry.documentId, subentry.doneDate, null, false, null);
+          this.dbService.updateEntry(subentry.documentId, subentry.doneDate, null, false, null);
         }
       }
     }
+*/
     this.editMode = false;
   }
 

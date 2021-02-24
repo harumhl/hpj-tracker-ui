@@ -1,7 +1,4 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import firebase from 'firebase';
-import QuerySnapshot = firebase.firestore.QuerySnapshot;
-import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 import {Subject} from 'rxjs';
 
 @Injectable({
@@ -18,23 +15,6 @@ export class UtilService implements OnDestroy {
     for (const interval of this.intervals) {
       clearInterval(interval);
     }
-  }
-
-  // Firebase returns a json, but sometimes a list of its values is needed.
-  toIterable(obj: any) {
-    const iterable = [];
-    if (obj instanceof QuerySnapshot) {
-      obj.forEach((doc) => {
-        const data = doc.data();
-        data.id = doc.id;
-        iterable.push(data);
-      });
-    } else if (obj instanceof DocumentSnapshot) {
-
-    } else if (obj instanceof Object) {
-      Object.keys(obj).forEach(key => iterable.push(obj[key]));
-    }
-    return iterable;
   }
 
   // Displays an error on console in a consistent way.
@@ -128,9 +108,5 @@ export class UtilService implements OnDestroy {
       obj[elem] = defaultValue;
     }
     return obj;
-  }
-
-  listOfObjectsToCsv(listOfObjects: any[]) {
-
   }
 }

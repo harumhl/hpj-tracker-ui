@@ -42,7 +42,7 @@ export class SubentryTableComponent implements OnInit {
 
     // hide a subentry by entering -1
     if (newCount === -1) {
-      this.dbService.updateSubentry(row.documentId, this.date, null, !row.hide, null);
+      this.dbService.updateEntry(row.documentId, this.date, null, !row.hide, null);
       return;
     }
 
@@ -54,7 +54,7 @@ export class SubentryTableComponent implements OnInit {
     // Updating a subentry count
     if (row.count !== newCount) {
       const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
-      this.dbService.updateSubentry(row.documentId, this.date, newCount, hide, null);
+      this.dbService.updateEntry(row.documentId, this.date, newCount, hide, null);
 
       const copyOfRow = Object.assign({}, row);
       copyOfRow.count = newCount;
@@ -68,7 +68,7 @@ export class SubentryTableComponent implements OnInit {
   updateSubentryDetails(row, detail) {
     // Since the button is clicked, save the opposite value of the current value in the database
     row.subentryDetails[detail.key] = !detail.value;
-    this.dbService.updateSubentry(row.documentId, this.date, null, null, row.subentryDetails);
+    this.dbService.updateEntry(row.documentId, this.date, null, null, row.subentryDetails);
   }
 
   selectAll() {

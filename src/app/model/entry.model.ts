@@ -1,25 +1,23 @@
-import {Goal} from './task.model';
+import {Task} from './task.model';
 
 export class Entry {
   doneDate: string;
-  category: string;
   name: string;
   count: number;
   goalCount: number;
-  countToMinutes: number;
+  maxCount: number;
   hide: boolean;
-  subentryDetails: object;
+  multiplier: number;
+  // subentryDetails: object;
 
-  documentId: string;
-  id?: string; // From document-id in Firestore db
+  task: Task;
 
   // For edit mode
   checked?: boolean;
 
   // For display
+  category: string;
   unit?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
-
-  task: Goal;
 }

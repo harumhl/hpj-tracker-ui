@@ -1,28 +1,24 @@
 import {Category} from './category.model';
 
-export class Goal {
-  documentId: string; // primary key: 'category'_'name'
-
-  //category: string; // from Category.category
+export class Task { // todo rename Goal to Task
   name: string;
   archived: boolean;
   goalCount: number;
+  maxCount: number;
   unit: string;
-  countToMinutes: number;
+  multiplier: number;
   expectedTimesOfCompletion: string[];
-
   details?: string;
-  subentryDetails?: object;
+  // subentryDetails?: object;
 
   category: Category;
 
-  constructor(category, name, archived, goalCount, unit, countToMinutes, expectedTimesOfCompletion) {
+  constructor(category, name, archived, goalCount, unit, expectedTimesOfCompletion) {
     this.category = category;
     this.name = name;
     this.archived = archived;
     this.goalCount = goalCount;
     this.unit = unit;
-    this.countToMinutes = countToMinutes;
     this.expectedTimesOfCompletion = expectedTimesOfCompletion;
   }
 }

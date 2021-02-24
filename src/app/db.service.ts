@@ -6,7 +6,7 @@ import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 import {environment} from '../environments/environment';
 import {Category} from './model/category.model';
-import {Goal} from './model/task.model';
+import {Task} from './model/task.model';
 import {Entry} from './model/entry.model';
 import {Subject} from 'rxjs';
 import {HttpHeaders} from '@angular/common/http';
@@ -16,20 +16,17 @@ import {HttpHeaders} from '@angular/common/http';
 })
 export class DbService {
 
-  static collections = environment.firebaseCollections;
-
   firebaseDb: firebase.firestore.Firestore = null;
   today: string;
   dayOfToday: string;
 
-  refreshChartSubject = new Subject<boolean>();
   updateDisplaySubject = new Subject<boolean>();
 
   httpOption = {
     headers: new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
-      Authorization: 'Basic ' + btoa('user' + ':' + 'REPLACEME')
+      Authorization: 'Basic ' + btoa('user' + ':' + environment.backendPassword)
     }),
   };
 
@@ -38,6 +35,7 @@ export class DbService {
     this.today = this._getDateKey();
     this.dayOfToday = this.findDayOfTheWeek();
   }
+
   findDayOfTheWeek(date?) {
     if (date === null || date === undefined) {
       date = new Date();
@@ -64,26 +62,6 @@ export class DbService {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
 
-  // TODO move this to somewhere else ? like constructor
-  // Validating elements of a goal (especially goal >= 0 and expectedTimesOfCompletion)
-  _validateGoal(goal: Goal, newGoal: boolean) {/*
-    const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
-
-    return ((newGoal === true && goal.category !== null && goal.category !== undefined) || (newGoal === false)) && (goal.category !== '')
-      && ((newGoal === true && goal.name !== null && goal.name !== undefined) || (newGoal === false)) && (goal.name !== '')
-      && ((newGoal === true && goal.archived !== null && goal.archived !== undefined) || (newGoal === false))
-    // goalCount
-      && ((newGoal === true && goal.unit !== null && goal.unit !== undefined) || (newGoal === false)) && (goal.unit !== '')
-      ;
-
-    && (goal.goalCount !== null && goal.goalCount !== undefined && goal.goalCount >= 0)
-
-    && (goal.countToMinutes !== null && goal.countToMinutes !== undefined && goal.countToMinutes > 0)
-    && (goal.expectedTimesOfCompletion !== null && goal.expectedTimesOfCompletion !== undefined && goal.expectedTimesOfCompletion.length > 0
-        && goal.expectedTimesOfCompletion.filter(t => t.match(regex)).length === goal.expectedTimesOfCompletion.length);*/
-    return false;
-  }
-
   // Write a new category to Firebase database
   newCategory(category: string) {
 /*
@@ -97,7 +75,7 @@ export class DbService {
   // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
   // TODO order of goals for display
   // Write a new goal to Firebase database
-  newGoal(newGoal: Goal, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
+  newGoal(newGoal: Task, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
 /*
     if (this._validateGoal(newGoal, true)) {
       // Foreign key constraint - check whether the category already exists in /categories
@@ -116,7 +94,7 @@ export class DbService {
   }
 
   // Update an existing goal in Firebase database
-  updateGoal(updateGoal: Goal, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
+  updateGoal(updateGoal: Task, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
     let dataToModify = {name};/*
     if (goalCount) {
       dataToModify = Object.assign(dataToModify, {goalCount});
@@ -198,7 +176,7 @@ export class DbService {
   }
 
   // Update the count or 'hide' of an existing entry in Firebase database
-  updateSubentry(documentId: string, doneDate?: string, count?: number, hide?: boolean, subentryDetails?: object) {
+  updateEntry(documentId: string, doneDate?: string, count?: number, hide?: boolean, subentryDetails?: object) {
 /*
     if (doneDate === null || doneDate === undefined) {
       doneDate = this._getDateKey();
@@ -218,10 +196,6 @@ export class DbService {
     this.updateDocInSubcollection(collection, DbService._getDocumentId(collection, {doneDate}), dataToModify, DbService.collections.goals, Object.assign(dataToModify, {documentId}),
       () => { if (count !== null) { this.refreshChart(); } });
 */
-  }
-
-  refreshChart() {
-    this.refreshChartSubject.next(true);
   }
 
   refreshData() {

@@ -9,6 +9,6 @@ export const environment = {
   firebaseMessagingSenderId: '',
   firebaseAppId: '',
   firebaseMeasurementId: '',
-  firebaseCollections: {categories: 'categories', goals: 'goals', entries: 'entries', notes: 'notes', basics: 'basics'},
+  backendPassword: '',
   environment: 'prod'
 };
