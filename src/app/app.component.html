@@ -141,7 +141,7 @@
 
   <label [hidden]="!display.testing">{{this.activeGoals.length}} active goals </label>
   <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.archivedGoals.length}} archived goals)</label>
-  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'countToMinutes', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
+  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
                   [dataToDisplay]="sortByCategory(this.goals)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
   <br>
 

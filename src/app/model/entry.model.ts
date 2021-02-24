@@ -1,6 +1,7 @@
 import {Task} from './task.model';
 
 export class Entry {
+  id: number;
   doneDate: string;
   name: string;
   count: number;

@@ -58,8 +58,9 @@ export class SubentryTableComponent implements OnInit {
 
       const copyOfRow = Object.assign({}, row);
       copyOfRow.count = newCount;
+      this.utilService.displayToast('info', 'updating entries', 'Updating');
       this.http.put('https://hpj-tracker.herokuapp.com/entries', copyOfRow, this.dbService.httpOption).subscribe(entry => {
-        this.utilService.displayTempMessage('Updated entries - refreshing data', 3);
+        this.utilService.displayToast('success', 'Updated entries - refreshing data', 'Updated');
         this.dbService.refreshData();
       });
     }

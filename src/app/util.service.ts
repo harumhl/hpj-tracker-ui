@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 export class UtilService implements OnDestroy {
 
   intervals: any[] = [];
-  updateTempMessageSubject = new Subject<string>();
+  updateTempMessageSubject = new Subject<any>();
 
   constructor() { }
 
@@ -45,8 +45,8 @@ export class UtilService implements OnDestroy {
     this.intervals.push(interval);
   }
 
-  displayTempMessage(message: string, displaySeconds: number) {
-    this.setInterval(1, displaySeconds * 1000, () => { this.updateTempMessageSubject.next(message); }, () => { this.updateTempMessageSubject.next(''); });
+  displayToast(type: string, message: string, title?: string) {
+    this.updateTempMessageSubject.next({type, message, title});
   }
 
   // Remove duplicate elements in the array

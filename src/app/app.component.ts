@@ -138,15 +138,19 @@ notes: Note[] = [];
         this.computeCompletionPercentageByCategories();
       }
     });
-    this.utilService.updateTempMessageSubject.subscribe(message => {
-      // If it's not displaying it already
-      if (this.tempMessage !== message) {
-        this.tempMessage = message;
+    this.utilService.updateTempMessageSubject.subscribe(object => {
+      const type = object.type;
+      const message = object.message;
+      const title = object.message;
 
-        // '' is for clearing tempMessage
-        if (message !== '') {
-          this.toastr.success(message);
-        }
+      if (type === 'success') {
+        this.toastr.success(message, title);
+      } else if (type === 'error') {
+        this.toastr.error(message, title);
+      } else if (type === 'info') {
+        this.toastr.info(message, title);
+      } else if (type === 'warning') {
+        this.toastr.warning(message, title);
       }
     });
 
@@ -257,10 +261,11 @@ notes: Note[] = [];
 
   readEntiresOfToday(recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
+    this.utilService.displayToast('info', 'retriving entries', 'retrieving');
     this.http.get('https://hpj-tracker.herokuapp.com/entries/today', this.dbService.httpOption).subscribe(entries => {
       this.dataQueried = entries as Entry[];
       if (this.dataQueried.length > 0) {
-        this.utilService.displayTempMessage('Entries retrieved and now processing', 3);
+        this.utilService.displayToast('success', 'entries retrieved');
         for (const entry of this.dataQueried) {
           entry.category = entry.task.category.name;
         }
@@ -270,13 +275,13 @@ notes: Note[] = [];
 
       } else if (recurse) {
         // If nothing got retrieved, then add entries for today
-        this.utilService.displayTempMessage('Creating new entries for today', 3);
+        this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
         this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.dbService.httpOption).subscribe(e => {
           this.readEntiresOfToday(false);
         });
       }
     }, (error) => {
-      this.utilService.displayTempMessage(`Failed to load: ${error.toString()}`, 10);
+      this.utilService.displayToast('error', `Failed to load: ${error.error.toString()}`);
     });
   }
 
