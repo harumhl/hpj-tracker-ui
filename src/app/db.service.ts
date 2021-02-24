@@ -198,9 +198,10 @@ export class DbService {
   }
 
   // Update the count or 'hide' of an existing entry in Firebase database
-  updateEntry(updatedEntry: Entry) {
+  updateEntry(entryToUpdate: Entry) {
+    entryToUpdate.details = null; // TODO currently this is set to empty string, but backend expsts an object not a string
     this.utilService.displayToast('info', 'updating entries', 'Updating');
-    return this.http.put('https://hpj-tracker.herokuapp.com/entries', updatedEntry, this.httpOption);
+    return this.http.put('https://hpj-tracker.herokuapp.com/entries', entryToUpdate, this.httpOption);
   }
 
   getChart() {
