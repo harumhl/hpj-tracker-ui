@@ -45,8 +45,8 @@ export class UtilService implements OnDestroy {
     this.intervals.push(interval);
   }
 
-  displayToast(type: string, message: string, title?: string) {
-    this.updateTempMessageSubject.next({type, message, title});
+  displayToast(type: string, message: string, title?: string, error = null) {
+    this.updateTempMessageSubject.next({type, message, title, error});
   }
 
   // Remove duplicate elements in the array

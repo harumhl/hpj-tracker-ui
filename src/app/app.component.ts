@@ -141,12 +141,13 @@ notes: Note[] = [];
     this.utilService.updateTempMessageSubject.subscribe(object => {
       const type = object.type;
       const message = object.message;
-      const title = object.message;
+      const title = object.title;
 
       if (type === 'success') {
         this.toastr.success(message, title);
       } else if (type === 'error') {
-        this.toastr.error(message, title);
+        const error = object.error;
+        this.toastr.error(message + `: ${error.status} - ${error.message}`, 'Error', {timeOut: 15 * 1000});
       } else if (type === 'info') {
         this.toastr.info(message, title);
       } else if (type === 'warning') {
@@ -155,17 +156,6 @@ notes: Note[] = [];
     });
 
     this.utilService.setInterval(288, 1000 * 60 * 5, this.calculateTimeToHighlight); // refresh every 5 mins X 288 times = 1 full day
-  }
-
-  // What to do first: remove above goal in the firestore
-  testFunctionalities() {/*
-    const goalName = 'unit test';
-
-    this.dbService.newGoal('Hazel', goalName, false, 1, 'unit', 1, ['01:00'], '', {},
-      () => { this.dbService.readAll(false, DbService.collections.goals, ['name', '==', goalName],
-              () => { console.log('Testing: successful to add a goal'); }); },
-      () => { console.error('Testing: failed to add a goal'); });
-      */
   }
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
@@ -261,11 +251,11 @@ notes: Note[] = [];
 
   readEntiresOfToday(recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
-    this.utilService.displayToast('info', 'retriving entries', 'retrieving');
+    this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
     this.http.get('https://hpj-tracker.herokuapp.com/entries/today', this.dbService.httpOption).subscribe(entries => {
       this.dataQueried = entries as Entry[];
       if (this.dataQueried.length > 0) {
-        this.utilService.displayToast('success', 'entries retrieved');
+        this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
         for (const entry of this.dataQueried) {
           entry.category = entry.task.category.name;
         }
@@ -281,7 +271,7 @@ notes: Note[] = [];
         });
       }
     }, (error) => {
-      this.utilService.displayToast('error', `Failed to load: ${error.error.toString()}`);
+      this.utilService.displayToast('error', 'Failed to load', 'Error', error);
     });
   }
 
