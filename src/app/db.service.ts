@@ -182,13 +182,18 @@ export class DbService {
     return this.http.get(this.backendUrl + '/tasks', this.httpOption);
   }
 
+  getEntries() {
+    this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
+    return this.http.get(this.backendUrl + '/entries', this.httpOption);
+  }
+
   postEntriesOfToday() {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
     return this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.httpOption);
   }
 
   getEntriesOfToday() {
-    this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
+    this.utilService.displayToast('info', 'retriving entries for today', 'Retrieving');
     return this.http.get(this.backendUrl + '/entries/today', this.httpOption);
   }
 

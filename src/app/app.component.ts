@@ -253,7 +253,7 @@ notes: Note[] = [];
     this.dbService.getEntriesOfToday().subscribe(entries => {
       this.dataQueried = entries as Entry[];
       if (this.dataQueried.length > 0) {
-        this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
+        this.utilService.displayToast('success', 'entries retrieved for today', 'Retrieved');
 
         // Add 'category', 'unit' and 'details' from tasks
         for (const entry of this.dataQueried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
@@ -326,17 +326,27 @@ notes: Note[] = [];
     }
 
     if (id === 'testing' && this.display.testing) {
-      this.dbService.getTasks().subscribe((tasks: Task[]) => {
-        this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
-        this.tasks = tasks;
-        for (const task of this.tasks) {
-          // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
-        }
-        this.taskList = this.tasks.map(goal => goal.name);
+      if (this.tasks.length === 0) {
+        // Read tasks
+        this.dbService.getTasks().subscribe((tasks: Task[]) => {
+          this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
+          this.tasks = tasks;
+          for (const task of this.tasks) {
+            // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
+          }
+          this.taskList = this.tasks.map(goal => goal.name);
 
-        this.activeTasks = this.tasks.filter(g => g.archived === false);
-        this.archivedTasks = this.tasks.filter(g => g.archived);
-      });
+          this.activeTasks = this.tasks.filter(g => g.archived === false);
+          this.archivedTasks = this.tasks.filter(g => g.archived);
+        });
+      }
+
+      if (this.dataQueriedPast.length === 0) {
+        this.dbService.getEntries().subscribe((entries: Entry[]) => {
+          this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
+          this.processPastData(entries);
+        });
+      }
     }
 
     if (id === 'allOptions') { // Nothing to perform
@@ -557,5 +567,51 @@ notes: Note[] = [];
     });
 
     this.reloadChart();
+  }
+
+  // todo allow other days to be modified? - with drop down selection and 'count' has different date (then subscription should change too)
+  // Restructure past data to display 7-8 days data into one table
+  processPastData(entries: Entry[]) {
+    // Get unique tasks in all entries
+    for (const entry of entries) {
+      if (this.dataQueriedPast.filter(d => d.name === entry.name).length === 0) {
+        const copiedEntry = this.utilService.deepCopy(entry);
+        copiedEntry.count = '';
+        this.dataQueriedPast.push(copiedEntry);
+      }
+    }
+
+    // Get all unique dates
+    const dates = [];
+    for (const entry of this.dataQueriedPast) {
+      const date = entry.doneDate[0] + '-' + entry.doneDate[1] + '-' + entry.doneDate[2];
+      if (dates.indexOf(date) === -1) {
+        dates.push(date);
+      }
+    }
+    dates.sort();
+
+    // Set headers
+    for (const date of dates) {
+      // Adding a date to headers
+      if (this.headersPast.indexOf(date) === -1) { // this condition exists because this function can be called to initialize AND when yesterday's subentry is updated
+        this.headersPast.push(date);
+        // this.headersPast.push(date + ' subentryDetails');
+      }
+    }
+    this.headersPast = this.headersPast.sort();
+
+    // Adding the 'counts' in the respective dates in the array
+    //   not assuming that the entries from different dates are identical, because goals can change
+    for (const copiedEntry of this.dataQueriedPast) {
+      for (const entry of entries) {
+        for (const date of dates) {
+          const entryDate = entry.doneDate[0] + '-' + entry.doneDate[1] + '-' + entry.doneDate[2];
+          if (entryDate === date && entry.name === copiedEntry.name) {
+            copiedEntry[date] = entry.count;
+          }
+        }
+      }
+    }
   }
 }
