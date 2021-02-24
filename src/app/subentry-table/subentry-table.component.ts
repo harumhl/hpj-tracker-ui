@@ -63,8 +63,10 @@ export class SubentryTableComponent implements OnInit {
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.count = newCount;
       this.dbService.updateEntry(copyOfRow).subscribe(entry => {
-        this.utilService.displayToast('success', 'Updated entries - refreshing data', 'Updated');
+        this.utilService.displayToast('success', 'Updated entry - refreshing data', 'Updated');
         this.dbService.refreshData();
+      }, (error) => {
+        this.utilService.displayToast('error', 'Failed to update entry', 'Error', error);
       });
     }
   }

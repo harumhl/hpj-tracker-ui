@@ -274,10 +274,12 @@ notes: Note[] = [];
         this.dbService.postEntriesOfToday().subscribe(e => {
           this.utilService.displayToast('success', 'entries created', 'Created');
           this.readEntiresOfToday(false);
+        }, (error) => {
+          this.utilService.displayToast('error', 'Failed to create entries', 'Error', error);
         });
       }
     }, (error) => {
-      this.utilService.displayToast('error', 'Failed to load', 'Error', error);
+      this.utilService.displayToast('error', 'Failed to retrieve entries for today', 'Error', error);
     });
   }
 
@@ -338,6 +340,8 @@ notes: Note[] = [];
 
           this.activeTasks = this.tasks.filter(g => g.archived === false);
           this.archivedTasks = this.tasks.filter(g => g.archived);
+        }, (error) => {
+          this.utilService.displayToast('error', 'Failed to retrieve tasks', 'Error', error);
         });
       }
 
@@ -345,6 +349,8 @@ notes: Note[] = [];
         this.dbService.getEntries().subscribe((entries: Entry[]) => {
           this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
           this.processPastData(entries);
+        }, (error) => {
+          this.utilService.displayToast('error', 'Failed to retrieve entries', 'Error', error);
         });
       }
     }
@@ -564,6 +570,8 @@ notes: Note[] = [];
           }
         }
       }
+    }, (error) => {
+      this.utilService.displayToast('error', 'Failed to retrieve chart', 'Error', error);
     });
 
     this.reloadChart();
