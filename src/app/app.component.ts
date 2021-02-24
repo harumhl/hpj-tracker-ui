@@ -104,7 +104,6 @@ notes: Note[] = [];
   // todo bigger input boxes on web - testing
   // todo ngstyle instead for css
 
-  // TODO document ID can have spaces, so don't try to remove the spaces when writing
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
   // todo allow modify archive
@@ -255,9 +254,17 @@ notes: Note[] = [];
       this.dataQueried = entries as Entry[];
       if (this.dataQueried.length > 0) {
         this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
-        for (const entry of this.dataQueried) {
+
+        // Add 'category', 'unit' and 'details' from tasks
+        for (const entry of this.dataQueried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
+          entry.unit = entry.task.unit;
+          entry.details = entry.task.details;
         }
+
+        // this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
+        // this.toggle('inSchedules', this.display.inSchedules);
+
         this.dataQueried = this.dataQueried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
         this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         this.disableInput = false;
@@ -275,13 +282,11 @@ notes: Note[] = [];
   }
 
   readAndWriteAfterLogin() {
-    // this.initializeDatabase(); // to be performed only after db refresh - though its content is outdated
-
     // Add any missing entry & sub-entries
     this.dbService.newEntry(this.dbService.today);
 
-    // Read notes
 /*
+    // Read notes
     this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
       this.notes = this.utilService.toIterable(querySnapshot);
       for (const note of this.notes) { // Firestore keeps it as '\n' and '\t', but it's read in as '\\n' and '\\t'
@@ -292,50 +297,17 @@ notes: Note[] = [];
     });
 */
 
-    // Subscribe to goals from database
-/*
-    this.dbService.readAll(true, DbService.collections.goals, [], (querySnapshot: QuerySnapshot) => {
-      this.goals = this.utilService.toIterable(querySnapshot);
-      this.goalList = this.goals.map(goal => goal.name);
-
-      this.activeGoals = this.goals.filter(g => g.archived === false);
-      this.archivedGoals = this.goals.filter(g => g.archived);
-    });
-*/
     this.readEntiresOfToday();
-/*
-    this.dbService.readSubcollectionsInAnEntryOfADay(true, 'today', (querySnapshot: QuerySnapshot) => {
-      this.dataQueried = this.utilService.toIterable(querySnapshot); // todo order by category first then by custom
-      this.dataQueried = this.sortByCategory(this.dataQueried);
-
-      // Add 'unit' and 'details' from goals to subcollections in entry for display
-      for (const queriedSubentry of this.dataQueried) {
-        // TODO with a new goal, this.dataQueried is updated but this.goals is not, thus below statement fails (returns an empty array)
-        const goal = this.goals.filter(g => g.name === queriedSubentry.name)[0];
-        queriedSubentry.unit = goal.unit;
-        queriedSubentry.details = goal.details;
-        queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
-      }
-
-      this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
-      this.toggle('inSchedules', this.display.inSchedules);
-
-      // todo use priorities to calculate % (so I don't always try to do easy stuff to get the percentage up)
-      // Calculate overall completion rate to display
-      this.overallCompletionRate = this.computeOverallCompletionRate(this.dataQueried);
-      this.computeCompletionPercentageByCategories();
-    });
-*/
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
-    // Subscribe today's 'basic' entry
 /*
+    // Subscribe today's 'basic' entry
     this.dbService.readSubcollectionsOfSingleDoc(false, DbService.collections.entries, this.dbService.today, [], DbService.collections.basics, (querySnapshot: QuerySnapshot) => {
       this.basics = this.utilService.toIterable(querySnapshot);
     });
 */
-    // Subscribe to categories from database
 /*
+    // Subscribe to categories from database
     this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
       this.categories = this.utilService.toIterable(querySnapshot);
       this.categoryList = this.categories.map(category => category.category);
