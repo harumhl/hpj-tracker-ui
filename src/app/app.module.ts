@@ -11,12 +11,14 @@ import { SubentryTableComponent } from './subentry-table/subentry-table.componen
 import {HighLightPipe} from './highlightpipe';
 import {ToastrModule} from 'ngx-toastr';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { ModifyTaskComponent } from './modify-task/modify-task.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SubentryTableComponent,
-    HighLightPipe
+    HighLightPipe,
+    ModifyTaskComponent
   ],
   imports: [
     BrowserModule,

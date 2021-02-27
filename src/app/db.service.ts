@@ -183,7 +183,6 @@ export class DbService {
   }
 
   postTask(task: any) {
-    console.log(task);
     this.utilService.displayToast('info', 'creating new task', 'Creating');
     return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
   }
