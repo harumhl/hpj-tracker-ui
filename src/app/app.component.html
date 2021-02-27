@@ -93,43 +93,10 @@
 <!-- Testing -->
 <br>
 <div (dblclick)="display.testing = false">
-  <!-- (Testing) Enter a new goal -->
-  <div [hidden]="!display.testing">
-    <form (submit)="save('New Goal')">
-      <label>New goal: </label>
-      <select id="newGoalCategory" [disabled]="loggedIn === false">
-        <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
-      </select>
-      <input id="newGoalName" placeholder="name" style="width: 100px" [disabled]="loggedIn === false" required>
-      <input id="newGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false" required>
-      <input id="newGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false" required>
-      <input id="newGoalCountToMinutes" placeholder="count to minutes" style="width: 100px" [disabled]="loggedIn === false" required>
-      <input id="newGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false" required>
-      <input id="newGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
-      <input id="newGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-      <input type="submit" value="save">
-    </form>
-  </div>
-  <app-modify-task [loggedIn]="loggedIn"
+  <!-- (Testing) Add or update a task -->
+  <app-modify-task [hidden]="!display.testing" [loggedIn]="loggedIn"
                    [categories]="categories" [categoryList]="categoryList" [templateTask]="this.tasks[0]"
                    [tasks]="tasks" [taskList]="taskList"></app-modify-task>
-
-  <!-- (Testing) Update an existing goal -->
-  <div [hidden]="!display.testing">
-    <form (ngSubmit)="save('Modify Goal')">
-      <label>Modify goal: </label>
-      <select id="modifyGoalName" [disabled]="loggedIn === false" (change)="updateModifyInputElements('Modify Goal')">
-        <option *ngFor="let name of taskList" value="{{name}}">{{name}}</option>
-      </select>
-      <input id="modifyGoalGoalCount" type="number" placeholder="goalCount" style="width: 70px" [disabled]="loggedIn === false">
-      <input id="modifyGoalUnit" placeholder="unit" style="width: 50px" [disabled]="loggedIn === false">
-      <input id="modifyGoalCountToMinutes" placeholder="count to minutes" style="width: 100px" [disabled]="loggedIn === false">
-      <input id="modifyGoalExpectedTimesOfCompletion" placeholder="time to complete" style="width: 100px" [disabled]="loggedIn === false">
-      <input id="modifyGoalSubentryDetails" placeholder="subentryDetails" style="width: 100px" [disabled]="loggedIn === false">
-      <input id="modifyGoalDetails" placeholder="details" style="width: 100px" [disabled]="loggedIn === false">
-      <input type="submit" value="save">
-    </form>
-  </div>
 
   {{saveMessage}}
   <br *ngIf="saveMessage.length > 0">
