@@ -77,8 +77,7 @@ export class AppComponent {
 
   display = { // whether to display each component or not
     allOptions: false,
-    //inSchedules: true,
-    inSchedules: false,
+    inSchedules: true,
     incompleteAndUnhiddenOnly: true,
     fullInfo: true,
     topChart: true, // todo display more dates, display per category
@@ -190,18 +189,13 @@ export class AppComponent {
 
   // Convert raw data format from the database to a format for schedule view (deep-copying since 'time' goes string[] -> string)
   convertArrayForScheduleDisplay(queriedData: Entry[]) {
-    // Get all possible times
-    let times: any = {};
+    let times: string[] = [];
     for (const data of queriedData) {
       for (const t of data.time) {
-        // With object (aka dict), no 'duplicate' sub-entries are introduced
-        times[t] = t;
+        times.push(t);
       }
     }
-    // Change object (aka dict) to array and sort them
-    times = [];
-    Object.keys(times).forEach(key => times.push(times[key])); // = this.utilService.toIterable();
-    // times = this.utilService.toIterable(times) as string[];
+    times = this.utilService.getUniqueInArray(times);
     times = times.sort();
 
     // Create an array to return that will be used for display
@@ -274,15 +268,17 @@ export class AppComponent {
         for (const entry of this.entriesOfToday.queried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
           entry.unit = entry.task.unit;
+          entry.time = entry.task.expectedTimesOfCompletion;
           entry.impact = `${Math.round(entry.multiplier / entry.task.category.goalInComparableUnit * 100)}%`;
           entry.details = entry.task.details;
         }
 
-        // this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
-        // this.toggle('inSchedules', this.display.inSchedules);
-
         this.entriesOfToday.queried = this.entriesOfToday.queried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
         this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+
+        this.entriesOfToday.queriedInSchedules = this.convertArrayForScheduleDisplay(this.entriesOfToday.queried);
+        this.toggle('inSchedules', this.display.inSchedules);
+
         this.disableMainInput = false;
 
       } else if (recurse) {
