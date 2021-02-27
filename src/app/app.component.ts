@@ -18,17 +18,17 @@ import {ToastrService} from 'ngx-toastr';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'HPJ Tracker';
+  // Metadata
   version = 'v' + version;
   buildTimestamp = environment.buildTimestamp;
   environment = environment.environment;
-  mobile: boolean = window.screen.height <= 896;
+  mobile: boolean = window.screen.height <= 896; // my iphone height
 
+  // Login
   email = 'haru.mhl@gmail.com';
   loggedIn = false;
-
-  // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
   firebaseConfig = {
+    // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
     apiKey: environment.firebaseApiKey,
     authDomain: environment.firebaseAuthDomain,
     databaseURL: environment.firebaseDatabaseURL,
@@ -39,9 +39,7 @@ export class AppComponent {
     measurementId: environment.firebaseMeasurementId
   };
 
-notes: Note[] = [];
-
-  tempMessage = '';
+  notes: Note[] = [];
 
   headers: string[] = ['name', 'count', 'goalCount', 'maxCount', 'unit', 'impact', 'multiplier', 'subentryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored

@@ -1,6 +1,6 @@
 @media screen and (min-height: 200px) { /* Designed for iPhone 11 */
   table {font-size: 10px; padding: 0 5px;}
-  table tr th input, table tr td input {width: 40px; height: 10px; font-size: 10px;}
+  table tr th input, table tr td input {width: 25px; height: 10px; font-size: 10px;}
 }
 @media screen and (min-height: 900px) { /* Designed for desktop */
   table {font-size: 15px; padding: 5px 5px;}
