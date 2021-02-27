@@ -20,7 +20,7 @@ export class DbService {
   today: string;
   dayOfToday: string;
 
-  disableDisplaySubject = new Subject<boolean>();
+  disableMainInputSubject = new Subject<boolean>();
   updateDisplaySubject = new Subject<boolean>();
 
   backendUrl = environment.backendUrl;

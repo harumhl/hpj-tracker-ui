@@ -40,6 +40,7 @@
 <label for="edit">edit</label>
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
 <label for="displayAllOptions">options</label>
+<button style="width: 60px; height: 20px" (click)="this.readEntriesOfToday(true)">refresh</button>
 
 <!-- TODO some 'classification' on what I can do in given situations (if I'm out and wearing masks -> smile or mewing / if I'm with friends -> ??)
           -> currently I just have it in Notes in prod -->
@@ -77,7 +78,7 @@
 
 <!-- Displaying data -->
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
-  <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers" [disable]="disableInput"
+  <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers" [disable]="disableMainInput"
                   [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
                   [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
   </subentry-table>
@@ -135,7 +136,7 @@
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
   <!-- (Testing) display all categories and goals -->
-  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category']"
+  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['name']"
                   [dataToDisplay]="this.categories" [mobile]="this.mobile"></subentry-table>
   <br>
 

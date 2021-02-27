@@ -19,6 +19,7 @@ export class Entry {
   // For display
   category: string;
   unit?: string;
+  impact?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
 }

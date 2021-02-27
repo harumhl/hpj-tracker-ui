@@ -43,7 +43,7 @@ notes: Note[] = [];
 
   tempMessage = '';
 
-  headers: string[] = ['name', 'count', 'goalCount', 'unit', 'subentryDetails', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'maxCount', 'unit', 'impact', 'multiplier', 'subentryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
@@ -54,7 +54,7 @@ notes: Note[] = [];
     Interpersonal: '#f5f0ff',
     Hobby: '#f5f0ff'
   };
-  disableInput = false;
+  disableMainInput = false;
   dataQueried: Entry[] = [];
   dataQueriedInSchedules: Entry[] = [];
   timeToHighlight: string;
@@ -132,10 +132,12 @@ notes: Note[] = [];
 
     this.dbService.updateDisplaySubject.subscribe(update => {
       if (update) {
-        this.disableInput = true;
-        this.readEntiresOfToday();
+        this.readEntriesOfToday(true);
         this.computeCompletionPercentageByCategories();
       }
+    });
+    this.dbService.disableMainInputSubject.subscribe(disable => {
+      this.disableMainInput = disable;
     });
     this.utilService.displayToastSubject.subscribe(object => {
       const type = object.type;
@@ -148,13 +150,22 @@ notes: Note[] = [];
         const error = object.error;
         this.toastr.error(message + `: ${error.status} - ${error.message}`, 'Error', {timeOut: 15 * 1000});
       } else if (type === 'info') {
-        this.toastr.info(message, title);
+        this.toastr.info(message, title, {timeOut: 3 * 1000});
       } else if (type === 'warning') {
         this.toastr.warning(message, title);
       }
     });
 
     this.utilService.setInterval(288, 1000 * 60 * 5, this.calculateTimeToHighlight); // refresh every 5 mins X 288 times = 1 full day
+
+    // Keep the backend alive - Heroku puts the dyno to sleep after 30 minutes of inactivity (I get 550 free dyno hours every month: 550/31 = 17.74 ~ 6am to 11pm)
+    setInterval(() => {
+      const now = new Date();
+      if (6 <= now.getHours() && now.getHours() < 23) { // between 6am and 10:59pm
+        console.log(`ping: ${now.getHours()}:${now.getMinutes()}`);
+        this.readEntriesOfToday(true);
+      }
+    }, 1000 * 60 * 25); // every 25 minutes
   }
 
   // Attempt to reload the chart, since this.overallCompletionRates can take awhile to generate
@@ -248,17 +259,18 @@ notes: Note[] = [];
     return array;
   }
 
-  readEntiresOfToday(recurse: boolean = true) {
+  readEntriesOfToday(must: boolean, recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
     this.dbService.getEntriesOfToday().subscribe(entries => {
       this.dataQueried = entries as Entry[];
-      if (this.dataQueried.length > 0) {
+      if (must || this.dataQueried.length > 0) {
         this.utilService.displayToast('success', 'entries retrieved for today', 'Retrieved');
 
         // Add 'category', 'unit' and 'details' from tasks
         for (const entry of this.dataQueried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
           entry.unit = entry.task.unit;
+          entry.impact = `${Math.round(entry.multiplier / entry.task.category.goalInComparableUnit * 100)}%`;
           entry.details = entry.task.details;
         }
 
@@ -267,13 +279,13 @@ notes: Note[] = [];
 
         this.dataQueried = this.dataQueried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
         this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
-        this.disableInput = false;
+        this.disableMainInput = false;
 
       } else if (recurse) {
         // If nothing got retrieved, then add entries for today
         this.dbService.postEntriesOfToday().subscribe(e => {
           this.utilService.displayToast('success', 'entries created', 'Created');
-          this.readEntiresOfToday(false);
+          this.readEntriesOfToday(must, false);
         }, (error) => {
           this.utilService.displayToast('error', 'Failed to create entries', 'Error', error);
         });
@@ -299,7 +311,7 @@ notes: Note[] = [];
     });
 */
 
-    this.readEntiresOfToday();
+    this.readEntriesOfToday(true);
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
 /*
@@ -335,6 +347,11 @@ notes: Note[] = [];
           this.tasks = tasks;
           for (const task of this.tasks) {
             // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
+
+            if (this.categoryList.indexOf(task.category.name) === -1) {
+              this.categoryList.push(task.category.name);
+              this.categories.push(task.category);
+            }
           }
           this.taskList = this.tasks.map(goal => goal.name);
 
