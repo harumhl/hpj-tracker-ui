@@ -187,6 +187,11 @@ export class DbService {
     return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
   }
 
+  putTask(task: any) {
+    this.utilService.displayToast('info', 'updating a task', 'Creating');
+    return this.http.put(this.backendUrl + '/tasks', task, this.httpOption);
+  }
+
   getEntries() {
     this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
     return this.http.get(this.backendUrl + '/entries', this.httpOption);

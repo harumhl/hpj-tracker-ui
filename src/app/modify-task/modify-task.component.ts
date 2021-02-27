@@ -14,6 +14,8 @@ export class ModifyTaskComponent implements OnInit {
   @Input() loggedIn = false;
   @Input() categoryList: string[] = [];
   @Input() categories: Category[] = [];
+  @Input() taskList: string[] = [];
+  @Input() tasks: Task[] = [];
   @Input() templateTask: Task;
   task: Task;
 
@@ -36,6 +38,13 @@ export class ModifyTaskComponent implements OnInit {
     }
   }
 
+  updateContent() {
+    const taskName = (document.getElementById('taskDropdown') as HTMLInputElement).value;
+    this.task = Object.assign({}, this.tasks.filter(t => t.name === taskName)[0]);
+    this.task.categoryId = this.task.category.id;
+    delete this.task.category;
+  }
+
   saveTask(update: boolean) {
     this.task = JSON.parse((document.getElementById('task') as HTMLInputElement).value);
 
@@ -45,6 +54,13 @@ export class ModifyTaskComponent implements OnInit {
         this.assignEmptyNewTask();
       }, (error) => {
         this.utilService.displayToast('error', 'Failed to create task', 'Error', error);
+      });
+    } else if (update) {
+      this.dbService.putTask(this.task).subscribe(e => {
+        this.utilService.displayToast('success', 'task updated', 'Updated');
+        this.assignEmptyNewTask();
+      }, (error) => {
+        this.utilService.displayToast('error', 'Failed to update task', 'Error', error);
       });
     }
   }

@@ -110,8 +110,9 @@
       <input type="submit" value="save">
     </form>
   </div>
-  <app-modify-task [loggedIn]="loggedIn" [categories]="categories" [categoryList]="categoryList"
-                   [templateTask]="this.tasks[0]"></app-modify-task>
+  <app-modify-task [loggedIn]="loggedIn"
+                   [categories]="categories" [categoryList]="categoryList" [templateTask]="this.tasks[0]"
+                   [tasks]="tasks" [taskList]="taskList"></app-modify-task>
 
   <!-- (Testing) Update an existing goal -->
   <div [hidden]="!display.testing">

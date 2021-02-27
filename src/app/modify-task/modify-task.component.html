@@ -1,10 +1,18 @@
 <!-- Designed to add a new task or update an existing task -->
 
+<!-- Category selection for a new entry (of a task) -->
 <select id="categoryDropdown" [disabled]="loggedIn === false" (change)="assignCategory()">
   <option *ngFor="let category of categoryList" value="{{category}}">{{category}}</option>
 </select>
 
-<textarea id="task" style="width: 100%; height: 250px" [innerHTML]="task | json"
-          [disabled]="task === undefined || task['categoryId'] === null"></textarea>
+<!-- Task selection for an update -->
+<select id="taskDropdown" [disabled]="loggedIn === false" (change)="updateContent()">
+  <option *ngFor="let task of taskList" value="{{task}}">{{task}}</option>
+</select>
+
+<!-- Display and allow update of contents of a task -->
+<textarea id="task" style="width: 100%; height: 250px" [innerHTML]="task | json" [disabled]="task === undefined || task['categoryId'] === null"></textarea>
+
+<!-- Buttons to trigger action -->
 <button (click)="saveTask(false)">New Task</button>
 <button (click)="saveTask(true)">Update Task</button><br>
