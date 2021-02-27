@@ -100,7 +100,6 @@ export class AppComponent {
     active: [], // Task[]
     archived: [] // Task[]
   };
-  saveMessage = '';
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
   dataQueriedPast: any[] = []; // similar to Subentry, but 7-8 days of entries instead of single 'count'
@@ -476,24 +475,24 @@ export class AppComponent {
   }
 
   updateBasics() {
-    // Get the string representation of json data to json/dict/object
-    let updatedBasics = [];
-    try {
-      updatedBasics = JSON.parse((document.getElementById('updatedBasics') as HTMLInputElement).value)
-    } catch (error) {
-      this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Failed to parse updated "basics"'; }, () => {this.saveMessage = ''; });
-      return;
-    }
+    /*
+        // Get the string representation of json data to json/dict/object
+        let updatedBasics = [];
+        try {
+          updatedBasics = JSON.parse((document.getElementById('updatedBasics') as HTMLInputElement).value)
+        } catch (error) {
+          this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Failed to parse updated "basics"'; }, () => {this.saveMessage = ''; });
+          return;
+        }
 
-    // Update the db under /entries/today's-date/basics (all of the 'documents' regardless of whether it's updated or not)
-/*
-    const collection = DbService.collections.basics;
-    for (const updatedBasic of updatedBasics) {
-      this.dbService.updateDocInSubcollection(DbService.collections.entries, this.dbService.today, updatedBasic, collection, updatedBasic,
-        () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics successful'; }, () => { this.saveMessage = ''; }); },
-        (error) => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics failed'; }, () => {this.saveMessage = ''; }); });
-    }
-*/
+        // Update the db under /entries/today's-date/basics (all of the 'documents' regardless of whether it's updated or not)
+        const collection = DbService.collections.basics;
+        for (const updatedBasic of updatedBasics) {
+          this.dbService.updateDocInSubcollection(DbService.collections.entries, this.dbService.today, updatedBasic, collection, updatedBasic,
+            () => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics successful'; }, () => { this.saveMessage = ''; }); },
+            (error) => { this.utilService.setInterval(10, 1000, () => { this.saveMessage = 'Update basics failed'; }, () => {this.saveMessage = ''; }); });
+        }
+    */
   }
 
   computeCompletionPercentageByCategories() {

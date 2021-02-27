@@ -8,7 +8,7 @@ import {environment} from '../environments/environment';
 import {Category} from './model/category.model';
 import {Task} from './model/task.model';
 import {Entry} from './model/entry.model';
-import {Subject} from 'rxjs';
+import {Subject, throwError} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
@@ -177,19 +177,53 @@ export class DbService {
 */
   }
 
+  validateTask(task: any) {
+    const keys = ['name', 'archived', 'goalCount', 'maxCount', 'unit', 'multiplier', 'expectedTimesOfCompletion', 'details', 'categoryId'];
+    const timeRegex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
+
+    const keyCountMatch = keys.filter(k => task.hasOwnProperty(k)).length === keys.length;
+    const constraints = {
+      name: task.name.length > 0,
+      archived: true,
+      goalCount: task.goalCount > 0,
+      maxCount: task.maxCount >= task.goalCount,
+      unit: task.unit.length > 0,
+      multiplier: task.multiplier !== 0,
+      expectedTimesOfCompletion: task.expectedTimesOfCompletion.length > 0
+                                && task.expectedTimesOfCompletion.filter(t => t.match(timeRegex)).length === task.expectedTimesOfCompletion.length,
+      details: true,
+      categoryId: task.categoryId > 0,
+    };
+
+    let result = keyCountMatch;
+    for (const k in constraints) {
+      result = result && constraints[k];
+    }
+    console.log('validateTask', result);
+    return result;
+  }
+
   getTasks() {
     this.utilService.displayToast('info', 'retriving tasks', 'Retrieving');
     return this.http.get(this.backendUrl + '/tasks', this.httpOption);
   }
 
   postTask(task: any) {
-    this.utilService.displayToast('info', 'creating new task', 'Creating');
-    return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
+    if (this.validateTask(task)) {
+      this.utilService.displayToast('info', 'creating new task', 'Creating');
+      return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
+    } else {
+      return throwError({status: 400, message: 'invalid new task'});
+    }
   }
 
   putTask(task: any) {
-    this.utilService.displayToast('info', 'updating a task', 'Creating');
-    return this.http.put(this.backendUrl + '/tasks', task, this.httpOption);
+    if (this.validateTask(task)) {
+      this.utilService.displayToast('info', 'updating a task', 'Creating');
+      return this.http.put(this.backendUrl + '/tasks', task, this.httpOption);
+    } else {
+      return throwError({status: 400, message: 'invalid updated task'});
+    }
   }
 
   getEntries() {
