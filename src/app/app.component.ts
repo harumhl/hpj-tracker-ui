@@ -18,25 +18,27 @@ import {ToastrService} from 'ngx-toastr';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // Metadata
-  version = 'v' + version;
-  buildTimestamp = environment.buildTimestamp;
-  environment = environment.environment;
-  mobile: boolean = window.screen.height <= 896; // my iphone height
+  metadata = {
+    version: 'v' + version,
+    buildTimestamp: environment.buildTimestamp,
+    environment: environment.environment,
+    mobile: window.screen.height <= 896, // my iphone height
+  };
 
-  // Login
-  email = 'haru.mhl@gmail.com';
-  loggedIn = false;
-  firebaseConfig = {
-    // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
-    apiKey: environment.firebaseApiKey,
-    authDomain: environment.firebaseAuthDomain,
-    databaseURL: environment.firebaseDatabaseURL,
-    projectId: environment.firebaseProjectId,
-    storageBucket: environment.firebaseStorageBucket,
-    messagingSenderId: environment.firebaseMessagingSenderId,
-    appId: environment.firebaseAppId,
-    measurementId: environment.firebaseMeasurementId
+  signIn = {
+    email: 'haru.mhl@gmail.com',
+    loggedIn: false,
+    firebaseConfig: {
+      // Found it at https://console.firebase.google.com/project/hpj-tracker/settings/general, 'Config' under 'Firebase SDK snippet'
+      apiKey: environment.firebaseApiKey,
+      authDomain: environment.firebaseAuthDomain,
+      databaseURL: environment.firebaseDatabaseURL,
+      projectId: environment.firebaseProjectId,
+      storageBucket: environment.firebaseStorageBucket,
+      messagingSenderId: environment.firebaseMessagingSenderId,
+      appId: environment.firebaseAppId,
+      measurementId: environment.firebaseMeasurementId
+    },
   };
 
   notes: Note[] = [];
@@ -52,12 +54,13 @@ export class AppComponent {
     Interpersonal: '#f5f0ff',
     Hobby: '#f5f0ff'
   };
+  entriesOfToday = {
+    queried: [], // Entry[]
+    queriedInSchedules: [], // Entry[]
+    displayed: [], // Entry[]
+  };
   disableMainInput = false;
-  dataQueried: Entry[] = [];
-  dataQueriedInSchedules: Entry[] = [];
   timeToHighlight: string;
-  // TODO select a few to focus now
-  dataToDisplay: Entry[] = [];
   overallCompletionRate = 0;
 
   @ViewChild('topChart')
@@ -87,12 +90,16 @@ export class AppComponent {
   editMode = false;
 
   basics: any[] = [];
-  categoryList: string[] = [];
-  taskList: string[] = [];
-  categories: Category[] = [];
-  tasks: Task[] = []; // TODO most and least accomplished goals in the past 7 days
-  activeTasks: Task[] = [];
-  archivedTasks: Task[] = [];
+  categories = {
+    list: [], // string[]
+    full: [], // Category[]
+  };
+  tasks = {
+    list: [], // string[]
+    full: [], // Task[]
+    active: [], // Task[]
+    archived: [] // Task[]
+  };
   saveMessage = '';
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
@@ -109,7 +116,7 @@ export class AppComponent {
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
     // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase
-    firebase.initializeApp(this.firebaseConfig);
+    firebase.initializeApp(this.signIn.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore(); // todo not needed?
 
     // For testing - allowing yesterday's entry to be modified
@@ -117,7 +124,7 @@ export class AppComponent {
     yesterday.setDate(yesterday.getDate() - 1);
     this.yesterday = this.utilService.formatDate(this.dbService._getDateKey(yesterday), 'MM-DD');
 
-    if (!this.mobile) { // Display 'category' column only on desktop by default
+    if (!this.metadata.mobile) { // Display 'category' column only on desktop by default
       this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
     }
 
@@ -227,11 +234,11 @@ export class AppComponent {
   login() { // Login, hide login HTML components, read data
     (document.getElementById('login') as HTMLInputElement).disabled = true;
 
-    this.email = (document.getElementById('emailInput') as HTMLInputElement).value;
+    this.signIn.email = (document.getElementById('emailInput') as HTMLInputElement).value;
     const password = (document.getElementById('passwordInput') as HTMLInputElement).value;
-    firebase.auth().signInWithEmailAndPassword(this.email, password)
+    firebase.auth().signInWithEmailAndPassword(this.signIn.email, password)
       .then((user) => {
-        console.log(`Successfully logged in as ${this.email}`);
+        console.log(`Successfully logged in as ${this.signIn.email}`);
       })
       .catch((error) => {
         (document.getElementById('login') as HTMLInputElement).disabled = false;
@@ -240,7 +247,7 @@ export class AppComponent {
   }
 
   postLogin() {
-    this.loggedIn = true;
+    this.signIn.loggedIn = true;
 
     // Hide login-related HTML components
     document.getElementById('emailLabel').hidden = true;
@@ -260,12 +267,12 @@ export class AppComponent {
   readEntriesOfToday(must: boolean, recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
     this.dbService.getEntriesOfToday().subscribe(entries => {
-      this.dataQueried = entries as Entry[];
-      if (must || this.dataQueried.length > 0) {
+      this.entriesOfToday.queried = entries as Entry[];
+      if (must || this.entriesOfToday.queried.length > 0) {
         this.utilService.displayToast('success', 'entries retrieved for today', 'Retrieved');
 
         // Add 'category', 'unit' and 'details' from tasks
-        for (const entry of this.dataQueried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
+        for (const entry of this.entriesOfToday.queried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
           entry.unit = entry.task.unit;
           entry.impact = `${Math.round(entry.multiplier / entry.task.category.goalInComparableUnit * 100)}%`;
@@ -275,8 +282,8 @@ export class AppComponent {
         // this.dataQueriedInSchedules = this.convertArrayForScheduleDisplay(this.dataQueried);
         // this.toggle('inSchedules', this.display.inSchedules);
 
-        this.dataQueried = this.dataQueried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
-        this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+        this.entriesOfToday.queried = this.entriesOfToday.queried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
+        this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         this.disableMainInput = false;
 
       } else if (recurse) {
@@ -338,23 +345,23 @@ export class AppComponent {
     }
 
     if (id === 'testing' && this.display.testing) {
-      if (this.tasks.length === 0) {
+      if (this.tasks.full.length === 0) {
         // Read tasks
         this.dbService.getTasks().subscribe((tasks: Task[]) => {
           this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
-          this.tasks = tasks;
-          for (const task of this.tasks) {
+          this.tasks.full = tasks;
+          for (const task of this.tasks.full) {
             // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
 
-            if (this.categoryList.indexOf(task.category.name) === -1) {
-              this.categoryList.push(task.category.name);
-              this.categories.push(task.category);
+            if (this.categories.list.indexOf(task.category.name) === -1) {
+              this.categories.list.push(task.category.name);
+              this.categories.full.push(task.category);
             }
           }
-          this.taskList = this.tasks.map(goal => goal.name);
+          this.tasks.list = this.tasks.full.map(goal => goal.name);
 
-          this.activeTasks = this.tasks.filter(g => g.archived === false);
-          this.archivedTasks = this.tasks.filter(g => g.archived);
+          this.tasks.active = this.tasks.full.filter(g => g.archived === false);
+          this.tasks.archived = this.tasks.full.filter(g => g.archived);
         }, (error) => {
           this.utilService.displayToast('error', 'Failed to retrieve tasks', 'Error', error);
         });
@@ -390,15 +397,15 @@ export class AppComponent {
     if (id === 'incompleteAndUnhiddenOnly' || id === 'inSchedules') {
       if (this.display.incompleteAndUnhiddenOnly) { // Filter out completed and/or hidden sub-entries (no deep-copy, but just filtering from the queried data))
         if (this.display.inSchedules) {
-          this.dataToDisplay = this.dataQueriedInSchedules.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         } else {
-          this.dataToDisplay = this.dataQueried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
         }
       } else {
         if (this.display.inSchedules) { // Deep-copy happens when this.dataQueried is pulled from database (so already done by now)
-          this.dataToDisplay = this.dataQueriedInSchedules;
+          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules;
         } else {
-          this.dataToDisplay = this.dataQueried;
+          this.entriesOfToday.displayed = this.entriesOfToday.queried;
         }
       }
 
@@ -406,7 +413,7 @@ export class AppComponent {
       if (this.display.inSchedules) {
         this.headers = this.utilService.addElemInArray(this.headers, 'time', true);
 
-        if (this.dataToDisplay.length > 0) {
+        if (this.entriesOfToday.displayed.length > 0) {
           this.calculateTimeToHighlight();
         }
       } else {
@@ -420,16 +427,16 @@ export class AppComponent {
   // Figure out which time in schedule to highlight
   calculateTimeToHighlight = () => {
     const now = this.dbService.datePipe.transform(Date(), 'HH:mm');
-    for (let i = 1; i < this.dataToDisplay.length; i++) {
-      if (this.dataToDisplay[i - 1].time <= now && now <= this.dataToDisplay[i].time) {
-        this.timeToHighlight = this.dataToDisplay[i - 1].time;
+    for (let i = 1; i < this.entriesOfToday.displayed.length; i++) {
+      if (this.entriesOfToday.displayed[i - 1].time <= now && now <= this.entriesOfToday.displayed[i].time) {
+        this.timeToHighlight = this.entriesOfToday.displayed[i - 1].time;
       }
     }
     // (edge cases)
-    if (now < this.dataToDisplay[0].time) {
-      this.timeToHighlight = this.dataToDisplay[0].time;
-    } else if (this.dataToDisplay[this.dataToDisplay.length - 1].time < now) {
-      this.timeToHighlight = this.dataToDisplay[this.dataToDisplay.length - 1].time;
+    if (now < this.entriesOfToday.displayed[0].time) {
+      this.timeToHighlight = this.entriesOfToday.displayed[0].time;
+    } else if (this.entriesOfToday.displayed[this.entriesOfToday.displayed.length - 1].time < now) {
+      this.timeToHighlight = this.entriesOfToday.displayed[this.entriesOfToday.displayed.length - 1].time;
     }
   };
 

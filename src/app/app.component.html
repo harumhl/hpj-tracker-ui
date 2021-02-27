@@ -76,9 +76,9 @@
 
 <!-- Displaying data -->
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
-  <subentry-table *ngIf="dataToDisplay.length > 0" [loggedIn]="loggedIn" [headers]="headers" [disable]="disableMainInput"
-                  [dataToDisplay]="this.dataToDisplay" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
-                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.mobile">
+  <subentry-table *ngIf="entriesOfToday.displayed.length > 0" [loggedIn]="signIn.loggedIn" [headers]="headers" [disable]="disableMainInput"
+                  [dataToDisplay]="this.entriesOfToday.displayed" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
+                  [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.metadata.mobile">
   </subentry-table>
 </div>
 
@@ -88,15 +88,15 @@
   <button (click)="updateBasics()">Save Basics</button><br>
 </div>
 
-{{version}} {{environment}} {{buildTimestamp}}
+{{metadata.version}} {{metadata.environment}} {{metadata.buildTimestamp}}
 
 <!-- Testing -->
 <br>
 <div (dblclick)="display.testing = false">
   <!-- (Testing) Add or update a task -->
-  <app-modify-task [hidden]="!display.testing" [loggedIn]="loggedIn"
-                   [categories]="categories" [categoryList]="categoryList" [templateTask]="this.tasks[0]"
-                   [tasks]="tasks" [taskList]="taskList"></app-modify-task>
+  <app-modify-task [hidden]="!display.testing" [loggedIn]="signIn.loggedIn"
+                   [categories]="categories.full" [categoryList]="categories.list" [templateTask]="this.tasks.full[0]"
+                   [tasks]="tasks.full" [taskList]="tasks.list"></app-modify-task>
 
   {{saveMessage}}
   <br *ngIf="saveMessage.length > 0">
@@ -104,20 +104,20 @@
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
   <!-- (Testing) display all categories and goals -->
-  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['name']"
-                  [dataToDisplay]="this.categories" [mobile]="this.mobile"></subentry-table>
+  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['name']"
+                  [dataToDisplay]="this.categories.full" [mobile]="this.metadata.mobile"></subentry-table>
   <br>
 
-  <label [hidden]="!display.testing">{{this.activeTasks.length}} active goals </label>
-  <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.archivedTasks.length}} archived goals)</label>
-  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
-                  [dataToDisplay]="sortByCategory(this.tasks)" [categoryColors]="categoryColors" [mobile]="this.mobile"></subentry-table>
+  <label [hidden]="!display.testing">{{this.tasks.active.length}} active goals </label>
+  <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.tasks.archived.length}} archived goals)</label>
+  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
+                  [dataToDisplay]="sortByCategory(this.tasks.full)" [categoryColors]="categoryColors" [mobile]="this.metadata.mobile"></subentry-table>
   <br>
 
   <!-- (Testing) display data of past 7 days -->
   <label [hidden]="!display.testing">'count' is for yesterday's entry</label>
-  <subentry-table [hidden]="!display.testing" [loggedIn]="loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
-                  [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.mobile">
+  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
+                  [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.metadata.mobile">
   </subentry-table>
 </div>
 
