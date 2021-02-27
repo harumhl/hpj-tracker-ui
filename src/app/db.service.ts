@@ -182,6 +182,12 @@ export class DbService {
     return this.http.get(this.backendUrl + '/tasks', this.httpOption);
   }
 
+  postTask(task: any) {
+    console.log(task);
+    this.utilService.displayToast('info', 'creating new task', 'Creating');
+    return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
+  }
+
   getEntries() {
     this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
     return this.http.get(this.backendUrl + '/entries', this.httpOption);
@@ -189,7 +195,7 @@ export class DbService {
 
   postEntriesOfToday() {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
-    return this.http.post('https://hpj-tracker.herokuapp.com/entries/today', {}, this.httpOption);
+    return this.http.post(this.backendUrl + '/entries/today', {}, this.httpOption);
   }
 
   getEntriesOfToday() {
@@ -201,12 +207,12 @@ export class DbService {
   updateEntry(entryToUpdate: Entry) {
     entryToUpdate.details = null; // TODO currently this is set to empty string, but backend expsts an object not a string
     this.utilService.displayToast('info', 'updating entries', 'Updating');
-    return this.http.put('https://hpj-tracker.herokuapp.com/entries', entryToUpdate, this.httpOption);
+    return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption);
   }
 
   getChart() {
     this.utilService.displayToast('info', 'retriving chart', 'Retrieving');
-    return this.http.get('https://hpj-tracker.herokuapp.com/completion-unit/today', this.httpOption);
+    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption);
   }
 
   refreshData() {

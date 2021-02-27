@@ -12,6 +12,7 @@ export class Task { // todo rename Goal to Task
   // subentryDetails?: object;
 
   category: Category;
+  categoryId?: number;
 
   constructor(category, name, archived, goalCount, unit, expectedTimesOfCompletion) {
     this.category = category;

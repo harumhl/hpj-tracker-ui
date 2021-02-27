@@ -86,6 +86,7 @@ export class AppComponent {
 
   editMode = false;
 
+  newTask: any = {};
   basics: any[] = [];
   categoryList: string[] = [];
   taskList: string[] = [];
@@ -353,6 +354,8 @@ export class AppComponent {
           }
           this.taskList = this.tasks.map(goal => goal.name);
 
+          this.assignEmptyNewTask();
+
           this.activeTasks = this.tasks.filter(g => g.archived === false);
           this.archivedTasks = this.tasks.filter(g => g.archived);
         }, (error) => {
@@ -415,6 +418,55 @@ export class AppComponent {
     }
 
     this.headers = this.utilService.getUniqueInArray(this.headers);
+  }
+
+  assignEmptyNewTask() {
+    if (this.tasks.length > 0) {
+      // Create a template for a new task
+      this.newTask = Object.assign({}, this.tasks[0]);
+      for (const key in this.newTask) {
+        if (this.newTask.hasOwnProperty(key)) {
+          // Assign default values or remove keys
+          if (['id'].indexOf(key) !== -1) {
+            delete this.newTask[key];
+          } else if (['name', 'details'].indexOf(key) !== -1) {
+            this.newTask[key] = '';
+          } else if (['unit'].indexOf(key) !== -1) {
+            this.newTask[key] = 'count';
+          } else if (['archived'].indexOf(key) !== -1) {
+            this.newTask[key] = false;
+          } else if (['goalCount', 'maxCount', 'multiplier'].indexOf(key) !== -1) {
+            this.newTask[key] = 0;
+          } else if (['expectedTimesOfCompletion'].indexOf(key) !== -1) {
+            this.newTask[key] = ['07:00'];
+          } else if (['category'].indexOf(key) !== -1) {
+            delete this.newTask.category;
+            this.newTask.categoryId = null;
+          } else {
+            this.newTask[key] = null;
+          }
+
+        }
+      }
+    }
+  }
+
+  assignCategory() {
+    const categoryName = (document.getElementById('newGoalCategory') as HTMLInputElement).value;
+    const categoryMatches = this.categories.filter(c => c.name === categoryName);
+    if (categoryMatches.length > 0) {
+      this.newTask.categoryId = categoryMatches[0].id;
+    }
+  }
+
+  saveTask() {
+    this.newTask = JSON.parse((document.getElementById('newTask') as HTMLInputElement).value);
+    this.dbService.postTask(this.newTask).subscribe(e => {
+      this.utilService.displayToast('success', 'task created', 'Created');
+      this.assignEmptyNewTask();
+    }, (error) => {
+      this.utilService.displayToast('error', 'Failed to create task', 'Error', error);
+    });
   }
 
   // Figure out which time in schedule to highlight
