@@ -135,7 +135,7 @@ export class AppComponent {
 
     this.dbService.updateDisplaySubject.subscribe(update => {
       if (update) {
-        this.readEntriesOfToday(true);
+        this.readEntriesOfToday();
         this.computeCompletionPercentageByCategories();
       }
     });
@@ -166,7 +166,7 @@ export class AppComponent {
       const now = new Date();
       if (6 <= now.getHours() && now.getHours() < 23) { // between 6am and 10:59pm
         console.log(`ping: ${now.getHours()}:${now.getMinutes()}`);
-        this.readEntriesOfToday(true);
+        this.readEntriesOfToday();
       }
     }, 1000 * 60 * 25); // every 25 minutes
   }
@@ -257,11 +257,11 @@ export class AppComponent {
     return array;
   }
 
-  readEntriesOfToday(must: boolean, recurse: boolean = true) {
+  readEntriesOfToday(recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
     this.dbService.getEntriesOfToday().subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
-      if (must || this.entriesOfToday.queried.length > 0) {
+      if (this.entriesOfToday.queried.length > 0) {
         this.utilService.displayToast('success', 'entries retrieved for today', 'Retrieved');
 
         // Add 'category', 'unit' and 'details' from tasks
@@ -285,7 +285,7 @@ export class AppComponent {
         // If nothing got retrieved, then add entries for today
         this.dbService.postEntriesOfToday().subscribe(e => {
           this.utilService.displayToast('success', 'entries created', 'Created');
-          this.readEntriesOfToday(must, false);
+          this.readEntriesOfToday(false);
         }, (error) => {
           this.utilService.displayToast('error', 'Failed to create entries', 'Error', error);
         });
@@ -311,7 +311,7 @@ export class AppComponent {
     });
 */
 
-    this.readEntriesOfToday(true);
+    this.readEntriesOfToday();
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
 /*
