@@ -9,6 +9,7 @@ import {Category} from './model/category.model';
 import {Task} from './model/task.model';
 import {Entry} from './model/entry.model';
 import {Subject, throwError} from 'rxjs';
+import { share } from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
@@ -109,7 +110,7 @@ export class DbService {
 
   getTasks() {
     this.utilService.displayToast('info', 'retriving tasks', 'Retrieving');
-    return this.http.get(this.backendUrl + '/tasks', this.httpOption).pipe(obs => {
+    return this.http.get(this.backendUrl + '/tasks', this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(t => {
         this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
       }).catch(error => {
@@ -125,7 +126,7 @@ export class DbService {
   postTask(task: any) {
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'creating new task', 'Creating');
-      return this.http.post(this.backendUrl + '/tasks', task, this.httpOption).pipe(obs => {
+      return this.http.post(this.backendUrl + '/tasks', task, this.httpOption).pipe(share(), obs => {
         obs.toPromise().then(t => {
           this.utilService.displayToast('success', 'task created', 'Created');
         }).catch(error => {
@@ -142,7 +143,7 @@ export class DbService {
   putTask(task: any) {
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'updating a task', 'Creating');
-      return this.http.put(this.backendUrl + '/tasks', task, this.httpOption).pipe(obs => {
+      return this.http.put(this.backendUrl + '/tasks', task, this.httpOption).pipe(share(), obs => {
         obs.toPromise().then(t => {
           this.utilService.displayToast('success', 'task updated', 'Updated');
         }).catch(error => {
@@ -159,7 +160,7 @@ export class DbService {
 
   getEntries() {
     this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
-    return this.http.get(this.backendUrl + '/entries', this.httpOption).pipe(obs => {
+    return this.http.get(this.backendUrl + '/entries', this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(e => {
         this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
       }).catch(error => {
@@ -171,7 +172,8 @@ export class DbService {
 
   postEntriesOfADay(date: string = 'today') {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
-    return this.http.post(this.backendUrl + '/entries/' + date, {}, this.httpOption).pipe(obs => {
+    return this.http.post(this.backendUrl + '/entries/' + date, {}, this.httpOption).pipe(share(), obs => {
+      console.log('post');
       obs.toPromise().then(e => {
         this.utilService.displayToast('success', 'entries created', 'Created');
       }).catch(error => {
@@ -183,7 +185,7 @@ export class DbService {
 
   getEntriesOfADay(date: string = 'today') {
     this.utilService.displayToast('info', 'retriving entries for today', 'Retrieving');
-    return this.http.get(this.backendUrl + '/entries/' + date, this.httpOption).pipe(obs => {
+    return this.http.get(this.backendUrl + '/entries/' + date, this.httpOption).pipe(share(), obs => {
       obs.toPromise().then((e: Entry[]) => {
         this.utilService.displayToast('success', `entries retrieved for today (${e.length} entries)`, 'Retrieved');
       }).catch(error => {
@@ -199,7 +201,7 @@ export class DbService {
     entryToUpdate.taskId = entryToUpdate.task.id;
     entryToUpdate.count = entryToUpdate.count ? entryToUpdate.count : 0; // in case of hiding with -1
     this.utilService.displayToast('info', 'updating entries', 'Updating');
-    return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption).pipe(obs => {
+    return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(e => {
         this.utilService.displayToast('success', 'Updated entry - refreshing data', 'Updated');
       }).catch(error => {
@@ -211,7 +213,7 @@ export class DbService {
 
   getChart() {
     this.utilService.displayToast('info', 'retriving chart', 'Retrieving');
-    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption).pipe(obs => {
+    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(c => {
         this.utilService.displayToast('success', 'chart retrieved', 'Retrieved');
       }).catch(error => {
