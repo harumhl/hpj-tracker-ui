@@ -183,13 +183,13 @@ export class DbService {
 
     const keyCountMatch = keys.filter(k => task.hasOwnProperty(k)).length === keys.length;
     const constraints = {
-      name: task.name.length > 0,
+      name: task.name && task.name.length > 0,
       archived: true,
       goalCount: task.goalCount > 0,
       maxCount: task.maxCount >= task.goalCount,
-      unit: task.unit.length > 0,
+      unit: task.unit && task.unit.length > 0,
       multiplier: task.multiplier !== 0,
-      expectedTimesOfCompletion: task.expectedTimesOfCompletion.length > 0
+      expectedTimesOfCompletion: task.expectedTimesOfCompletion && task.expectedTimesOfCompletion.length > 0
                                 && task.expectedTimesOfCompletion.filter(t => t.match(timeRegex)).length === task.expectedTimesOfCompletion.length,
       details: true,
       categoryId: task.categoryId > 0,
@@ -199,58 +199,117 @@ export class DbService {
     for (const k in constraints) {
       result = result && constraints[k];
     }
-    console.log('validateTask', result);
     return result;
   }
 
   getTasks() {
     this.utilService.displayToast('info', 'retriving tasks', 'Retrieving');
-    return this.http.get(this.backendUrl + '/tasks', this.httpOption);
+    return this.http.get(this.backendUrl + '/tasks', this.httpOption).pipe(obs => {
+      obs.toPromise().then(t => {
+        this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to retrieve tasks', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   postTask(task: any) {
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'creating new task', 'Creating');
-      return this.http.post(this.backendUrl + '/tasks', task, this.httpOption);
+      return this.http.post(this.backendUrl + '/tasks', task, this.httpOption).pipe(obs => {
+        obs.toPromise().then(t => {
+          this.utilService.displayToast('success', 'task created', 'Created');
+        }).catch(error => {
+          this.utilService.displayToast('error', 'Failed to create task', 'Error', error);
+        });
+        return obs;
+      });
     } else {
-      return throwError({status: 400, message: 'invalid new task'});
-    }
+      const error = {status: 400, message: 'invalid new task'};
+      this.utilService.displayToast('error', 'Did not make a POST request', 'Error', error);
+      return throwError(error);    }
   }
 
   putTask(task: any) {
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'updating a task', 'Creating');
-      return this.http.put(this.backendUrl + '/tasks', task, this.httpOption);
+      return this.http.put(this.backendUrl + '/tasks', task, this.httpOption).pipe(obs => {
+        obs.toPromise().then(t => {
+          this.utilService.displayToast('success', 'task updated', 'Updated');
+        }).catch(error => {
+          this.utilService.displayToast('error', 'Failed to update task', 'Error', error);
+        });
+        return obs;
+      });
     } else {
-      return throwError({status: 400, message: 'invalid updated task'});
+      const error = {status: 400, message: 'invalid updated task'};
+      this.utilService.displayToast('error', 'Did not make a PUT request', 'Error', error);
+      return throwError(error);
     }
   }
 
   getEntries() {
     this.utilService.displayToast('info', 'retriving entries', 'Retrieving');
-    return this.http.get(this.backendUrl + '/entries', this.httpOption);
+    return this.http.get(this.backendUrl + '/entries', this.httpOption).pipe(obs => {
+      obs.toPromise().then(e => {
+        this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to retrieve entries', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   postEntriesOfToday() {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
-    return this.http.post(this.backendUrl + '/entries/today', {}, this.httpOption);
+    return this.http.post(this.backendUrl + '/entries/today', {}, this.httpOption).pipe(obs => {
+      obs.toPromise().then(e => {
+        this.utilService.displayToast('success', 'entries created', 'Created');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to create entries', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   getEntriesOfToday() {
     this.utilService.displayToast('info', 'retriving entries for today', 'Retrieving');
-    return this.http.get(this.backendUrl + '/entries/today', this.httpOption);
+    return this.http.get(this.backendUrl + '/entries/today', this.httpOption).pipe(obs => {
+      obs.toPromise().then((e: Entry[]) => {
+        this.utilService.displayToast('success', `entries retrieved for today (${e.length} entries)`, 'Retrieved');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to retrieve entries for today', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   // Update the count or 'hide' of an existing entry in Firebase database
   updateEntry(entryToUpdate: Entry) {
     entryToUpdate.details = null; // TODO currently this is set to empty string, but backend expsts an object not a string
+    entryToUpdate.taskId = entryToUpdate.task.id;
     this.utilService.displayToast('info', 'updating entries', 'Updating');
-    return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption);
+    return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption).pipe(obs => {
+      obs.toPromise().then(e => {
+        this.utilService.displayToast('success', 'Updated entry - refreshing data', 'Updated');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to update entry', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   getChart() {
     this.utilService.displayToast('info', 'retriving chart', 'Retrieving');
-    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption);
+    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption).pipe(obs => {
+      obs.toPromise().then(c => {
+        this.utilService.displayToast('success', 'chart retrieved', 'Retrieved');
+      }).catch(error => {
+        this.utilService.displayToast('error', 'Failed to retrieve chart', 'Error', error);
+      });
+      return obs;
+    });
   }
 
   refreshData() {

@@ -12,6 +12,7 @@ export class Entry {
   // subentryDetails: object;
 
   task: Task;
+  taskId: number;
 
   // For edit mode
   checked?: boolean;

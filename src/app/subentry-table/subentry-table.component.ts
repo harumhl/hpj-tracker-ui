@@ -28,7 +28,7 @@ export class SubentryTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateSubentry(row, column: string, event) {
+  updateEntry(row, column: string, event) {
     // iPhone doesn't contains a dot (.) with <input type='tel'>, so allow any other symbols to be used as a dot
     // Replace any of those symbols to dot, but only expect one
     const acceptableSymbols = ['+', ',', ';', '*', '#'];
@@ -46,10 +46,7 @@ export class SubentryTableComponent implements OnInit {
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.hide = !row.hide;
       this.dbService.updateEntry(copyOfRow).subscribe(entry => {
-        this.utilService.displayToast('success', 'Updated entry - refreshing data', 'Updated');
         this.dbService.refreshData();
-      }, (error) => {
-        this.utilService.displayToast('error', 'Failed to update entry', 'Error', error);
       });
       return;
     }
@@ -69,10 +66,7 @@ export class SubentryTableComponent implements OnInit {
       copyOfRow.count = newCount;
       this.dbService.disableMainInputSubject.next(true);
       this.dbService.updateEntry(copyOfRow).subscribe(entry => {
-        this.utilService.displayToast('success', 'Updated entry - refreshing data', 'Updated');
         this.dbService.refreshData();
-      }, (error) => {
-        this.utilService.displayToast('error', 'Failed to update entry', 'Error', error);
       });
     }
   }

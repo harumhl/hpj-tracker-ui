@@ -28,9 +28,9 @@
 
         <!-- type="tel" if mobile // type="number" if web -->
         <input *ngIf="!mobile && loggedIn === true && column === 'count'" type="number" value="{{row[column]}}" [disabled]="disable"
-               (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+               (focusout)="updateEntry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
         <input *ngIf="mobile && loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}" [disabled]="disable"
-               (focusout)="updateSubentry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
+               (focusout)="updateEntry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
 
         <div *ngIf="loggedIn === true && column.includes('subentryDetails')">
           <button *ngFor="let detail of row[column] | keyvalue" (click)="updateSubentryDetails(row, detail)"

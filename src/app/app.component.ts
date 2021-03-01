@@ -262,8 +262,6 @@ export class AppComponent {
     this.dbService.getEntriesOfToday().subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
       if (this.entriesOfToday.queried.length > 0) {
-        this.utilService.displayToast('success', 'entries retrieved for today', 'Retrieved');
-
         // Add 'category', 'unit' and 'details' from tasks
         for (const entry of this.entriesOfToday.queried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
@@ -284,14 +282,9 @@ export class AppComponent {
       } else if (recurse) {
         // If nothing got retrieved, then add entries for today
         this.dbService.postEntriesOfToday().subscribe(e => {
-          this.utilService.displayToast('success', 'entries created', 'Created');
           this.readEntriesOfToday(false);
-        }, (error) => {
-          this.utilService.displayToast('error', 'Failed to create entries', 'Error', error);
         });
       }
-    }, (error) => {
-      this.utilService.displayToast('error', 'Failed to retrieve entries for today', 'Error', error);
     });
   }
 
@@ -343,7 +336,6 @@ export class AppComponent {
       if (this.tasks.full.length === 0) {
         // Read tasks
         this.dbService.getTasks().subscribe((tasks: Task[]) => {
-          this.utilService.displayToast('success', 'tasks retrieved', 'Retrieved');
           this.tasks.full = tasks;
           for (const task of this.tasks.full) {
             // task.category = task.category.name; // TODO if category object is named 'category', what should I call category's name? just category_name?
@@ -357,17 +349,12 @@ export class AppComponent {
 
           this.tasks.active = this.tasks.full.filter(g => g.archived === false);
           this.tasks.archived = this.tasks.full.filter(g => g.archived);
-        }, (error) => {
-          this.utilService.displayToast('error', 'Failed to retrieve tasks', 'Error', error);
         });
       }
 
       if (this.dataQueriedPast.length === 0) {
         this.dbService.getEntries().subscribe((entries: Entry[]) => {
-          this.utilService.displayToast('success', 'entries retrieved', 'Retrieved');
           this.processPastData(entries);
-        }, (error) => {
-          this.utilService.displayToast('error', 'Failed to retrieve entries', 'Error', error);
         });
       }
     }
@@ -493,7 +480,6 @@ export class AppComponent {
 
   computeCompletionPercentageByCategories() {
     this.dbService.getChart().subscribe((completionUnits: any[]) => {
-      this.utilService.displayToast('success', 'chart retrieved', 'Retrieved');
       for (const completionUnit of completionUnits) {
         for (const completionPercentage of this.completionPercentageByCategories) {
           if (completionPercentage.category.includes(completionUnit.categoryName)) {
@@ -501,8 +487,6 @@ export class AppComponent {
           }
         }
       }
-    }, (error) => {
-      this.utilService.displayToast('error', 'Failed to retrieve chart', 'Error', error);
     });
 
     this.reloadChart();

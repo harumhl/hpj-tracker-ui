@@ -1,6 +1,7 @@
 import {Category} from './category.model';
 
-export class Task { // todo rename Goal to Task
+export class Task {
+  id: number;
   name: string;
   archived: boolean;
   goalCount: number;

@@ -50,17 +50,11 @@ export class ModifyTaskComponent implements OnInit {
 
     if (!update) {
       this.dbService.postTask(this.task).subscribe(e => {
-        this.utilService.displayToast('success', 'task created', 'Created');
         this.assignEmptyNewTask();
-      }, (error) => {
-        this.utilService.displayToast('error', 'Failed to create task', 'Error', error);
       });
     } else if (update) {
       this.dbService.putTask(this.task).subscribe(e => {
-        this.utilService.displayToast('success', 'task updated', 'Updated');
         this.assignEmptyNewTask();
-      }, (error) => {
-        this.utilService.displayToast('error', 'Failed to update task', 'Error', error);
       });
     }
   }
