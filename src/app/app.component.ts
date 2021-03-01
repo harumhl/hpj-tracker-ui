@@ -438,22 +438,26 @@ export class AppComponent {
   }
 
   applyEditMode(editType: string) {
-/*
     if (editType === 'hide' || editType === 'unhide') {
       const hide = editType === 'hide';
-      for (const subentry of this.dataToDisplay) {
-        if (subentry.checked === true) {
-          this.dbService.updateEntry(subentry.documentId, subentry.doneDate, null, hide, null);
+      for (const entry of this.entriesOfToday.displayed) {
+        if (entry.checked === true) {
+          entry.hide = hide;
+          this.dbService.putEntry(entry).subscribe(e => {
+            this.readEntriesOfToday();
+          });
         }
       }
     } else if (editType === 'unhideAll') {
-      for (const subentry of this.dataQueried) {
-        if (subentry.hide === true) {
-          this.dbService.updateEntry(subentry.documentId, subentry.doneDate, null, false, null);
+      for (const entry of this.entriesOfToday.queried) {
+        if (entry.hide === true) {
+          entry.hide = false;
+          this.dbService.putEntry(entry).subscribe(e => {
+            this.readEntriesOfToday();
+          });
         }
       }
     }
-*/
     this.editMode = false;
   }
 

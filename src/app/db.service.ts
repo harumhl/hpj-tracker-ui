@@ -286,9 +286,10 @@ export class DbService {
   }
 
   // Update the count or 'hide' of an existing entry in Firebase database
-  updateEntry(entryToUpdate: Entry) {
+  putEntry(entryToUpdate: Entry) {
     entryToUpdate.details = null; // TODO currently this is set to empty string, but backend expsts an object not a string
     entryToUpdate.taskId = entryToUpdate.task.id;
+    entryToUpdate.count = entryToUpdate.count ? entryToUpdate.count : 0; // in case of hiding with -1
     this.utilService.displayToast('info', 'updating entries', 'Updating');
     return this.http.put(this.backendUrl + '/entries', entryToUpdate, this.httpOption).pipe(obs => {
       obs.toPromise().then(e => {

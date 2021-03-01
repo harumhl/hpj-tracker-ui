@@ -45,7 +45,7 @@ export class SubentryTableComponent implements OnInit {
     if (newCount === -1) {
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.hide = !row.hide;
-      this.dbService.updateEntry(copyOfRow).subscribe(entry => {
+      this.dbService.putEntry(copyOfRow).subscribe(entry => {
         this.dbService.refreshData();
       });
       return;
@@ -65,7 +65,7 @@ export class SubentryTableComponent implements OnInit {
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.count = newCount;
       this.dbService.disableMainInputSubject.next(true);
-      this.dbService.updateEntry(copyOfRow).subscribe(entry => {
+      this.dbService.putEntry(copyOfRow).subscribe(entry => {
         this.dbService.refreshData();
       });
     }
