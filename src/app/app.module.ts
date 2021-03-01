@@ -7,7 +7,7 @@ import {DatePipe} from '@angular/common';
 import { CategoryService, LegendService, TooltipService } from '@syncfusion/ej2-angular-charts';
 import { DataLabelService, LineSeriesService} from '@syncfusion/ej2-angular-charts';
 import {FormsModule} from '@angular/forms';
-import { SubentryTableComponent } from './subentry-table/subentry-table.component';
+import { EditableTableComponent } from './editable-table/editable-table.component';
 import {HighLightPipe} from './highlightpipe';
 import {ToastrModule} from 'ngx-toastr';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
@@ -16,7 +16,7 @@ import { ModifyTaskComponent } from './modify-task/modify-task.component';
 @NgModule({
   declarations: [
     AppComponent,
-    SubentryTableComponent,
+    EditableTableComponent,
     HighLightPipe,
     ModifyTaskComponent
   ],

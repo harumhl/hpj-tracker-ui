@@ -76,10 +76,10 @@
 
 <!-- Displaying data -->
 <div id="main-table-div" style="display: block; overflow: scroll" class="div-table">
-  <subentry-table *ngIf="entriesOfToday.displayed.length > 0" [loggedIn]="signIn.loggedIn" [headers]="headers" [disable]="disableMainInput"
+  <editable-table *ngIf="entriesOfToday.displayed.length > 0" [loggedIn]="signIn.loggedIn" [headers]="headers" [disable]="disableMainInput"
                   [dataToDisplay]="this.entriesOfToday.displayed" [timeToHighlight]="timeToHighlight" [editMode]="this.editMode"
                   [categoryColors]="categoryColors" [date]="this.dbService._getDateKey()" [mobile]="this.metadata.mobile">
-  </subentry-table>
+  </editable-table>
 </div>
 
 <!-- (Testing) Update Basics (sleep, food, mood) -->
@@ -101,21 +101,21 @@
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
   <!-- (Testing) display all categories and goals -->
-  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['name']"
-                  [dataToDisplay]="this.categories.full" [mobile]="this.metadata.mobile"></subentry-table>
+  <editable-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['name']"
+                  [dataToDisplay]="this.categories.full" [mobile]="this.metadata.mobile"></editable-table>
   <br>
 
   <label [hidden]="!display.testing">{{this.tasks.active.length}} active goals </label>
   <label [hidden]="!display.testing" style="background-color: #FF9999">({{this.tasks.archived.length}} archived goals)</label>
-  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'subentryDetails', 'details']"
-                  [dataToDisplay]="sortByCategory(this.tasks.full)" [categoryColors]="categoryColors" [mobile]="this.metadata.mobile"></subentry-table>
+  <editable-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="['category', 'name', 'archived', 'goalCount', 'unit', 'expectedTimesOfCompletion', 'entryDetails', 'details']"
+                  [dataToDisplay]="sortByCategory(this.tasks.full)" [categoryColors]="categoryColors" [mobile]="this.metadata.mobile"></editable-table>
   <br>
 
   <!-- (Testing) display data of past 7 days -->
   <label [hidden]="!display.testing">'count' is for yesterday's entry</label>
-  <subentry-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
+  <editable-table [hidden]="!display.testing" [loggedIn]="signIn.loggedIn" [headers]="headersPast" [dataToDisplay]="this.dataQueriedPast"
                   [categoryColors]="categoryColors" [date]="yesterday" [mobile]="this.metadata.mobile">
-  </subentry-table>
+  </editable-table>
 </div>
 
 <!-- todo: charts

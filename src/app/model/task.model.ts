@@ -10,7 +10,7 @@ export class Task {
   multiplier: number;
   expectedTimesOfCompletion: string[];
   details?: string;
-  // subentryDetails?: object;
+  // entryDetails?: object;
 
   category: Category;
   categoryId?: number;

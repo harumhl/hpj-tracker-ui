@@ -7,7 +7,9 @@ import {Subject} from 'rxjs';
 export class UtilService implements OnDestroy {
 
   intervals: any[] = [];
-  displayToastSubject = new Subject<any>();
+  subjects = {
+    displayToast: new Subject<any>(),
+  };
 
   constructor() { }
 
@@ -50,7 +52,7 @@ export class UtilService implements OnDestroy {
   }
 
   displayToast(type: string, message: string, title?: string, error = null) {
-    this.displayToastSubject.next({type, message, title, error});
+    this.subjects.displayToast.next({type, message, title, error});
   }
 
   // Remove duplicate elements in the array

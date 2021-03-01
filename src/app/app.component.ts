@@ -4,7 +4,6 @@ import {DbService} from './db.service';
 import {environment} from '../environments/environment';
 import {version} from '../../package.json';
 import {UtilService} from './util.service';
-import {Category} from './model/category.model';
 import {Entry} from './model/entry.model';
 import {Task} from './model/task.model';
 import {ChartComponent} from '@syncfusion/ej2-angular-charts';
@@ -43,7 +42,7 @@ export class AppComponent {
 
   notes: Note[] = [];
 
-  headers: string[] = ['name', 'count', 'goalCount', 'maxCount', 'unit', 'impact', 'multiplier', 'subentryDetails', 'details'];
+  headers: string[] = ['name', 'count', 'goalCount', 'maxCount', 'unit', 'impact', 'multiplier', 'entryDetails', 'details'];
   categoryColors: object = { // TODO instead of here, category in db should have another key/column to have this color value stored
     Hazel: '#e6efff',
     'Body Care': '#ffeacc',
@@ -101,7 +100,7 @@ export class AppComponent {
   };
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
-  dataQueriedPast: any[] = []; // similar to Subentry, but 7-8 days of entries instead of single 'count'
+  dataQueriedPast: any[] = []; // similar to Entry, but 7-8 days of entries instead of single 'count'
 
   // TODO calculate overall percentage and save whenever changes
   // todo bigger input boxes on web - testing
@@ -133,16 +132,16 @@ export class AppComponent {
       }
     });
 
-    this.dbService.updateDisplaySubject.subscribe(update => {
+    this.dbService.subjects.updateDisplay.subscribe(update => {
       if (update) {
         this.readEntriesOfToday();
         this.computeCompletionPercentageByCategories();
       }
     });
-    this.dbService.disableMainInputSubject.subscribe(disable => {
+    this.dbService.subjects.disableMainInput.subscribe(disable => {
       this.disableMainInput = disable;
     });
-    this.utilService.displayToastSubject.subscribe(object => {
+    this.utilService.subjects.displayToast.subscribe(object => {
       const type = object.type;
       const message = object.message;
       const title = object.title;
@@ -213,7 +212,7 @@ export class AppComponent {
             break;
           }
         }
-        // If a subentry with matching time exists, then addAed to dataToDisplay
+        // If an entry with matching time exists, then addAed to dataToDisplay
         if (remainingTimes.some(d => d === t)) {
           const newData = this.utilService.deepCopy(data);
           newData.time = t;  // string time, instead of string[]
@@ -259,11 +258,11 @@ export class AppComponent {
 
   readEntriesOfToday(recurse: boolean = true) {
     // Read today's entry (especially its subcollection) from database (for display)
-    this.dbService.getEntriesOfToday().subscribe(entries => {
+    this.dbService.getEntriesOfADay('today').subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
       if (this.entriesOfToday.queried.length > 0) {
         // Add 'category', 'unit' and 'details' from tasks
-        for (const entry of this.entriesOfToday.queried) { // TODO queriedSubentry.time = goal.expectedTimesOfCompletion; // string[] for now
+        for (const entry of this.entriesOfToday.queried) { // TODO queriedEntry.time = goal.expectedTimesOfCompletion; // string[] for now
           entry.category = entry.task.category.name;
           entry.unit = entry.task.unit;
           entry.time = entry.task.expectedTimesOfCompletion;
@@ -272,7 +271,7 @@ export class AppComponent {
         }
 
         this.entriesOfToday.queried = this.entriesOfToday.queried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
-        this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+        this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(entry => entry.count < entry.goalCount && entry.hide === false);
 
         this.entriesOfToday.queriedInSchedules = this.convertArrayForScheduleDisplay(this.entriesOfToday.queried);
         this.toggle('inSchedules', this.display.inSchedules);
@@ -281,7 +280,7 @@ export class AppComponent {
 
       } else if (recurse) {
         // If nothing got retrieved, then add entries for today
-        this.dbService.postEntriesOfToday().subscribe(e => {
+        this.dbService.postEntriesOfADay('today').subscribe(e => {
           this.readEntriesOfToday(false);
         });
       }
@@ -311,13 +310,6 @@ export class AppComponent {
     // Subscribe today's 'basic' entry
     this.dbService.readSubcollectionsOfSingleDoc(false, DbService.collections.entries, this.dbService.today, [], DbService.collections.basics, (querySnapshot: QuerySnapshot) => {
       this.basics = this.utilService.toIterable(querySnapshot);
-    });
-*/
-/*
-    // Subscribe to categories from database
-    this.dbService.readAll(false, DbService.collections.categories, [], (querySnapshot: QuerySnapshot) => {
-      this.categories = this.utilService.toIterable(querySnapshot);
-      this.categoryList = this.categories.map(category => category.category);
     });
 */
     this.computeCompletionPercentageByCategories();
@@ -366,12 +358,12 @@ export class AppComponent {
         this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
         this.headers = this.utilService.addElemInArray(this.headers, 'time', true);
         this.headers = this.utilService.addElemInArray(this.headers, 'unit');
-        this.headers = this.utilService.addElemInArray(this.headers, 'subentryDetails');
+        this.headers = this.utilService.addElemInArray(this.headers, 'entryDetails');
         this.headers = this.utilService.addElemInArray(this.headers, 'details');
       } else {
         this.headers = this.utilService.removeElemInArray(this.headers, 'category');
         this.headers = this.utilService.removeElemInArray(this.headers, 'unit');
-        this.headers = this.utilService.removeElemInArray(this.headers, 'subentryDetails');
+        this.headers = this.utilService.removeElemInArray(this.headers, 'entryDetails');
         this.headers = this.utilService.removeElemInArray(this.headers, 'details');
       }
     }
@@ -379,9 +371,9 @@ export class AppComponent {
     if (id === 'incompleteAndUnhiddenOnly' || id === 'inSchedules') {
       if (this.display.incompleteAndUnhiddenOnly) { // Filter out completed and/or hidden sub-entries (no deep-copy, but just filtering from the queried data))
         if (this.display.inSchedules) {
-          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules.filter(entry => entry.count < entry.goalCount && entry.hide === false);
         } else {
-          this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(subentry => subentry.count < subentry.goalCount && subentry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(entry => entry.count < entry.goalCount && entry.hide === false);
         }
       } else {
         if (this.display.inSchedules) { // Deep-copy happens when this.dataQueried is pulled from database (so already done by now)
@@ -427,8 +419,8 @@ export class AppComponent {
       return 0;
     } else {
       let overallCompletionRate = 0;
-      for (const subentry of array) {
-        const ratio = subentry.count / subentry.goalCount;
+      for (const entry of array) {
+        const ratio = entry.count / entry.goalCount;
         overallCompletionRate += ratio > 1 ? 1 : ratio;
       }
       overallCompletionRate /= array.length;
@@ -521,9 +513,9 @@ export class AppComponent {
     // Set headers
     for (const date of dates) {
       // Adding a date to headers
-      if (this.headersPast.indexOf(date) === -1) { // this condition exists because this function can be called to initialize AND when yesterday's subentry is updated
+      if (this.headersPast.indexOf(date) === -1) { // this condition exists because this function can be called to initialize AND when yesterday's entry is updated
         this.headersPast.push(date);
-        // this.headersPast.push(date + ' subentryDetails');
+        // this.headersPast.push(date + ' entryDetails');
       }
     }
     this.headersPast = this.headersPast.sort();

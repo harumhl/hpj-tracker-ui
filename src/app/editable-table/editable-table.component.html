@@ -23,7 +23,7 @@
                               row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
         <!-- todo merge category column over multiple rows -->
         <!-- todo display streak -->
-        <label *ngIf="loggedIn === false || (column !== 'count' && !column.includes('subentryDetails'))">{{row[column]}}</label>
+        <label *ngIf="loggedIn === false || (column !== 'count' && !column.includes('entryDetails'))">{{row[column]}}</label>
         <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
 
         <!-- type="tel" if mobile // type="number" if web -->
@@ -32,8 +32,8 @@
         <input *ngIf="mobile && loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}" [disabled]="disable"
                (focusout)="updateEntry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
 
-        <div *ngIf="loggedIn === true && column.includes('subentryDetails')">
-          <button *ngFor="let detail of row[column] | keyvalue" (click)="updateSubentryDetails(row, detail)"
+        <div *ngIf="loggedIn === true && column.includes('entryDetails')">
+          <button *ngFor="let detail of row[column] | keyvalue" (click)="updateEntryDetails(row, detail)"
                   [ngStyle]="{'background-color': detail.value ? '#BBFFBB' : '#FFCCEE'}">{{detail.key}}</button>
         </div>
       </td>

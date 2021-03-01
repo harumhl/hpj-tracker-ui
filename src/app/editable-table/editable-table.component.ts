@@ -4,11 +4,11 @@ import {HttpClient} from '@angular/common/http';
 import {UtilService} from '../util.service';
 
 @Component({
-  selector: 'subentry-table',
-  templateUrl: './subentry-table.component.html',
-  styleUrls: ['./subentry-table.component.css']
+  selector: 'editable-table',
+  templateUrl: './editable-table.component.html',
+  styleUrls: ['./editable-table.component.css']
 })
-export class SubentryTableComponent implements OnInit {
+export class EditableTableComponent implements OnInit {
 
   @Input() loggedIn = false;
   @Input() headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
@@ -41,7 +41,7 @@ export class SubentryTableComponent implements OnInit {
     }
     const newCount = parseFloat(enteredValue);
 
-    // hide a subentry by entering -1
+    // hide an entry by entering -1
     if (newCount === -1) {
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.hide = !row.hide;
@@ -57,24 +57,24 @@ export class SubentryTableComponent implements OnInit {
       row[column] = 0;
     }
 
-    // Updating a subentry count
+    // Updating an entry count
     if (row.count !== newCount) {
       //const hide = row.hide ? false : null; // if the row was hidden then stop hiding with an update; else keep it as it is
       //this.dbService.updateEntry(row.documentId, this.date, newCount, hide, null);
 
       const copyOfRow = this.utilService.copyAsJson(row);
       copyOfRow.count = newCount;
-      this.dbService.disableMainInputSubject.next(true);
+      this.dbService.subjects.disableMainInput.next(true);
       this.dbService.putEntry(copyOfRow).subscribe(entry => {
         this.dbService.refreshData();
       });
     }
   }
 
-  updateSubentryDetails(row, detail) {
+  updateEntryDetails(row, detail) {
     // Since the button is clicked, save the opposite value of the current value in the database
-    row.subentryDetails[detail.key] = !detail.value;
-    //this.dbService.updateEntry(row.documentId, this.date, null, null, row.subentryDetails);
+    row.entryDetails[detail.key] = !detail.value;
+    //this.dbService.updateEntry(row.documentId, this.date, null, null, row.entryDetails);
   }
 
   selectAll() {

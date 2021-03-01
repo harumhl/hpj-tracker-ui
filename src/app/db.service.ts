@@ -20,8 +20,10 @@ export class DbService {
   today: string;
   dayOfToday: string;
 
-  disableMainInputSubject = new Subject<boolean>();
-  updateDisplaySubject = new Subject<boolean>();
+  subjects = {
+    disableMainInput: new Subject<boolean>(),
+    updateDisplay: new Subject<boolean>(),
+  };
 
   backendUrl = environment.backendUrl;
   httpOption = {
@@ -64,114 +66,17 @@ export class DbService {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
 
-  // Write a new category to Firebase database
-  newCategory(category: string) {
-/*
-    if (category !== null && category !== undefined && category !== '') { // input validation
-      this.writeDoc(DbService.collections.categories, {category});
-    }
-*/
-  }
-
-  // TODO goal occurrence (e.g. daily/weekly/MWF)
-  // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
-  // TODO order of goals for display
-  // Write a new goal to Firebase database
-  newTask(newGoal: Task, callback: () => any = () => {}, errorCallback: () => any = () => {}) {
-/*
-    if (this._validateGoal(newGoal, true)) {
-      // Foreign key constraint - check whether the category already exists in /categories
-      this.readAll(false, DbService.collections.categories, ['category', '==', newGoal.category], (querySnapshot) => {
-        // If the category exists, then write the new goal (and create today's entry + its subcollections)
-        if (querySnapshot.docs.length > 0) {
-          newGoal.documentId = DbService._getDocumentId(DbService.collections.goals, {documentId: newGoal.category + '_' + name});
-          this.writeDoc(DbService.collections.goals, newGoal,
-            () => { this.newEntry(this.today); callback(); }, () => errorCallback());
-        }
-      });
-    } else {
-      errorCallback();
-    }
-*/
-  }
-
-  // Update an existing goal in Firebase database
-  updateTask(updateGoal: Task, callback: () => any = () => {}, errorCallback: (error) => any = () => {}) {
-    let dataToModify = {name};/*
-    if (goalCount) {
-      dataToModify = Object.assign(dataToModify, {goalCount});
-    }
-    if (unit) {
-      dataToModify = Object.assign(dataToModify, {unit});
-    }
-    if (countToMinutes) {
-      dataToModify = Object.assign(dataToModify, {countToMinutes});
-    }
-    if (expectedTimesOfCompletion) {
-      // Validate expectedTimesOfCompletion before actually updating
-      const regex: RegExp = new RegExp(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/);
-      if (expectedTimesOfCompletion.length > 0 && expectedTimesOfCompletion.filter(t => t.match(regex)).length === expectedTimesOfCompletion.length) {
-        dataToModify = Object.assign(dataToModify, {expectedTimesOfCompletion});
-      } else {
-        errorCallback(null);
-        return;
-      }
-    }
-    if (details) {
-      dataToModify = Object.assign(dataToModify, {details});
-    }
-    if (subentryDetails) {
-      dataToModify = Object.assign(dataToModify, {subentryDetails});
-    }
-
-    // Update
-    this.readAll(false, DbService.collections.goals, ['name', '==', updateGoal.name], (querySnapshot) => {
-      const doc = querySnapshot.docs[0].data();
-      dataToModify = Object.assign(dataToModify, {category: doc.category, documentId: doc.documentId, archived: doc.archived});
-
-      const collection = DbService.collections.goals;
-      this.updateDoc(collection, DbService._getDocumentId(collection, {documentId: doc.documentId}), dataToModify, callback, errorCallback);
-    });
-    */
-  }
-
   // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)
   // Write a new entry in Firebase database
   newEntry(doneDate: string) {
 /*
-    if (doneDate === null || doneDate === undefined) {
-      doneDate = this._getDateKey();
-    }
-
     this.readSingle(false, DbService.collections.entries, DbService._getDocumentId(DbService.collections.entries, {doneDate}), [],
-      (documentSnapshot) => {
-      if (documentSnapshot.data() === undefined) {
-        this.writeDoc(DbService.collections.entries, {doneDate}, () => {
-          this.newSubcollectionOfAnEntry(doneDate);
-        });
-      } else {
-        this.newSubcollectionOfAnEntry(doneDate);
-      }
     });
 
     this.readAll(false, DbService.collections.basics, [], (querySnapshot: QuerySnapshot) => {
       const basics = this.utilService.toIterable(querySnapshot);
       for (const basic of basics) {
         this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.basics, basic);
-      }
-    });
-*/
-  }
-
-  // Write documents of a subcollection for an entry
-  newSubcollectionOfAnEntry(doneDate: string) {
-/*
-    this.readAll(false, DbService.collections.goals, ['archived', '==', false], (querySnapshot: QuerySnapshot) => {
-      const goals = this.utilService.toIterable(querySnapshot);
-      for (const goal of goals) {
-        const subentry = {category: goal.category, name: goal.name, documentId: DbService._getDocumentId(DbService.collections.goals, goal),
-          count: 0, goalCount: goal.goalCount, countToMinutes: goal.countToMinutes, hide: false, subentryDetails: goal.subentryDetails};
-        this.writeDocInSubcollection(DbService.collections.entries, {doneDate}, DbService.collections.goals, subentry);
       }
     });
 */
@@ -214,6 +119,9 @@ export class DbService {
     });
   }
 
+  // TODO goal occurrence (e.g. daily/weekly/MWF)
+  // todo not only for 'achieve' goal, but also 'prevent' goal too (e.g. eating snacks, eating red meat, eating ramen)
+  // TODO order of goals for display
   postTask(task: any) {
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'creating new task', 'Creating');
@@ -261,9 +169,9 @@ export class DbService {
     });
   }
 
-  postEntriesOfToday() {
+  postEntriesOfADay(date: string = 'today') {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
-    return this.http.post(this.backendUrl + '/entries/today', {}, this.httpOption).pipe(obs => {
+    return this.http.post(this.backendUrl + '/entries/' + date, {}, this.httpOption).pipe(obs => {
       obs.toPromise().then(e => {
         this.utilService.displayToast('success', 'entries created', 'Created');
       }).catch(error => {
@@ -273,9 +181,9 @@ export class DbService {
     });
   }
 
-  getEntriesOfToday() {
+  getEntriesOfADay(date: string = 'today') {
     this.utilService.displayToast('info', 'retriving entries for today', 'Retrieving');
-    return this.http.get(this.backendUrl + '/entries/today', this.httpOption).pipe(obs => {
+    return this.http.get(this.backendUrl + '/entries/' + date, this.httpOption).pipe(obs => {
       obs.toPromise().then((e: Entry[]) => {
         this.utilService.displayToast('success', `entries retrieved for today (${e.length} entries)`, 'Retrieved');
       }).catch(error => {
@@ -314,6 +222,6 @@ export class DbService {
   }
 
   refreshData() {
-    this.updateDisplaySubject.next(true);
+    this.subjects.updateDisplay.next(true);
   }
 }

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SubentryTableComponent } from './subentry-table.component';
+import { EditableTableComponent } from './editable-table.component';
 
-describe('SubentryTableComponent', () => {
-  let component: SubentryTableComponent;
-  let fixture: ComponentFixture<SubentryTableComponent>;
+describe('EditableTableComponent', () => {
+  let component: EditableTableComponent;
+  let fixture: ComponentFixture<EditableTableComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SubentryTableComponent ]
+      declarations: [ EditableTableComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SubentryTableComponent);
+    fixture = TestBed.createComponent(EditableTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

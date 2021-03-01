@@ -9,7 +9,7 @@ export class Entry {
   maxCount: number;
   hide: boolean;
   multiplier: number;
-  // subentryDetails: object;
+  // entryDetails: object;
 
   task: Task;
   taskId: number;
