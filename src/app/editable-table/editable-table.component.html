@@ -23,15 +23,24 @@
                               row['count'] >= row['goalCount'] ? '#ff9fda' : 'inherit'}">
         <!-- todo merge category column over multiple rows -->
         <!-- todo display streak -->
-        <label *ngIf="loggedIn === false || (column !== 'count' && !column.includes('entryDetails'))">{{row[column]}}</label>
         <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
+        <label *ngIf="loggedIn === false || (column !== 'count' && column !== 'entryDetails' && !(mobile === true && column === 'goalCount'))">
+          {{row[column]}}
+        </label>
 
-        <!-- type="tel" if mobile // type="number" if web -->
+        <!-- count : type="tel" if mobile // type="number" if web -->
         <input *ngIf="!mobile && loggedIn === true && column === 'count'" type="number" value="{{row[column]}}" [disabled]="disable"
                (focusout)="updateEntry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
         <input *ngIf="mobile && loggedIn === true && column === 'count'" type="tel" value="{{row[column]}}" [disabled]="disable"
                (focusout)="updateEntry(row, column, $event)" (focusin)="row[column] === 0 ? row[column] = '' : null">
 
+        <!-- goalCount on mobile: goalCount ~ maxCount (since 'impact' column exists, 'multiplier' column isn't necessarily shown -->
+        <label *ngIf="mobile === true && loggedIn === true && column === 'goalCount'">
+          <label *ngIf="row['goalCount'] === row['maxCount']">{{row['goalCount']}}</label>
+          <label *ngIf="row['goalCount'] !== row['maxCount']">{{row['goalCount']}}~{{row['maxCount']}}</label>
+        </label>
+
+        <!-- entryDetails -->
         <div *ngIf="loggedIn === true && column.includes('entryDetails')">
           <button *ngFor="let detail of row[column] | keyvalue" (click)="updateEntryDetails(row, detail)"
                   [ngStyle]="{'background-color': detail.value ? '#BBFFBB' : '#FFCCEE'}">{{detail.key}}</button>

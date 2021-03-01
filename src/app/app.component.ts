@@ -123,6 +123,9 @@ export class AppComponent {
 
     if (!this.metadata.mobile) { // Display 'category' column only on desktop by default
       this.headers = this.utilService.addElemInArray(this.headers, 'category', true);
+    } else { // goalCount column will display these two elements as well
+      this.headers = this.utilService.removeElemInArray(this.headers, 'maxCount');
+      this.headers = this.utilService.removeElemInArray(this.headers, 'multiplier');
     }
 
     // If already signed in, then hide login related HTML components and add any missing sub-entries
