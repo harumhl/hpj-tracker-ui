@@ -259,7 +259,7 @@ export class AppComponent {
     return array;
   }
 
-  readEntriesOfToday(recurse: boolean = true) {
+  readEntriesOfToday(createIfNone: boolean = false) {
     // Read today's entry (especially its subcollection) from database (for display)
     this.dbService.getEntriesOfADay('today').subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
@@ -281,10 +281,10 @@ export class AppComponent {
 
         this.disableMainInput = false;
 
-      } else if (recurse) {
+      } else if (createIfNone) {
         // If nothing got retrieved, then add entries for today
         this.dbService.postEntriesOfADay('today').subscribe(e => {
-          this.readEntriesOfToday(false);
+          this.readEntriesOfToday();
         });
       }
     });
@@ -306,7 +306,7 @@ export class AppComponent {
     });
 */
 
-    this.readEntriesOfToday();
+    this.readEntriesOfToday(true);
 
     /* De-prioritize tasks that do not contribute to displaying sub-entries in the main table */
 /*
