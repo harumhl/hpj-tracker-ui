@@ -479,16 +479,20 @@ export class AppComponent {
 
   computeCompletionPercentageByCategories() {
     this.dbService.getChart().subscribe((completionUnits: any[]) => {
+      // Set all to 0
+      for (const completionPercentage of this.completionPercentageByCategories) {
+        completionPercentage.percent = 0;
+      }
+      // If the chart category includes the category name, then add up the percent
       for (const completionUnit of completionUnits) {
         for (const completionPercentage of this.completionPercentageByCategories) {
           if (completionPercentage.category.includes(completionUnit.categoryName)) {
-            completionPercentage.percent = Math.round(completionUnit.completionPercent);
+            completionPercentage.percent += Math.round(completionUnit.completionPercent);
           }
         }
       }
+      this.reloadChart();
     });
-
-    this.reloadChart();
   }
 
   // todo allow other days to be modified? - with drop down selection and 'count' has different date (then subscription should change too)
