@@ -273,7 +273,18 @@ export class AppComponent {
           entry.details = entry.task.details;
         }
 
-        this.entriesOfToday.queried = this.entriesOfToday.queried.sort((a, b) => {if (a.id > b.id) { return 1; } else if (a.id < b.id) { return -1; } else { return 0; }});
+        this.entriesOfToday.queried = this.entriesOfToday.queried.sort((a, b) => {
+          // first: by category
+          // second: by first occurrence on schedule
+          if (a.category > b.category) {
+            return 1;
+          } else if (a.category < b.category) {
+            return -1;
+          } else {
+            return (a.task.expectedTimesOfCompletion[0] > b.task.expectedTimesOfCompletion[0]) ? 1 :
+              (a.task.expectedTimesOfCompletion[0] < b.task.expectedTimesOfCompletion[0]) ? -1 : 0;
+          }
+        });
         this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(entry => entry.count < entry.goalCount && entry.hide === false);
 
         this.entriesOfToday.queriedInSchedules = this.convertArrayForScheduleDisplay(this.entriesOfToday.queried);
