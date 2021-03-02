@@ -64,7 +64,7 @@ export class DbService {
     if (date === null || date === undefined) {
       date = Date();
     }
-    return this.datePipe.transform(date, 'yyyy-MM-dd');
+    return this.datePipe.transform(date, 'MM-dd');
   }
 
   // todo subcategory or mini goals (e.g. not just writing that I studied for Hazel, but sub-goals like 10 minutes for makeup, 10 minutes for skincare, 10 minutes for haircare)

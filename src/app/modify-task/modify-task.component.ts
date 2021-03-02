@@ -5,7 +5,7 @@ import {DbService} from '../db.service';
 import {UtilService} from '../util.service';
 
 @Component({
-  selector: 'app-modify-task',
+  selector: 'modify-task',
   templateUrl: './modify-task.component.html',
   styleUrls: ['./modify-task.component.css']
 })
@@ -62,6 +62,7 @@ export class ModifyTaskComponent implements OnInit {
   assignEmptyNewTask() {
     if (this.templateTask !== undefined) {
       // Create a template for a new task
+      this.task = null;
       this.task = Object.assign({}, this.templateTask);
       for (const key in this.task) {
         if (this.task.hasOwnProperty(key)) {

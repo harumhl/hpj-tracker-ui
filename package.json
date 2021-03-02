@@ -24,6 +24,7 @@
     "@syncfusion/ej2-angular-charts": "^18.4.30",
     "angular-in-memory-web-api": "~0.11.0",
     "firebase": "^8.2.0",
+    "font-awesome": "^4.7.0",
     "moment-timezone": "^0.5.32",
     "ngx-toastr": "^13.2.0",
     "replace-in-file": "^6.1.0",

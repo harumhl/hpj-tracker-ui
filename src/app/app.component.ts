@@ -60,7 +60,14 @@ export class AppComponent {
   };
   disableMainInput = false;
   timeToHighlight: string;
-  overallCompletionRate = 0;
+  completionRate = {
+    overall: 0,
+    logarithm_squared: 0,
+  };
+  percentsPerCategory = {
+    minGoal: 65,
+    maxGoal: 85
+  };
 
   @ViewChild('topChart')
   public chart: ChartComponent;
@@ -260,6 +267,8 @@ export class AppComponent {
   }
 
   readEntriesOfToday(createIfNone: boolean = false) {
+    this.disableMainInput = true;
+
     // Read today's entry (especially its subcollection) from database (for display)
     this.dbService.getEntriesOfADay('today').subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
@@ -385,9 +394,9 @@ export class AppComponent {
     if (id === 'incompleteAndUnhiddenOnly' || id === 'inSchedules') {
       if (this.display.incompleteAndUnhiddenOnly) { // Filter out completed and/or hidden sub-entries (no deep-copy, but just filtering from the queried data))
         if (this.display.inSchedules) {
-          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules.filter(entry => entry.count < entry.goalCount && entry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queriedInSchedules.filter(entry => entry.count < entry.maxCount && entry.hide === false);
         } else {
-          this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(entry => entry.count < entry.goalCount && entry.hide === false);
+          this.entriesOfToday.displayed = this.entriesOfToday.queried.filter(entry => entry.count < entry.maxCount && entry.hide === false);
         }
       } else {
         if (this.display.inSchedules) { // Deep-copy happens when this.dataQueried is pulled from database (so already done by now)
@@ -427,21 +436,6 @@ export class AppComponent {
       this.timeToHighlight = this.entriesOfToday.displayed[this.entriesOfToday.displayed.length - 1].time;
     }
   };
-
-  computeOverallCompletionRate(array: Entry[]) {
-    if (array.length === 0) {
-      return 0;
-    } else {
-      let overallCompletionRate = 0;
-      for (const entry of array) {
-        const ratio = entry.count / entry.goalCount;
-        overallCompletionRate += ratio > 1 ? 1 : ratio;
-      }
-      overallCompletionRate /= array.length;
-      overallCompletionRate *= 100;
-      return overallCompletionRate;
-    }
-  }
 
   applyEditMode(editType: string) {
     if (editType === 'hide' || editType === 'unhide') {
@@ -502,6 +496,14 @@ export class AppComponent {
           }
         }
       }
+      // Compute single overall percent
+      this.completionRate.overall = 0;
+      for (const completionPercentage of this.completionPercentageByCategories) {
+        this.completionRate.overall += completionPercentage.percent >= this.percentsPerCategory.minGoal ? completionPercentage.percent : 0;
+      }
+      this.completionRate.overall /= this.completionPercentageByCategories.length;
+      this.completionRate.logarithm_squared = Math.pow(Math.log(this.completionRate.overall) / Math.log(100), 2) * 100; // [log (base 100) of X]^2
+
       this.reloadChart();
     });
   }

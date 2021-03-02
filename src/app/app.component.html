@@ -15,7 +15,7 @@
     <ejs-chart #topChart id="completion-hours-by-categories-as-percentage-chart" width="300" height="200" [legendSettings]="{visible: false}"
                [primaryXAxis]="{valueType:'Category', title: '', labelPosition: 'Inside'}"
                [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: '',
-                 stripLines: [{start: 65, end: 85, text: 'Feb-Mar goal', color: 'pink', opacity: 0.5, visible: true}]}">
+                 stripLines: [{start: percentsPerCategory.minGoal, end: percentsPerCategory.maxGoal, text: 'Feb-Mar goal', color: 'pink', opacity: 0.5, visible: true}]}">
       <e-series-collection>
         <e-series [dataSource]='this.completionPercentageByCategories' type='Bar' xName='category' yName='percent' name="hours as percent"
                   [marker]="{dataLabel: {visible: true, position: 'Top', font: {fontWeight: '600', color: '#ffffff'}}}"></e-series>
@@ -27,18 +27,20 @@
 <!-- todo refresh button to refresh today's entry -->
 <!-- Today's completion rate & today's date & display option checkbox -->
 <label [ngClass]="{
-      'twenty-percent-done': 20 <= overallCompletionRate && overallCompletionRate < 40,
-      'forty-percent-done': 40 <= overallCompletionRate && overallCompletionRate < 60,
-      'sixty-percent-done': 60 <= overallCompletionRate && overallCompletionRate < 80,
-      'eighty-percent-done': 80 <= overallCompletionRate && overallCompletionRate < 100,
-      'hundred-percent-done': overallCompletionRate >= 100}" style="color: red">
-  {{overallCompletionRate | number : '0.2-2'}}%</label>
+      'twenty-percent-done': 20 <= completionRate.overall && completionRate.overall < 40,
+      'forty-percent-done': 40 <= completionRate.overall && completionRate.overall < 60,
+      'sixty-percent-done': 60 <= completionRate.overall && completionRate.overall < 80,
+      'eighty-percent-done': 80 <= completionRate.overall && completionRate.overall < 100,
+      'hundred-percent-done': completionRate.overall >= 100}" style="color: red">
+  {{completionRate.overall | number : '0.2-2'}}%</label>
+(log<sup>2</sup> {{completionRate.logarithm_squared | number : '0.0-0'}}%)
 ({{dbService.today}} {{dbService.dayOfToday}})
 <input id="edit" type="checkbox" [checked]="editMode" (change)="editMode = !editMode">
 <label for="edit">edit</label>
 <input id="displayAllOptions" type="checkbox" [checked]="display.allOptions" (change)="toggle('allOptions', !display.allOptions)">
 <label for="displayAllOptions">options</label>
-<button style="width: 60px; height: 20px" (click)="this.readEntriesOfToday(); this.computeCompletionPercentageByCategories()">refresh</button>
+<i class="fa fa-refresh" [ngClass]="{'fa-spin': this.disableMainInput}" style="padding-left: 8px; padding-right: 8px"
+   (click)="this.readEntriesOfToday(); this.computeCompletionPercentageByCategories()"></i>
 
 <!-- TODO some 'classification' on what I can do in given situations (if I'm out and wearing masks -> smile or mewing / if I'm with friends -> ??)
           -> currently I just have it in Notes in prod -->
@@ -94,9 +96,9 @@
 <br>
 <div (dblclick)="display.testing = false">
   <!-- (Testing) Add or update a task -->
-  <app-modify-task [hidden]="!display.testing" [loggedIn]="signIn.loggedIn"
-                   [categories]="categories.full" [categoryList]="categories.list" [templateTask]="this.tasks.full[0]"
-                   [tasks]="tasks.full" [taskList]="tasks.list"></app-modify-task>
+  <modify-task [hidden]="!display.testing" [loggedIn]="signIn.loggedIn"
+               [categories]="categories.full" [categoryList]="categories.list" [templateTask]="this.tasks.full[0]"
+               [tasks]="tasks.full" [taskList]="tasks.list"></modify-task>
 
   <!-- TODO Categories has "details" to have this kinda info (e.g. category 'Hazel' is only for Hazel not for both) -->
   <!-- todo display entries of past dates -->
