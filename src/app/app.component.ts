@@ -72,11 +72,11 @@ export class AppComponent {
   @ViewChild('topChart')
   public chart: ChartComponent;
   completionPercentageByCategories: any[] = [
-    { category: 'Mind-ProgrammingAI-Interpersonal-Hobby-Others', minutes: 30, percent: 0 },
-    { category: 'Workout', minutes: 45, percent: 0 },
-    { category: 'Body Care', minutes: 30, percent: 0 },
-    { category: 'Basic', minutes: 60, percent: 0 },
-    { category: 'Hazel', minutes: 90, percent: 0 },
+    { category: 'Mind-ProgrammingAI-Interpersonal-Hobby-Others', percent: 0 },
+    { category: 'Workout', percent: 0 },
+    { category: 'Body Care', percent: 0 },
+    { category: 'Basic', percent: 0 },
+    { category: 'Hazel', percent: 0 },
   ];
   interval = null;
   chartLoaded = false;
@@ -502,7 +502,9 @@ export class AppComponent {
         this.completionRate.overall += completionPercentage.percent >= this.percentsPerCategory.minGoal ? completionPercentage.percent : 0;
       }
       this.completionRate.overall /= this.completionPercentageByCategories.length;
-      this.completionRate.logarithm_squared = Math.pow(Math.log(this.completionRate.overall) / Math.log(100), 2) * 100; // [log (base 100) of X]^2
+      this.completionRate.logarithm_squared = this.completionRate.overall >= this.percentsPerCategory.minGoal ?
+        Math.pow(Math.log(this.completionRate.overall) / Math.log(100), 2) * 100 : // [log (base 100) of X]^2
+        Math.pow(this.completionRate.overall / 100, 2) * 100; // (x/100)^2
 
       this.reloadChart();
     });

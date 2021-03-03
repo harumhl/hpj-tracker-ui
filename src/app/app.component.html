@@ -25,7 +25,7 @@
 </div>
 
 <!-- todo refresh button to refresh today's entry -->
-<!-- Today's completion rate & today's date & display option checkbox -->
+<!-- Today's completion rate -->
 <label [ngClass]="{
       'twenty-percent-done': 20 <= completionRate.overall && completionRate.overall < 40,
       'forty-percent-done': 40 <= completionRate.overall && completionRate.overall < 60,
@@ -33,7 +33,11 @@
       'eighty-percent-done': 80 <= completionRate.overall && completionRate.overall < 100,
       'hundred-percent-done': completionRate.overall >= 100}" style="color: red">
   {{completionRate.overall | number : '0.2-2'}}%</label>
-(log<sup>2</sup> {{completionRate.logarithm_squared | number : '0.0-0'}}%)
+<!-- Log^2 (better) or (x/n)^2 (worse)? -->
+<label *ngIf="this.completionRate.overall >= this.percentsPerCategory.minGoal">(log<sup>2</sup> {{completionRate.logarithm_squared | number : '0.0-0'}}%)</label>
+<label *ngIf="this.completionRate.overall < this.percentsPerCategory.minGoal">(x<sup>2</sup> {{completionRate.logarithm_squared | number : '0.0-0'}}%)</label>
+
+<!-- today's date & display option checkbox -->
 ({{dbService.today}} {{dbService.dayOfToday}})
 <input id="edit" type="checkbox" [checked]="editMode" (change)="editMode = !editMode">
 <label for="edit">edit</label>
