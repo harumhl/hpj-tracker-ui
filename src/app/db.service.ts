@@ -173,7 +173,6 @@ export class DbService {
   postEntriesOfADay(date: string = 'today') {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
     return this.http.post(this.backendUrl + '/entries/' + date, {}, this.httpOption).pipe(share(), obs => {
-      console.log('post');
       obs.toPromise().then(e => {
         this.utilService.displayToast('success', 'entries created', 'Created');
       }).catch(error => {

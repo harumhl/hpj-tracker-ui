@@ -72,7 +72,7 @@ export class AppComponent {
   @ViewChild('topChart')
   public chart: ChartComponent;
   completionPercentageByCategories: any[] = [
-    { category: 'Mind-ProgramAI-Interpersonal-Hobby', minutes: 30, percent: 0 },
+    { category: 'Mind-ProgrammingAI-Interpersonal-Hobby-Others', minutes: 30, percent: 0 },
     { category: 'Workout', minutes: 45, percent: 0 },
     { category: 'Body Care', minutes: 30, percent: 0 },
     { category: 'Basic', minutes: 60, percent: 0 },
