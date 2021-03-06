@@ -493,6 +493,7 @@ export class AppComponent {
         for (const completionPercentage of this.completionPercentageByCategories) {
           if (completionPercentage.category.includes(completionUnit.categoryName)) {
             completionPercentage.percent += Math.round(completionUnit.completionPercent);
+            completionPercentage.percent = completionPercentage.percent > 100 ? 100 : completionPercentage.percent; // Keep it max at 100(%)
           }
         }
       }
