@@ -170,7 +170,7 @@ export class DbService {
     });
   }
 
-  postEntriesOfADay(date: string = 'today') {
+  postEntriesOfADay(date: string = this.today) {
     this.utilService.displayToast('info', 'creating new entries for today', 'Creating');
     return this.http.post(this.backendUrl + '/entries/' + date, {}, this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(e => {
@@ -182,7 +182,7 @@ export class DbService {
     });
   }
 
-  getEntriesOfADay(date: string = 'today') {
+  getEntriesOfADay(date: string = this.today) {
     this.utilService.displayToast('info', 'retriving entries for today', 'Retrieving');
     return this.http.get(this.backendUrl + '/entries/' + date, this.httpOption).pipe(share(), obs => {
       obs.toPromise().then((e: Entry[]) => {
@@ -212,7 +212,7 @@ export class DbService {
 
   getChart() {
     this.utilService.displayToast('info', 'retriving chart', 'Retrieving');
-    return this.http.get(this.backendUrl + '/completion-unit/today', this.httpOption).pipe(share(), obs => {
+    return this.http.get(this.backendUrl + '/completion-unit/' + this.today, this.httpOption).pipe(share(), obs => {
       obs.toPromise().then(c => {
         this.utilService.displayToast('success', 'chart retrieved', 'Retrieved');
       }).catch(error => {

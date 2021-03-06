@@ -270,7 +270,7 @@ export class AppComponent {
     this.disableMainInput = true;
 
     // Read today's entry (especially its subcollection) from database (for display)
-    this.dbService.getEntriesOfADay('today').subscribe(entries => {
+    this.dbService.getEntriesOfADay().subscribe(entries => {
       this.entriesOfToday.queried = entries as Entry[];
       if (this.entriesOfToday.queried.length > 0) {
         // Add 'category', 'unit' and 'details' from tasks
@@ -303,7 +303,7 @@ export class AppComponent {
 
       } else if (createIfNone) {
         // If nothing got retrieved, then add entries for today
-        this.dbService.postEntriesOfADay('today').subscribe(e => {
+        this.dbService.postEntriesOfADay().subscribe(e => {
           this.readEntriesOfToday();
         });
       }
@@ -311,9 +311,6 @@ export class AppComponent {
   }
 
   readAndWriteAfterLogin() {
-    // Add any missing entry & sub-entries
-    this.dbService.newEntry(this.dbService.today);
-
 /*
     // Read notes
     this.dbService.readAll(false, DbService.collections.notes, [], (querySnapshot) => {
