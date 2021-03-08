@@ -71,8 +71,10 @@ export class AppComponent {
 
   @ViewChild('topChart')
   public chart: ChartComponent;
-  completionPercentageByCategories: any[] = [
-    { category: 'Mind-Programming/AI-Interpersonal-Hobby-Others', percent: 0 },
+  completionPercentageByCategories: any[] = [ // TODO move this to db too?
+    { category: 'Interpersonal-Hobby-Others', percent: 0 },
+    { category: 'Programming/AI', percent: 0 },
+    { category: 'Mind', percent: 0 },
     { category: 'Workout', percent: 0 },
     { category: 'Body Care', percent: 0 },
     { category: 'Basic', percent: 0 },
