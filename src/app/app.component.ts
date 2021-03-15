@@ -65,7 +65,7 @@ export class AppComponent {
     logarithm_squared: 0,
   };
   percentsPerCategory = {
-    minGoal: 65,
+    minGoal: 68,
     maxGoal: 85
   };
 
@@ -158,13 +158,15 @@ export class AppComponent {
       const message = object.message;
       const title = object.title;
 
+      // can't change the width of toastr message without affecting other css, so messages show up for shorter duration of time on mobile
       if (type === 'success') {
         this.toastr.success(message, title);
       } else if (type === 'error') {
         const error = object.error;
         this.toastr.error(message + `: ${error.status} - ${error.message}`, 'Error', {timeOut: 15 * 1000});
       } else if (type === 'info') {
-        this.toastr.info(message, title, {timeOut: 3 * 1000});
+        const additionalConfig = this.metadata.mobile ? {timeOut: 1000} : {timeOut: 3 * 1000};
+        this.toastr.info(message, title, additionalConfig);
       } else if (type === 'warning') {
         this.toastr.warning(message, title);
       }
@@ -280,7 +282,7 @@ export class AppComponent {
           entry.category = entry.task.category.name;
           entry.unit = entry.task.unit;
           entry.time = entry.task.expectedTimesOfCompletion;
-          entry.impact = `${Math.round(entry.multiplier / entry.task.category.goalInComparableUnit * 100)}%`;
+          entry.impact = `${(entry.multiplier / entry.task.category.goalInComparableUnit * 100).toFixed(1)}%`;
           entry.details = entry.task.details;
         }
 

@@ -15,7 +15,7 @@
     <ejs-chart #topChart id="completion-hours-by-categories-as-percentage-chart" width="300" height="200" [legendSettings]="{visible: false}"
                [primaryXAxis]="{valueType:'Category', title: '', labelPosition: 'Inside'}"
                [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: '',
-                 stripLines: [{start: percentsPerCategory.minGoal, end: percentsPerCategory.maxGoal, text: 'Feb-Mar goal', color: 'pink', opacity: 0.5, visible: true}]}">
+                 stripLines: [{start: percentsPerCategory.minGoal, end: percentsPerCategory.maxGoal, text: 'Mar-Apr goal', color: 'pink', opacity: 0.5, visible: true}]}">
       <e-series-collection>
         <e-series [dataSource]='this.completionPercentageByCategories' type='Bar' xName='category' yName='percent' name="hours as percent"
                   [marker]="{dataLabel: {visible: true, position: 'Top', font: {fontWeight: '600', color: '#ffffff'}}}"></e-series>
