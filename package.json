@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "4.1.1",
-  "description": "'basics' collection for today's entry can be modified in an input box where a json is represented in a string",
+  "version": "5.0.0",
+  "description": "(2021-02-18 ~ 03-15) Moving away from Firebase's Firestore db, and start using Spring Boot backend and Heroku's PostgreSQL db",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
