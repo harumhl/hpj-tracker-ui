@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {DbService} from '../db.service';
 import {HttpClient} from '@angular/common/http';
 import {UtilService} from '../util.service';
@@ -11,7 +11,7 @@ import {Entry} from '../model/entry.model';
   templateUrl: './editable-table.component.html',
   styleUrls: ['./editable-table.component.css']
 })
-export class EditableTableComponent implements OnInit {
+export class EditableTableComponent implements OnInit, OnChanges {
 
   @Input() loggedIn = false;
   @Input() headers: string[] = ['category', 'name', 'count', 'goalCount', 'unit', 'details'];
@@ -31,6 +31,9 @@ export class EditableTableComponent implements OnInit {
   constructor(private dbService: DbService, private utilService: UtilService) { }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
     // Convert a text details into PrimeNG tree format
     this.dataToDisplay.forEach(row => {
       if (row.details === undefined || row.details === null) {

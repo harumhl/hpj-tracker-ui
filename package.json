@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "6.1.0",
-  "description": "can modify details by double clicking then moving away mouse + primeng tree parser can handle \\\\n too + add an entry with new task + multiplier can be 0",
+  "version": "6.1.1",
+  "description": "update primeng details tree upon data update and keeps displaying the tree",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
