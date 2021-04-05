@@ -69,7 +69,7 @@ export class AppComponent {
     maxGoal: 85
   };
 
-  @ViewChild('topChart')
+  @ViewChild('chartOfToday')
   public chart: ChartComponent;
   completionPercentageByCategories: any[] = [ // TODO move this to db too?
     { category: 'Interpersonal-Hobby-Others', percent: 0 },
@@ -88,7 +88,7 @@ export class AppComponent {
     inSchedules: true,
     incompleteAndUnhiddenOnly: true,
     fullInfo: true,
-    topChart: true, // todo display more dates, display per category
+    chartOfToday: true, // todo display more dates, display per category
     notes: false,
     testing: false,
     basics: true,
@@ -110,6 +110,7 @@ export class AppComponent {
   yesterday = '';
   headersPast: string[] = ['name', 'count', 'goalCount', 'unit'];
   dataQueriedPast: any[] = []; // similar to Entry, but 7-8 days of entries instead of single 'count'
+
 
   // TODO calculate overall percentage and save whenever changes
   // todo bigger input boxes on web - testing
@@ -191,7 +192,7 @@ export class AppComponent {
         // If the chart is enabled, then actually display the data on chart by refreshing/rerendering
         if (this.chart !== undefined) {
           this.chart.refresh();
-          this.toggle('topChart', true);
+          this.toggle('chartOfToday', true);
           this.chartLoaded = true;
           clearInterval(this.interval);
           this.interval = null;

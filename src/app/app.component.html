@@ -22,9 +22,9 @@ Notes:
 <!-- TODO put everything in the center of the screen? -->
 <!-- todo week-by-week completion rate chart? -->
 <!-- Chart -->
-<div *ngIf="display.topChart" (dblclick)="toggle('topChart', !display.topChart)">
+-<div *ngIf="display.chartOfToday" (dblclick)="toggle('chartOfToday', !display.chartOfToday)">
   <div style="display: inline-block"> <!-- inline-block displays <div>s side by side -->
-    <ejs-chart #topChart id="completion-hours-by-categories-as-percentage-chart" width="300" height="200" [legendSettings]="{visible: false}"
+    <ejs-chart #chartOfToday id="completion-hours-by-categories-as-percentage-chart" width="300" height="200" [legendSettings]="{visible: false}"
                [primaryXAxis]="{valueType:'Category', title: '', labelPosition: 'Inside'}"
                [primaryYAxis]="{minimum: 0, maximum: 100, interval: 20, title: '',
                  stripLines: [{start: percentsPerCategory.minGoal, end: percentsPerCategory.maxGoal, text: 'Mar-Apr goal', color: 'pink', opacity: 0.5, visible: true}]}">
@@ -69,8 +69,8 @@ Notes:
   <label for="displayFullInfo">full display</label><br>
   <input id="displayInSchedules" type="checkbox" [checked]="display.inSchedules" (change)="toggle('inSchedules', !display.inSchedules)">
   <label for="displayInSchedules">in schedule</label><br>
-  <input id="displayTopChart" type="checkbox" [checked]="display.topChart" (change)="toggle('topChart',!display.topChart)">
-  <label for="displayTopChart">display chart</label><br>
+  <input id="displayChartOfToday" type="checkbox" [checked]="display.chartOfToday" (change)="toggle('chartOfToday',!display.chartOfToday)">
+  <label for="displayChartOfToday">display chart of today</label><br>
   <input id="displayNotes" type="checkbox" [checked]="display.notes" (change)="toggle('notes',!display.notes)">
   <label for="displayNotes">display notes</label><br>
   <input id="displayBasics" type="checkbox" [checked]="display.basics" (change)="toggle('basics', !display.basics)">
