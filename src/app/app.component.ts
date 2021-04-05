@@ -10,6 +10,7 @@ import {ChartComponent} from '@syncfusion/ej2-angular-charts';
 import {Note} from './model/note.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ToastrService} from 'ngx-toastr';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -96,6 +97,8 @@ export class AppComponent {
 
   editMode = false;
 
+  workflowyUrl: SafeUrl;
+
   basics: any[] = [];
   categories = {
     list: [], // string[]
@@ -119,12 +122,14 @@ export class AppComponent {
   // TODO optimize read in order to prevent meeting quota - e.g. displaying chart (instead of calculating daily % on read, calculate it when modifying entry (aka on write)
   // todo prevent accessing test_* if 80% of the quota is met (read & write separately)
   // todo allow modify archive
-  constructor(public dbService: DbService, private utilService: UtilService, private http: HttpClient, private toastr: ToastrService) {
+  constructor(public dbService: DbService, private utilService: UtilService, private http: HttpClient, private toastr: ToastrService, private domSanitizer: DomSanitizer) {
     // TODO figure out a better way to display success-error message on UI (less relying on console.log) => improve callback systems
     // TODO better input validation & showing messages when failed e.g. if validation_success => make sure to cover else case too
     // Setting up Firebase
     firebase.initializeApp(this.signIn.firebaseConfig);
     this.dbService.firebaseDb = firebase.firestore(); // todo not needed?
+
+    this.workflowyUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(environment.workflowyUrl);
 
     // For testing - allowing yesterday's entry to be modified
     const yesterday: any = new Date();

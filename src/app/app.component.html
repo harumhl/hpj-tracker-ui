@@ -98,6 +98,9 @@ Notes:
   </editable-table>
 </div>
 
+<!-- embed Workflowy -->
+<iframe [src]="workflowyUrl" style="width: 100%; resize: both"></iframe>
+
 <!-- (Testing) Update Basics (sleep, food, mood) -->
 <div *ngIf="display.basics" (click)="toggle('basics', !display.basics)">
   <textarea id="updatedBasics" style="width: 100%; height: 250px" [innerHTML]="basics | json"></textarea>

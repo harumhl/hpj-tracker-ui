@@ -11,5 +11,6 @@ export const environment = {
   firebaseMeasurementId: '',
   backendUrl: '',
   backendPassword: '',
+  workflowyUrl: '',
   environment: 'prod'
 };

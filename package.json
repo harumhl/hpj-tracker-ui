@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "6.1.1",
-  "description": "update primeng details tree upon data update and keeps displaying the tree",
+  "version": "6.1.2",
+  "description": "workflowy in iframe + blank details can be edited too",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

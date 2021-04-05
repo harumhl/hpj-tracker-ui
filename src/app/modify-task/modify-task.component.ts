@@ -84,8 +84,6 @@ export class ModifyTaskComponent implements OnInit {
           } else if (['category'].indexOf(key) !== -1) {
             delete this.task.category;
             this.task.categoryId = null;
-          } else if (['detailsInTree'].indexOf(key) !== -1) {
-            delete this.task.detailsInTree;
           } else {
             this.task[key] = null;
           }
