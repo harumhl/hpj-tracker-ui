@@ -33,8 +33,30 @@ export class EditableTableComponent implements OnInit {
   ngOnInit(): void {
     // Convert a text details into PrimeNG tree format
     this.dataToDisplay.forEach(row => {
+      if (row.details === undefined || row.details === null) {
+        row.details = '';
+      }
       row.detailsInTree = this.detailParseHelper(row.details, 1);
     });
+  }
+
+  allowEditOfDetails(row, event) {
+    row.detailsInEditMode = true;
+    event.target.parentElement.contentEditable = true;
+  }
+
+  updateDetails(row, event) {
+    if (row.detailsInEditMode && row.details !== event.target.innerText) {
+      if (confirm('Save the updated details?')) { // Can't get the event listeners to perform perfectly, so a popup is needed
+        const copyOfTask = this.utilService.copyAsJson(row.task);
+        copyOfTask.details = event.target.innerText;
+
+        this.dbService.putTask(copyOfTask).subscribe(entry => {
+          this.dbService.refreshData();
+        });
+      }
+    }
+    row.detailsInEditMode = false;
   }
 
   detailParseHelper(text: string, indent: number) { // TODO this should return TreeNode[], not TreeNode

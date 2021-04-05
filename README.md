@@ -109,6 +109,7 @@ Version | Date | Details
 4.1.1 | 2021-02-12 | 'basics' collection for today's entry can be modified in an input box where a json is represented in a string
 5.0.0 | 2021-03-15 | (2021-02-18 ~ 03-15) Moving away from Firebase's Firestore db, and start using Spring Boot backend and Heroku's PostgreSQL db
 6.0.0 | 2021-04-05 | trying to make it look nicer with PrimeNG + details can be shown in PrimeNG tree format if the details is in nested bullet list with '-'
+6.1.0 | 2021-04-05 | can modify details by double clicking then moving away mouse + primeng tree parser can handle \\n too + add an entry with new task + multiplier can be 0 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

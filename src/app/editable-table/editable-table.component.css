@@ -34,11 +34,17 @@ textarea {
   font-size: 16px;
 }
 
-:host ::ng-deep .details-tree.p-tree {
-  padding: 0;
+:host ::ng-deep .details-tree.p-component {
+  font-size: 15px;
 }
 :host ::ng-deep .details-tree.p-tree .p-component {
   font-size: 15px;
+}
+:host ::ng-deep .details-tree.p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+  height: inherit; /* row height */
+}
+:host ::ng-deep .details-tree.p-tree {
+  padding: 0;
 }
 :host ::ng-deep .details-tree.p-tree .p-tree-container .p-treenode {
   padding: 0;

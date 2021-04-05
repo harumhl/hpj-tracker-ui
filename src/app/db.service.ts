@@ -143,6 +143,11 @@ export class DbService {
   }
 
   putTask(task: any) {
+    if (task.category) {
+      task.categoryId = task.category.id;
+      delete task.category;
+    }
+
     if (this.validateTask(task)) {
       this.utilService.displayToast('info', 'updating a task', 'Creating');
       return this.http.put(this.backendUrl + '/tasks', task, this.httpOption).pipe(share(), obs => {
@@ -198,7 +203,6 @@ export class DbService {
 
   // Update the count or 'hide' of an existing entry in Firebase database
   putEntry(entryToUpdate: Entry) {
-    entryToUpdate.details = null; // TODO currently this is set to empty string, but backend expsts an object not a string
     entryToUpdate.taskId = entryToUpdate.task.id;
     entryToUpdate.count = entryToUpdate.count ? entryToUpdate.count : 0; // in case of hiding with -1
     this.utilService.displayToast('info', 'updating entries', 'Updating');

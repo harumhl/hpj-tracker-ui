@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "6.0.0",
-  "description": "trying to make it look nicer with PrimeNG + details can be shown in PrimeNG tree format if the details is in nested bullet list with '-'",
+  "version": "6.1.0",
+  "description": "can modify details by double clicking then moving away mouse + primeng tree parser can handle \\\\n too + add an entry with new task + multiplier can be 0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

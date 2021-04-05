@@ -24,5 +24,6 @@ export class Entry {
   impact?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
+  detailsInEditMode: boolean;
   detailsInTree: TreeNode[] = [];
 }
