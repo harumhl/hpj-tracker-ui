@@ -36,6 +36,7 @@ export class ModifyTaskComponent implements OnInit {
     if (categoryMatches.length > 0) {
       this.task.categoryId = categoryMatches[0].id;
     }
+    (document.getElementById('task') as HTMLTextAreaElement).innerHTML = this.jsonPipe.transform(this.task);
   }
 
   updateContent() {
@@ -43,6 +44,7 @@ export class ModifyTaskComponent implements OnInit {
     this.task = Object.assign({}, this.tasks.filter(t => t.name === taskName)[0]);
     this.task.categoryId = this.task.category.id;
     delete this.task.category;
+    (document.getElementById('task') as HTMLTextAreaElement).innerHTML = this.jsonPipe.transform(this.task);
   }
 
   saveTask(update: boolean) {
@@ -82,6 +84,8 @@ export class ModifyTaskComponent implements OnInit {
           } else if (['category'].indexOf(key) !== -1) {
             delete this.task.category;
             this.task.categoryId = null;
+          } else if (['detailsInTree'].indexOf(key) !== -1) {
+            delete this.task.detailsInTree;
           } else {
             this.task[key] = null;
           }

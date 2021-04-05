@@ -50,7 +50,7 @@
         <!-- details -->
         <div *ngIf="loggedIn === true && column.includes('details')" (dblclick)="allowEditOfDetails(row, $event)" (pointerleave)="updateDetails(row, $event)">
           <span *ngIf="row.detailsInTree === undefined || row.detailsInTree === null || row.detailsInEditMode === true || row.detailsInTree.length === 0">
-            <pre style="margin: 0">{{row[column]}}</pre>
+            <pre style="margin: 0; min-height: 30px">{{row[column]}}</pre>
           </span>
           <p-tree *ngIf="row.detailsInTree !== undefined && row.detailsInTree !== null && row.detailsInEditMode !== true && row.detailsInTree.length > 0" [value]="row.detailsInTree"
           styleClass="details-tree"></p-tree>
