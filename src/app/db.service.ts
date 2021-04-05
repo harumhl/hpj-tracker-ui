@@ -129,6 +129,7 @@ export class DbService {
       return this.http.post(this.backendUrl + '/tasks', task, this.httpOption).pipe(share(), obs => {
         obs.toPromise().then(t => {
           this.utilService.displayToast('success', 'task created', 'Created');
+          this.postEntriesOfADay();
         }).catch(error => {
           this.utilService.displayToast('error', 'Failed to create task', 'Error', error);
         });
