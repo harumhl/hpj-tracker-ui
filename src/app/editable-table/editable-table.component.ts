@@ -38,7 +38,10 @@ export class EditableTableComponent implements OnInit {
   }
 
   detailParseHelper(text: string, indent: number) { // TODO this should return TreeNode[], not TreeNode
-    const splitText = text.split('\n');
+    let splitText = text.split('\\n');
+    if (text.split('\n')[0] !== text) {
+      splitText = text.split('\n');
+    }
     if (splitText === undefined || splitText === null || splitText.length === 0 || splitText[0] === '' || text === '') { // base case
       return null;
     }
