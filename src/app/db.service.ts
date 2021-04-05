@@ -94,7 +94,7 @@ export class DbService {
       goalCount: task.goalCount > 0,
       maxCount: task.maxCount >= task.goalCount,
       unit: task.unit && task.unit.length > 0,
-      multiplier: task.multiplier !== 0,
+      multiplier: task.multiplier >= 0,
       expectedTimesOfCompletion: task.expectedTimesOfCompletion && task.expectedTimesOfCompletion.length > 0
                                 && task.expectedTimesOfCompletion.filter(t => t.match(timeRegex)).length === task.expectedTimesOfCompletion.length,
       details: true,
