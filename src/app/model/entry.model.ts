@@ -1,4 +1,5 @@
 import {Task} from './task.model';
+import {TreeNode} from 'primeng/api';
 
 export class Entry {
   id: number;
@@ -23,4 +24,5 @@ export class Entry {
   impact?: string;
   details?: string;
   time?: any; // 'expectedTimesOfCompletion' in database in goals
+  detailsInTree: TreeNode[] = [];
 }

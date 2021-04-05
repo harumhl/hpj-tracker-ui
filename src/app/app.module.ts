@@ -12,6 +12,7 @@ import {HighLightPipe} from './highlightpipe';
 import {ToastrModule} from 'ngx-toastr';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import { ModifyTaskComponent } from './modify-task/modify-task.component';
+import {TreeModule} from 'primeng/tree';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ModifyTaskComponent } from './modify-task/modify-task.component';
     FormsModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    TreeModule
   ],
   providers: [DatePipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService, BarSeriesService],
   bootstrap: [AppComponent]

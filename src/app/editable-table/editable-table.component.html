@@ -24,7 +24,8 @@
         <!-- todo merge category column over multiple rows -->
         <!-- todo display streak -->
         <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
-        <label *ngIf="loggedIn === false || (column !== 'count' && column !== 'entryDetails' && !(mobile === true && column === 'goalCount'))">
+        <label *ngIf="loggedIn === false && !(mobile === true && column === 'goalCount')
+                      || (column !== 'count' && column !== 'entryDetails' && column !== 'details')">
           {{row[column]}}
         </label>
 
@@ -44,6 +45,12 @@
         <div *ngIf="loggedIn === true && column.includes('entryDetails')">
           <button *ngFor="let detail of row[column] | keyvalue" (click)="updateEntryDetails(row, detail)"
                   [ngStyle]="{'background-color': detail.value ? '#BBFFBB' : '#FFCCEE'}">{{detail.key}}</button>
+        </div>
+
+        <!-- details -->
+        <div *ngIf="loggedIn === true && column.includes('details')">
+          <span *ngIf="row.detailsInTree === null || row.detailsInTree.length === 0">{{row[column]}}</span>
+          <p-tree *ngIf="row.detailsInTree !== null && row.detailsInTree.length > 0" [value]="row.detailsInTree"></p-tree>
         </div>
       </td>
     </tr>

@@ -108,6 +108,7 @@ Version | Date | Details
 4.1.0 | 2021-02-11 | 'basics' collection is added and is copied under each entry every day (no UI capability yet - everything needs to be done via db directly besides adding it daily automatically) 
 4.1.1 | 2021-02-12 | 'basics' collection for today's entry can be modified in an input box where a json is represented in a string
 5.0.0 | 2021-03-15 | (2021-02-18 ~ 03-15) Moving away from Firebase's Firestore db, and start using Spring Boot backend and Heroku's PostgreSQL db
+6.0.0 | 2021-04-05 | trying to make it look nicer with PrimeNG + details can be shown in PrimeNG tree format if the details is in nested bullet list with '-'
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
