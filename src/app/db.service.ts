@@ -138,7 +138,8 @@ export class DbService {
     } else {
       const error = {status: 400, message: 'invalid new task'};
       this.utilService.displayToast('error', 'Did not make a POST request', 'Error', error);
-      return throwError(error);    }
+      return throwError(error);
+    }
   }
 
   putTask(task: any) {

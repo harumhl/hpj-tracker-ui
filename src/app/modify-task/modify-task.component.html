@@ -14,7 +14,7 @@
   </select>
 
   <!-- Display and allow update of contents of a task -->
-  <textarea id="task" style="width: 100%; height: 250px" [innerHTML]="task | json" [disabled]="task === undefined || task['categoryId'] === null"></textarea>
+  <textarea id="task" style="width: 100%; height: 250px" [disabled]="task === undefined || task['categoryId'] === null"></textarea>
 
   <!-- Buttons to trigger action -->
   <button (click)="saveTask(false)">New Task</button>

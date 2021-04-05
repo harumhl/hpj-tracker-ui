@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { Task } from '../model/task.model';
 import {Category} from '../model/category.model';
+import {JsonPipe} from '@angular/common';
 import {DbService} from '../db.service';
-import {UtilService} from '../util.service';
 
 @Component({
   selector: 'modify-task',
@@ -19,7 +19,7 @@ export class ModifyTaskComponent implements OnInit {
   @Input() templateTask: Task;
   task: Task;
 
-  constructor(private dbService: DbService, private utilService: UtilService) { }
+  constructor(private dbService: DbService, private jsonPipe: JsonPipe) { }
 
   ngOnInit(): void {
     const useTemplateTask = setInterval(() => {
@@ -62,7 +62,7 @@ export class ModifyTaskComponent implements OnInit {
   assignEmptyNewTask() {
     if (this.templateTask !== undefined) {
       // Create a template for a new task
-      this.task = null;
+      this.task = undefined;
       this.task = Object.assign({}, this.templateTask);
       for (const key in this.task) {
         if (this.task.hasOwnProperty(key)) {
@@ -87,6 +87,8 @@ export class ModifyTaskComponent implements OnInit {
           }
         }
       }
+      (document.getElementById('task') as HTMLTextAreaElement).innerHTML = this.jsonPipe.transform(this.task);
+
     }
   }
 }

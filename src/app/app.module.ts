@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {BarSeriesService, ChartModule, StripLineService} from '@syncfusion/ej2-angular-charts';
 import { AppComponent } from './app.component';
-import {DatePipe} from '@angular/common';
+import {DatePipe, JsonPipe} from '@angular/common';
 import { CategoryService, LegendService, TooltipService } from '@syncfusion/ej2-angular-charts';
 import { DataLabelService, LineSeriesService} from '@syncfusion/ej2-angular-charts';
 import {FormsModule} from '@angular/forms';
@@ -31,7 +31,7 @@ import {TreeModule} from 'primeng/tree';
     NoopAnimationsModule,
     TreeModule
   ],
-  providers: [DatePipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService, BarSeriesService],
+  providers: [DatePipe, JsonPipe, CategoryService, LegendService, TooltipService, DataLabelService, LineSeriesService, StripLineService, BarSeriesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
