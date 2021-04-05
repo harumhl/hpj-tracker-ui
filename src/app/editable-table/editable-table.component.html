@@ -49,8 +49,9 @@
 
         <!-- details -->
         <div *ngIf="loggedIn === true && column.includes('details')">
-          <span *ngIf="row.detailsInTree === null || row.detailsInTree.length === 0">{{row[column]}}</span>
-          <p-tree *ngIf="row.detailsInTree !== null && row.detailsInTree.length > 0" [value]="row.detailsInTree"></p-tree>
+          <span *ngIf="row.detailsInTree === undefined || row.detailsInTree === null || row.detailsInTree.length === 0">{{row[column]}}</span>
+          <p-tree *ngIf="row.detailsInTree !== undefined && row.detailsInTree !== null && row.detailsInTree.length > 0" [value]="row.detailsInTree"
+          styleClass="details-tree"></p-tree>
         </div>
       </td>
     </tr>
