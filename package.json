@@ -1,7 +1,7 @@
 {
   "name": "hpj-tracker",
-  "version": "6.1.2",
-  "description": "workflowy in iframe + blank details can be edited too",
+  "version": "6.1.3",
+  "description": "fixing errors recently introduced - could not edit, could not hide entries, goals were shown twice on mobile",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

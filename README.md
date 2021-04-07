@@ -111,7 +111,8 @@ Version | Date | Details
 6.0.0 | 2021-04-05 | trying to make it look nicer with PrimeNG + details can be shown in PrimeNG tree format if the details is in nested bullet list with '-'
 6.1.0 | 2021-04-05 | can modify details by double clicking then moving away mouse + primeng tree parser can handle \\n too + add an entry with new task + multiplier can be 0
 6.1.1 | 2021-04-05 | update primeng details tree upon data update and keeps displaying the tree
-6.1.2 | 2021-04-05 | workflowy in iframe + blank details can be edited too 
+6.1.2 | 2021-04-05 | workflowy in iframe + blank details can be edited too
+6.1.3 | 2021-04-07 | fixing errors recently introduced - could not edit, could not hide entries, goals were shown twice on mobile 
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

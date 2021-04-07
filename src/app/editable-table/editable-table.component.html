@@ -24,8 +24,8 @@
         <!-- todo merge category column over multiple rows -->
         <!-- todo display streak -->
         <!-- TODO allow expectedTimesOfCompletion to be modified easily -->
-        <label *ngIf="loggedIn === false && !(mobile === true && column === 'goalCount')
-                      || (column !== 'count' && column !== 'entryDetails' && column !== 'details')">
+        <label *ngIf="loggedIn === true && !(mobile === true && column === 'goalCount')
+                      && !(column === 'count' || column === 'entryDetails' || column === 'details')">
           {{row[column]}}
         </label>
 
